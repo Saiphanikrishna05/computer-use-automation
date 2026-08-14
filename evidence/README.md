@@ -28,6 +28,26 @@ exactly as it happened.
 | `replay-failure-input-validation/` | A malformed member ID is rejected against the declared input contract before the application is touched at all. |
 | `replay-escalation-irreversible/` | The irreversible step is refused by policy, a human takes control of the same live session, performs the submit, and hands back. Their actions are in the log. |
 | `replay-tenant-b-cascade/` | The same base artifact plus a small tenant overlay, replayed against a second institution running the same vendor product. |
+| `discovery-saucedemo-public-site/` | A discovery run against **saucedemo.com** — third-party markup I did not write. Proof the perception and locator layers are not overfitted to my own stand-in application. The model also declined to click *Finish*, unprompted, because submitting the order is irreversible. |
+| `replay-saucedemo-public-site/` | That capability replayed deterministically. 10/10 steps, zero degraded locators. |
+
+### A detail worth comparing
+
+Sauce Labs ships `data-test` attributes, so every step there resolves at **tier 0
+(`test_id`)**. The legacy console has none, and its steps resolve at **tier 2
+(inferred labels)**. Same ladder, same engine — it uses whatever signal the
+surface actually offers, which is the property that has to hold if one artifact
+schema is going to span modern and legacy applications.
+
+```bash
+python3 -c "
+import json
+for l in open('evidence/replay-saucedemo-public-site/log.jsonl'):
+    e=json.loads(l)
+    if e['type']=='resolution':
+        r=e['data']['report']; print(r['winningTier'], r['winningKind'], r['targetDescription'])
+"
+```
 
 ## Reading a log
 

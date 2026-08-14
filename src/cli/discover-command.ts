@@ -20,6 +20,10 @@ export interface DiscoverCommandOptions {
   capabilityId?: string;
   headless?: boolean;
   maxSteps?: number;
+  /** Vendor/product the capability is recorded against. Defaults to the
+   *  stand-in console; overridden when exploring a different application. */
+  vendor?: string;
+  product?: string;
 }
 
 export async function runDiscoverCommand(opts: DiscoverCommandOptions): Promise<number> {
@@ -37,6 +41,9 @@ export async function runDiscoverCommand(opts: DiscoverCommandOptions): Promise<
   const tenant = TENANT_RUNTIMES[opts.tenant] ?? TENANT_RUNTIMES[DEFAULT_TENANT]!;
   const entryUrl = opts.target ?? `${tenant.baseUrl}/`;
   const entryOrigin = new URL(entryUrl).origin;
+  // Canonicalisation and validation follow the application actually being
+  // explored, which is not necessarily the configured tenant.
+  const baseUrl = opts.target ? entryOrigin : tenant.baseUrl;
 
   const runId = newRunId('discovery');
   const credentials = resolveCredentials(tenant.id);
@@ -68,11 +75,11 @@ export async function runDiscoverCommand(opts: DiscoverCommandOptions): Promise<
     goal: opts.goal,
     runId,
     model: model.model,
-    vendor: 'meridian',
-    product: 'servicing-console',
+    vendor: opts.vendor ?? 'meridian',
+    product: opts.product ?? 'servicing-console',
     versionRange: '1.x',
     entryUrl,
-    baseUrl: tenant.baseUrl,
+    baseUrl,
     injectedSecrets: [
       {
         name: 'operatorId',
@@ -121,7 +128,7 @@ export async function runDiscoverCommand(opts: DiscoverCommandOptions): Promise<
 
     // Check what is checkable before a human is asked to review it. See
     // discovery/validate.ts for why this pass exists.
-    const validated = await validateAgainstEntryState(draft, driver, { baseUrl: tenant.baseUrl }, logger);
+    const validated = await validateAgainstEntryState(draft, driver, { baseUrl }, logger);
     const artifact = validated.artifact;
     const path = saveArtifact(artifact);
     // The artifact is written into the evidence bundle too, so the bundle is a

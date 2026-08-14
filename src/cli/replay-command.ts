@@ -28,10 +28,16 @@ export interface ReplayCommandOptions {
   faultScope?: string;
   operator?: boolean;
   json?: boolean;
+  /** Overrides the tenant's base URL and the allowlist, for capabilities
+   *  recorded against an application that is not a configured tenant. */
+  baseUrl?: string;
 }
 
 export async function runReplayCommand(options: ReplayCommandOptions): Promise<ReplayResult> {
-  const tenant = TENANT_RUNTIMES[options.tenant] ?? TENANT_RUNTIMES[DEFAULT_TENANT]!;
+  const configured = TENANT_RUNTIMES[options.tenant] ?? TENANT_RUNTIMES[DEFAULT_TENANT]!;
+  const tenant = options.baseUrl
+    ? { ...configured, id: new URL(options.baseUrl).host, baseUrl: options.baseUrl, overlayId: undefined }
+    : configured;
   const base = loadArtifact(options.capability, options.version);
 
   const overlay = tenant.overlayId ? loadOverlay(tenant.overlayId) : undefined;
@@ -60,7 +66,10 @@ export async function runReplayCommand(options: ReplayCommandOptions): Promise<R
 
   const policy = new PolicyEngine({
     ...REPLAY_POLICY,
-    allowedOrigins: [tenant.baseUrl],
+    // The allowlist follows the base URL, so pointing a capability at a
+    // different deployment widens the allowlist to exactly that deployment and
+    // nothing else.
+    allowedOrigins: [new URL(tenant.baseUrl).origin],
   });
 
   const driver = await PlaywrightWebSurface.launch({

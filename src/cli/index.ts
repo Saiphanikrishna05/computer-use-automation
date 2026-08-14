@@ -36,6 +36,7 @@ program
   .option('--fault <kind>', 'arm a fault in the target app before running (app_error, session_expired, slow, unexpected_dialog, validation_error, permission_denied)')
   .option('--fault-scope <scope>', 'which request the fault attaches to (any, search, member_detail, sub_account)', 'any')
   .option('--no-operator', 'fail instead of escalating to a human')
+  .option('--base-url <url>', 'override the base URL and the allowlist (e.g. a staging deployment)')
   .option('--json', 'print the raw result object')
   .action(async (capability: string, opts) => {
     const result = await runReplayCommand({
@@ -48,6 +49,7 @@ program
       faultScope: opts.faultScope,
       operator: opts.operator,
       json: opts.json,
+      baseUrl: opts.baseUrl,
     });
     printResult(result, Boolean(opts.json));
     // Exit codes let a caller branch without parsing stdout: 0 succeeded,
@@ -64,6 +66,8 @@ program
   .option('--capability-id <id>', 'id for the emitted artifact (default: derived from the goal)')
   .option('--headless', 'run without a visible browser window')
   .option('--max-steps <n>', 'stop after this many model turns', (v) => Number(v))
+  .option('--vendor <name>', 'vendor the capability is recorded against')
+  .option('--product <name>', 'product the capability is recorded against')
   .action(async (opts) => {
     const { runDiscoverCommand } = await import('./discover-command.js');
     const code = await runDiscoverCommand(opts);

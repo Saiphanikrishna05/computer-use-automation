@@ -1,0 +1,697 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "add_backpack_to_cart",
+  "version": 1,
+  "title": "Add Sauce Labs Backpack to cart and reach Checkout Overview",
+  "description": "Signs in to Swag Labs (saucedemo.com), adds the Sauce Labs Backpack ($29.99, the first item in the default Name A-Z product list) to the cart, opens the cart, starts checkout, fills the Checkout Information form (first name, last name, postal code), and continues to the Checkout: Overview page showing the line item, payment/shipping info and price total. It stops there deliberately: the order is NOT placed (the Finish button is never clicked), so this capability is non-committal and changes only the signed-in user's cart state. Returns no extracted values; success is the Checkout: Overview screen for the Sauce Labs Backpack.",
+  "target": {
+    "surface": "web",
+    "app": {
+      "vendor": "saucelabs",
+      "product": "swag-labs",
+      "versionRange": "1.x"
+    },
+    "entryUrlTemplate": "{{baseUrl}}/"
+  },
+  "approval": {
+    "state": "draft"
+  },
+  "maxRisk": "mutate_reversible",
+  "inputs": [
+    {
+      "name": "operatorId",
+      "type": "string",
+      "description": "Servicing console operator user ID. Injected by the runtime credential store.",
+      "required": true,
+      "sensitivity": "pii",
+      "injected": true
+    },
+    {
+      "name": "operatorPassword",
+      "type": "string",
+      "description": "Servicing console operator password. Injected by the runtime credential store.",
+      "required": true,
+      "sensitivity": "secret",
+      "injected": true
+    },
+    {
+      "name": "firstName",
+      "type": "string",
+      "description": "Buyer's first name entered on the Checkout Information form",
+      "required": true,
+      "sensitivity": "none",
+      "injected": false,
+      "example": "Alex"
+    },
+    {
+      "name": "lastName",
+      "type": "string",
+      "description": "Buyer's last name entered on the Checkout Information form",
+      "required": true,
+      "sensitivity": "none",
+      "injected": false,
+      "example": "Morgan"
+    },
+    {
+      "name": "postalCode",
+      "type": "string",
+      "description": "Buyer's Zip/Postal Code entered on the Checkout Information form",
+      "required": true,
+      "sensitivity": "none",
+      "injected": false,
+      "example": "94105"
+    }
+  ],
+  "outputs": [],
+  "steps": [
+    {
+      "id": "type_1",
+      "intent": "Enter the operator id into the Username field on the login screen",
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": [],
+      "action": {
+        "kind": "type",
+        "target": {
+          "description": "textbox \"Username\"",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "test_id",
+              "attribute": "data-test",
+              "value": "username"
+            },
+            {
+              "kind": "role_name",
+              "role": "textbox",
+              "name": "Username",
+              "exact": true
+            },
+            {
+              "kind": "placeholder",
+              "text": "Username"
+            },
+            {
+              "kind": "structural",
+              "css": "input[name=\"user-name\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.5,
+              "yFraction": 0.19277777777777777
+            }
+          ],
+          "evidence": {
+            "role": "textbox",
+            "accessibleName": "Username",
+            "tag": "input",
+            "boundingBox": {
+              "x": 494,
+              "y": 154,
+              "width": 292,
+              "height": 39
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "{{operatorId}}",
+        "clearFirst": true,
+        "secret": true
+      }
+    },
+    {
+      "id": "type_2",
+      "intent": "Enter the password into the Password field on the login screen",
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": [],
+      "action": {
+        "kind": "type",
+        "target": {
+          "description": "textbox \"Password\"",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "test_id",
+              "attribute": "data-test",
+              "value": "password"
+            },
+            {
+              "kind": "role_name",
+              "role": "textbox",
+              "name": "Password",
+              "exact": true
+            },
+            {
+              "kind": "placeholder",
+              "text": "Password"
+            },
+            {
+              "kind": "structural",
+              "css": "input[name=\"password\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.5,
+              "yFraction": 0.25277777777777777
+            }
+          ],
+          "evidence": {
+            "role": "textbox",
+            "accessibleName": "Password",
+            "tag": "input",
+            "boundingBox": {
+              "x": 494,
+              "y": 208,
+              "width": 292,
+              "height": 39
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "{{operatorPassword}}",
+        "clearFirst": true,
+        "secret": true
+      }
+    },
+    {
+      "id": "click_3",
+      "intent": "Submit the sign-on form to access the product catalogue",
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": [],
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "button \"Login\"",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "test_id",
+              "attribute": "data-test",
+              "value": "login-button"
+            },
+            {
+              "kind": "role_name",
+              "role": "button",
+              "name": "Login",
+              "exact": true
+            },
+            {
+              "kind": "structural",
+              "css": "input[name=\"login-button\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.5,
+              "yFraction": 0.36277777777777775
+            }
+          ],
+          "evidence": {
+            "role": "button",
+            "accessibleName": "Login",
+            "tag": "input",
+            "boundingBox": {
+              "x": 494,
+              "y": 302,
+              "width": 292,
+              "height": 49
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "click_4",
+      "intent": "Add the Sauce Labs Backpack to the cart from the Products list",
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": [],
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "button \"Add to cart\"",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "test_id",
+              "attribute": "data-test",
+              "value": "add-to-cart-sauce-labs-backpack"
+            },
+            {
+              "kind": "role_name",
+              "role": "button",
+              "name": "Add to cart",
+              "exact": true
+            },
+            {
+              "kind": "label",
+              "text": "$29.99",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "button[name=\"add-to-cart-sauce-labs-backpack\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.390625,
+              "yFraction": 0.39555555555555555
+            }
+          ],
+          "anchor": {
+            "nearestLabel": "$29.99"
+          },
+          "evidence": {
+            "role": "button",
+            "accessibleName": "Add to cart",
+            "tag": "button",
+            "textSnippet": "Add to cart",
+            "boundingBox": {
+              "x": 420,
+              "y": 339,
+              "width": 160,
+              "height": 34
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "navigate_5",
+      "intent": "Open the shopping cart page to begin checkout",
+      "risk": "read",
+      "timeoutMs": 15000,
+      "postconditions": [],
+      "action": {
+        "kind": "navigate",
+        "urlTemplate": "{{baseUrl}}/cart.html"
+      }
+    },
+    {
+      "id": "click_6",
+      "intent": "Start checkout from the cart page",
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": [],
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "button \"Checkout\"",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "test_id",
+              "attribute": "data-test",
+              "value": "checkout"
+            },
+            {
+              "kind": "role_name",
+              "role": "button",
+              "name": "Checkout",
+              "exact": true
+            },
+            {
+              "kind": "label",
+              "text": "Continue Shopping",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "button[name=\"checkout\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.90234375,
+              "yFraction": 0.4766666666666667
+            }
+          ],
+          "anchor": {
+            "nearestLabel": "Continue Shopping"
+          },
+          "evidence": {
+            "role": "button",
+            "accessibleName": "Checkout",
+            "tag": "button",
+            "textSnippet": "Checkout",
+            "boundingBox": {
+              "x": 1045,
+              "y": 412,
+              "width": 220,
+              "height": 34
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "type_7",
+      "intent": "Enter the buyer's first name in the Checkout Information form",
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": [],
+      "action": {
+        "kind": "type",
+        "target": {
+          "description": "textbox \"First Name\"",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "test_id",
+              "attribute": "data-test",
+              "value": "firstName"
+            },
+            {
+              "kind": "role_name",
+              "role": "textbox",
+              "name": "First Name",
+              "exact": true
+            },
+            {
+              "kind": "placeholder",
+              "text": "First Name"
+            },
+            {
+              "kind": "structural",
+              "css": "input[name=\"firstName\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.5,
+              "yFraction": 0.305
+            }
+          ],
+          "evidence": {
+            "role": "textbox",
+            "accessibleName": "First Name",
+            "tag": "input",
+            "boundingBox": {
+              "x": 450,
+              "y": 255,
+              "width": 380,
+              "height": 39
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "{{firstName}}",
+        "clearFirst": true,
+        "secret": false
+      }
+    },
+    {
+      "id": "type_8",
+      "intent": "Enter the buyer's last name in the Checkout Information form",
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": [],
+      "action": {
+        "kind": "type",
+        "target": {
+          "description": "textbox \"Last Name\"",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "test_id",
+              "attribute": "data-test",
+              "value": "lastName"
+            },
+            {
+              "kind": "role_name",
+              "role": "textbox",
+              "name": "Last Name",
+              "exact": true
+            },
+            {
+              "kind": "placeholder",
+              "text": "Last Name"
+            },
+            {
+              "kind": "structural",
+              "css": "input[name=\"lastName\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.5,
+              "yFraction": 0.365
+            }
+          ],
+          "evidence": {
+            "role": "textbox",
+            "accessibleName": "Last Name",
+            "tag": "input",
+            "boundingBox": {
+              "x": 450,
+              "y": 309,
+              "width": 380,
+              "height": 39
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "{{lastName}}",
+        "clearFirst": true,
+        "secret": false
+      }
+    },
+    {
+      "id": "type_9",
+      "intent": "Enter the buyer's postal code in the Checkout Information form",
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": [],
+      "action": {
+        "kind": "type",
+        "target": {
+          "description": "textbox \"Zip/Postal Code\"",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "test_id",
+              "attribute": "data-test",
+              "value": "postalCode"
+            },
+            {
+              "kind": "role_name",
+              "role": "textbox",
+              "name": "Zip/Postal Code",
+              "exact": true
+            },
+            {
+              "kind": "placeholder",
+              "text": "Zip/Postal Code"
+            },
+            {
+              "kind": "structural",
+              "css": "input[name=\"postalCode\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.5,
+              "yFraction": 0.425
+            }
+          ],
+          "evidence": {
+            "role": "textbox",
+            "accessibleName": "Zip/Postal Code",
+            "tag": "input",
+            "boundingBox": {
+              "x": 450,
+              "y": 363,
+              "width": 380,
+              "height": 39
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "{{postalCode}}",
+        "clearFirst": true,
+        "secret": false
+      }
+    },
+    {
+      "id": "click_10",
+      "intent": "Continue from checkout information to the checkout overview page",
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": [],
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "button \"Continue\"",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "test_id",
+              "attribute": "data-test",
+              "value": "continue"
+            },
+            {
+              "kind": "role_name",
+              "role": "button",
+              "name": "Continue",
+              "exact": true
+            },
+            {
+              "kind": "label",
+              "text": "Cancel",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "input[name=\"continue\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.90234375,
+              "yFraction": 0.6883333333333334
+            }
+          ],
+          "anchor": {
+            "nearestLabel": "Cancel"
+          },
+          "evidence": {
+            "role": "button",
+            "accessibleName": "Continue",
+            "tag": "input",
+            "boundingBox": {
+              "x": 1045,
+              "y": 599,
+              "width": 220,
+              "height": 41
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        }
+      }
+    }
+  ],
+  "checkpoint": {
+    "description": "The Checkout: Overview page is displayed, listing the Sauce Labs Backpack with its price, payment and shipping information, and the price total, with a Finish button available but not pressed.",
+    "condition": {
+      "kind": "text_present",
+      "text": "Checkout: Overview",
+      "framePath": [],
+      "caseSensitive": false
+    }
+  },
+  "outcomes": [
+    {
+      "code": "LOGIN_FAILED",
+      "description": "The supplied credentials were rejected at sign-on, so the product catalogue was never reached.",
+      "when": {
+        "kind": "text_present",
+        "text": "Epic sadface: Username and password do not match any user in this service",
+        "framePath": [],
+        "caseSensitive": false
+      },
+      "extract": []
+    },
+    {
+      "code": "USER_LOCKED_OUT",
+      "description": "The operator account is locked out and cannot sign in.",
+      "when": {
+        "kind": "text_present",
+        "text": "Epic sadface: Sorry, this user has been locked out.",
+        "framePath": [],
+        "caseSensitive": false
+      },
+      "extract": []
+    },
+    {
+      "code": "MISSING_CHECKOUT_INFO",
+      "description": "A required field on the Checkout Information form was empty, so the overview page could not be reached.",
+      "when": {
+        "kind": "text_present",
+        "text": "Error: First Name is required",
+        "framePath": [],
+        "caseSensitive": false
+      },
+      "extract": []
+    },
+    {
+      "code": "MISSING_POSTAL_CODE",
+      "description": "The Zip/Postal Code was not supplied on the Checkout Information form.",
+      "when": {
+        "kind": "text_present",
+        "text": "Error: Postal Code is required",
+        "framePath": [],
+        "caseSensitive": false
+      },
+      "extract": []
+    }
+  ],
+  "recovery": [
+    {
+      "code": "ACCEPT_SYSTEM_DIALOG",
+      "description": "A native dialog is blocking the page. Acknowledging it is required before any further step can run. Review whether acknowledging is safe for this flow before approving.",
+      "when": {
+        "kind": "dialog_present"
+      },
+      "then": [
+        {
+          "kind": "accept_dialog"
+        }
+      ],
+      "maxAttempts": 3
+    }
+  ],
+  "failures": [],
+  "provenance": {
+    "discoveredAt": "2026-08-14T23:24:57.198Z",
+    "runId": "discovery-20260814T232402-01",
+    "goal": "Add the Sauce Labs Backpack to the cart and reach the checkout overview page",
+    "model": "claude-opus-5",
+    "evidencePath": "runs/discovery-20260814T232402-01",
+    "humanEdits": [],
+    "validation": {
+      "checkedAt": "2026-08-14T23:24:57.463Z",
+      "warnings": [
+        "4 declared outcome(s) were hypothesised from a single successful run and have not been observed. Confirm the exact on-screen wording of each before approving: LOGIN_FAILED (\"Epic sadface: Username and password do not match any user in this service\"), USER_LOCKED_OUT (\"Epic sadface: Sorry, this user has been locked out.\"), MISSING_CHECKOUT_INFO (\"Error: First Name is required\"), MISSING_POSTAL_CODE (\"Error: Postal Code is required\")"
+      ],
+      "rejected": []
+    }
+  }
+}

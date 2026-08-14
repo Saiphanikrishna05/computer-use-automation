@@ -1,0 +1,369 @@
+[
+  {
+    "turn": 1,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "text",
+        "text": "I'll start by observing the current screen."
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_019XdL55x7TQxuTqBYvjNRes",
+        "name": "observe",
+        "input": {},
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 2,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_01LcuaV99jZ2P5uPV4w14L4h",
+        "name": "type",
+        "input": {
+          "ref": "main#0",
+          "text": "standard_user",
+          "intent": "Enter the operator id into the Username field on the login screen"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_018nPt9j2gVEFbNCP8nLEraV",
+        "name": "type",
+        "input": {
+          "ref": "main#1",
+          "text": "[redacted:literal]",
+          "intent": "Enter the password into the Password field on the login screen"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 3,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_01MdW5ecgqG9kzzyR8ZZPab9",
+        "name": "click",
+        "input": {
+          "ref": "main#2",
+          "intent": "Submit the sign-on form to access the product catalogue"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 4,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_014Kmdinp7ZYVoxp1NXAZrEE",
+        "name": "observe",
+        "input": {},
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 5,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "thinking",
+        "thinking": "",
+        "signature": "CAIS7wQKhwEIEBgCKkDlCnTAOE41DJDSkYDvydxJPpGSiBPPSQGApSX4RggpJ6ty8ORjEhw+DlAk3DP4DENY8mm9h22OV0H/ER6SsYIXMg1jbGF1ZGUtb3B1cy01OAFCCHRoaW5raW5nWiQyZDczZDMwZi03MzE2LTRkOWMtOGZmNS01ZWIzZTNiMTNkOGUSDImNIPAyaML1c85QohoMhPTqcw/YSob+W4khIjARU+VgHfAk9Zx+4yy7WWVMR5fdQuoMCHd6xxdl0HlKv7Ol4KxD5+DuSnge579sOrMqlAPnm1tvGfi2BFDq0vnT49vY1Hi5KR8+hAJghffW/MmTqj6ZjgqvArekqCPP/jxMqO8HgliVrbhst+Eho/fSE8UT/O5Af5mKnIjnYTMqQ6bVZZMxFBIfJZnFp3TZdJJiAgrRYrS49lS2aNs6jSJaAKYqlvHHV1P+uooX4ta5TmeRwduPEQPw/To9kLBoJMwUan9vNWOsthGb+oJX/2p9WYBCPP7yWoAXU5vemqGvVS41LUA1NMMugcWd6pQGYWuHs/Xlc1Xk5eiqwT7e2Akh7aHxZRDq6NBtXn4RQWCdqxX1EDuAzcK33Qo90Bw+8TPSdwdDosoG1RKafGjdItYBWIXqgK2J863YPk7rZxB7/TBXm2DKCAATCfRfz9tk4YrSJGEuaLO0W8xZUlkxWCuuhTW83h9QKDpTaMKgnsz4HkGm8jaDDudiWoHFe1yltQw1Mx4Zu9laJo9I55FQ+XuVj1D7Yw7Zf81gjBR7ks1yvL8p1hVLMwdiF5pqqEHGSlmS743+OElctRyv07JnIbA4cVG4jIA+3RgB"
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_011KZguWaUE3rHhM8KLMV1i4",
+        "name": "observe",
+        "input": {
+          "withScreenshot": true
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 6,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "thinking",
+        "thinking": "",
+        "signature": "CAISqQIKhwEIEBgCKkDdWBF8sFJ+Z0qnWv1yoG/VrPYlyLpnuOdAHheI4NHK98pU7Oro/0/b70nZvzQmuEwlneZdHfOCWPJw1kqQ/e6mMg1jbGF1ZGUtb3B1cy01OAFCCHRoaW5raW5nWiQyZDczZDMwZi03MzE2LTRkOWMtOGZmNS01ZWIzZTNiMTNkOGUSDCLw8iflsWQFMDVH1hoMgP6/bgAlFxtJfoTJIjDP0JuyGP2j05VXZNgejmvV2mRF+ssfnl0dgXiaIo6tw2EU46/f2fAOIza+HKqgl0MqT1jBCfP4bx9crwJ2nZAa453L8lauenonOysib9iU23ei/W3PzIRtoL8z931ffSRHML4+ky44yfTVvUsu4t1cYDm4rWUgiOQe5mQC/sMZSjwYAQ=="
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_016ppRtYRygPiXaETc1kx5mw",
+        "name": "click",
+        "input": {
+          "ref": "main#2",
+          "intent": "Add the Sauce Labs Backpack to the cart from the Products list"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 7,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_014Ne79au3SpvpTc76stKzZk",
+        "name": "observe",
+        "input": {},
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 8,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "thinking",
+        "thinking": "",
+        "signature": "CAISjgQKhwEIEBgCKkC0bwfDou2dssU2L33PPtmF79El6bJu65xDco2Q3oykxAD7ex9CckSvRi+RnvuKjp89ywyH4JZBvIPb78EkrjXhMg1jbGF1ZGUtb3B1cy01OAFCCHRoaW5raW5nWiQyZDczZDMwZi03MzE2LTRkOWMtOGZmNS01ZWIzZTNiMTNkOGUSDFqMLGjxtxQU+/oNZBoMZlDL8+4ZfZKVqpebIjAWKJVXCgGTbs58agtC7nm+oYrF4IKUi4amoa7Rp32i3xEHHcrv4enCF3ljY8f94EoqswJKJiJ1QvKsYqPp1NGHlpQPK/VsvNmkWqtthcs9rUSIWAL1fIPf/uB64kRgVN4mLFD/tsaq4pi3DgKzlEYZWyi8n8aCXUpKVjy/A71R09Z5eom60jJ+fA7uVDUxKsErTAjIV0ZdPQVKaI+ekUnmBH4sOOSCzHXcQhRjs6j4b2UYN1uhdZOULfbE54RJel2g8JV4z90kaFJMmMXcXACf4oYwIYuYzKf8hhwfH7Sx6m7vGoodevhZVT2EW029FJx5/zYY3Io+hjTYVEvYpczdH/ppRygKoC5jLG6yrV4Kk5PS3Zvv6MM302S4zPIuHh/wlIvYKhHLpcTk2yze5nkBb2MfYYEGsOIHxYmaWjJZFqG2/7tbmwt65BMhPm2z7Wc6FY2d5wTxsyE7bjAuzABT1zc+VNqfGAE="
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01Ecaf4J5NveWosoqWRfqRMU",
+        "name": "navigate",
+        "input": {
+          "url": "https://www.saucedemo.com/cart.html",
+          "intent": "Open the shopping cart page to begin checkout"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 9,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_012RFZxKitxt5eqpKtYydnPB",
+        "name": "observe",
+        "input": {},
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 10,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_011f2itsyCqwe9WRDnaZfLkR",
+        "name": "click",
+        "input": {
+          "ref": "main#3",
+          "intent": "Start checkout from the cart page"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 11,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_01FrxwAjRvzkR9HQ33ZLruei",
+        "name": "observe",
+        "input": {},
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 12,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_017JUHszwQ5rnNGTn7VzxK1s",
+        "name": "type",
+        "input": {
+          "ref": "main#1",
+          "text": "Alex",
+          "intent": "Enter the buyer's first name in the Checkout Information form"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01CZ37EBZP8PDLCbywg6F1n2",
+        "name": "type",
+        "input": {
+          "ref": "main#2",
+          "text": "Morgan",
+          "intent": "Enter the buyer's last name in the Checkout Information form"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01LKGoeFa3FY6nGoHGFgTb4x",
+        "name": "type",
+        "input": {
+          "ref": "main#3",
+          "text": "94105",
+          "intent": "Enter the buyer's postal code in the Checkout Information form"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 13,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_01AotyEAsQV81airusroL2GQ",
+        "name": "click",
+        "input": {
+          "ref": "main#5",
+          "intent": "Continue from checkout information to the checkout overview page"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 14,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_01Ef8UnXgxKZwn1hwcCJ1i1D",
+        "name": "observe",
+        "input": {
+          "withScreenshot": true
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 15,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "thinking",
+        "thinking": "",
+        "signature": "CAIS6QQKhwEIEBgCKkBBdXNDJwmVTpv6iVln2O0gYoC3D8yrsGuZKts7ibekYH2GnVEPPKelzTgPEEgWcWUqtElw20Odx+s3zVCmg4jmMg1jbGF1ZGUtb3B1cy01OAFCCHRoaW5raW5nWiQyZDczZDMwZi03MzE2LTRkOWMtOGZmNS01ZWIzZTNiMTNkOGUSDFjSXNGAh1CVt4raVBoM33hKx4DqFCWLQRvDIjBSUGzlLggmIM9HDbCmih3mSAm2ks8Q8tjUmSwU744FTqGDvHUorv+60sTB9NhJwkoqjgNqnYKHW1kXubo7iZtkybiRKvvgvWiz13FkU6CjGeIse8XHsoIHMpLq7HR+tvzT/g4Dj3urgCvwtg9yFaU1wr85vq8EB1aoaZ1pDvVo6NZGdUHjeX+aVwL/FAgAMMnJoi9CCNayBPyPxQ72o6Jq+B1KiZZ9a3qeNGdnDjawpvejzwXYRI7ufHQdIcRVyXMzM2kNHJVJwn8VlFyytxA2IuvOOxbzgDqL0/SouBOk5VF1KwajBBUFB11uOQAhqmV1bQ67ivdXBhyiWO7Iv9B+xjRrUVYfbXpOXRgWHHqLj307O7mECMKuV5jaEIjZScxDzA6LGi2qrzw9ILtgSrlG0smnNFs67yKS3r0HMkYTnqJzuHygFqbFiitJbOjK1hZDYxiqrDNe/WjSwU3rP0qDlszT3SWzDnXRBATV/lU+PHW69kXdSutHEx0Rc8jlRV8m025X3BqYMEJL3WyVLOKQXpmoqia7GM6oGLzIq1c0ZTq5zj1rgTkaJrbXY8bdV6VD+YBXAiah0+IHG84KcyL2HxgB"
+      },
+      {
+        "type": "text",
+        "text": "The checkout overview page has been reached with the Sauce Labs Backpack in the order. I stopped short of clicking **Finish**, since submitting the order would be an irreversible action."
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01QywXqF4Tc999wW4YE5MU8J",
+        "name": "finish",
+        "input": {
+          "capabilityId": "add_backpack_and_reach_checkout_overview",
+          "title": "Add Sauce Labs Backpack to cart and reach Checkout Overview",
+          "description": "Signs in to Swag Labs (saucedemo.com), adds the Sauce Labs Backpack ($29.99, the first item in the default Name A-Z product list) to the cart, opens the cart, starts checkout, fills the Checkout Information form (first name, last name, postal code), and continues to the Checkout: Overview page showing the line item, payment/shipping info and price total. It stops there deliberately: the order is NOT placed (the Finish button is never clicked), so this capability is non-committal and changes only the signed-in user's cart state. Returns no extracted values; success is the Checkout: Overview screen for the Sauce Labs Backpack.",
+          "parameters": [
+            {
+              "name": "firstName",
+              "type": "string",
+              "description": "Buyer's first name entered on the Checkout Information form",
+              "value": "Alex"
+            },
+            {
+              "name": "lastName",
+              "type": "string",
+              "description": "Buyer's last name entered on the Checkout Information form",
+              "value": "Morgan"
+            },
+            {
+              "name": "postalCode",
+              "type": "string",
+              "description": "Buyer's Zip/Postal Code entered on the Checkout Information form",
+              "value": "94105"
+            }
+          ],
+          "checkpointDescription": "The Checkout: Overview page is displayed, listing the Sauce Labs Backpack with its price, payment and shipping information, and the price total, with a Finish button available but not pressed.",
+          "checkpointText": "Checkout: Overview",
+          "expectedOutcomes": [
+            {
+              "code": "LOGIN_FAILED",
+              "description": "The supplied credentials were rejected at sign-on, so the product catalogue was never reached.",
+              "textWhenPresent": "Epic sadface: Username and password do not match any user in this service"
+            },
+            {
+              "code": "USER_LOCKED_OUT",
+              "description": "The operator account is locked out and cannot sign in.",
+              "textWhenPresent": "Epic sadface: Sorry, this user has been locked out."
+            },
+            {
+              "code": "MISSING_CHECKOUT_INFO",
+              "description": "A required field on the Checkout Information form was empty, so the overview page could not be reached.",
+              "textWhenPresent": "Error: First Name is required"
+            },
+            {
+              "code": "MISSING_POSTAL_CODE",
+              "description": "The Zip/Postal Code was not supplied on the Checkout Information form.",
+              "textWhenPresent": "Error: Postal Code is required"
+            }
+          ]
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  }
+]

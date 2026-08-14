@@ -32,6 +32,7 @@
 import type { CapabilityArtifact } from '../artifact/schema.js';
 import type { SurfaceDriver } from '../surface/types.js';
 import { evaluateCondition, describeCondition } from '../replay/conditions.js';
+import { interpolate } from '../replay/values.js';
 import type { RunLogger } from '../evidence/logger.js';
 
 export interface ValidationResult {
@@ -81,7 +82,12 @@ export async function validateAgainstEntryState(
     );
   }
 
-  const entryUrl = String(bindings.baseUrl ?? '') + '/';
+  // The artifact's own entry point, not an assumed base URL. Getting this
+  // wrong sent the validator at a different origin than the one being
+  // explored, where the allowlist correctly refused it — the guardrail
+  // catching my own bug rather than an attack, which is the cheapest possible
+  // way to find out.
+  const entryUrl = interpolate(artifact.target.entryUrlTemplate, bindings);
   await driver.navigate(entryUrl);
   await driver.waitForSettled();
 

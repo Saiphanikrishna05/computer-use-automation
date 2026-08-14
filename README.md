@@ -161,6 +161,32 @@ after that is deterministic.
 
 ---
 
+### 8. Proof it isn't overfitted to my own markup *(needs the API key)*
+
+Everything above runs against an application I wrote. This runs against one I
+didn't — [saucedemo.com](https://www.saucedemo.com), published by Sauce Labs as
+an automation target, with the dummy credentials printed on its own login page:
+
+```bash
+CUA_OPERATOR_ID=standard_user CUA_OPERATOR_PASSWORD=secret_sauce \
+  npm run discover -- --goal "Add the Sauce Labs Backpack to the cart and reach the checkout overview page" \
+  --target https://www.saucedemo.com/ --vendor saucelabs --product swag-labs \
+  --capability-id add_backpack_to_cart --headless
+
+npx tsx src/cli/index.ts catalog approve add_backpack_to_cart
+
+CUA_OPERATOR_ID=standard_user CUA_OPERATOR_PASSWORD=secret_sauce \
+  npm run replay -- add_backpack_to_cart -i firstName=Ada -i lastName=Lovelace -i postalCode=94107 \
+  --base-url https://www.saucedemo.com --headless
+```
+
+Two things to notice. Every step there resolves at **tier 0 (`test_id`)**,
+because Sauce Labs ships `data-test` attributes — while the legacy console has
+none and resolves at tier 2. And the model stopped short of clicking *Finish* on
+its own, because submitting the order is irreversible.
+
+---
+
 ## Tests
 
 ```bash

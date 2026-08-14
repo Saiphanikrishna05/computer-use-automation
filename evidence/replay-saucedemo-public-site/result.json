@@ -1,0 +1,236 @@
+{
+  "capabilityId": "add_backpack_to_cart",
+  "capabilityVersion": 1,
+  "tenantId": "www.saucedemo.com",
+  "startedAt": "2026-08-14T23:27:12.855Z",
+  "finishedAt": "2026-08-14T23:27:16.078Z",
+  "durationMs": 3223,
+  "steps": [
+    {
+      "stepId": "type_1",
+      "intent": "Enter the operator id into the Username field on the login screen",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 298,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox \"Username\"",
+        "attempts": [
+          {
+            "kind": "test_id",
+            "tier": 0,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 0,
+        "winningKind": "test_id",
+        "degraded": false,
+        "elapsedMs": 15
+      }
+    },
+    {
+      "stepId": "type_2",
+      "intent": "Enter the password into the Password field on the login screen",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 241,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox \"Password\"",
+        "attempts": [
+          {
+            "kind": "test_id",
+            "tier": 0,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 0,
+        "winningKind": "test_id",
+        "degraded": false,
+        "elapsedMs": 6
+      }
+    },
+    {
+      "stepId": "click_3",
+      "intent": "Submit the sign-on form to access the product catalogue",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 242,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "button \"Login\"",
+        "attempts": [
+          {
+            "kind": "test_id",
+            "tier": 0,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 0,
+        "winningKind": "test_id",
+        "degraded": false,
+        "elapsedMs": 4
+      }
+    },
+    {
+      "stepId": "click_4",
+      "intent": "Add the Sauce Labs Backpack to the cart from the Products list",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 787,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "button \"Add to cart\"",
+        "attempts": [
+          {
+            "kind": "test_id",
+            "tier": 0,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 0,
+        "winningKind": "test_id",
+        "degraded": false,
+        "elapsedMs": 8
+      }
+    },
+    {
+      "stepId": "navigate_5",
+      "intent": "Open the shopping cart page to begin checkout",
+      "action": "navigate",
+      "status": "ok",
+      "elapsedMs": 282,
+      "recoveries": []
+    },
+    {
+      "stepId": "click_6",
+      "intent": "Start checkout from the cart page",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 266,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "button \"Checkout\"",
+        "attempts": [
+          {
+            "kind": "test_id",
+            "tier": 0,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 0,
+        "winningKind": "test_id",
+        "degraded": false,
+        "elapsedMs": 11
+      }
+    },
+    {
+      "stepId": "type_7",
+      "intent": "Enter the buyer's first name in the Checkout Information form",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 77,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox \"First Name\"",
+        "attempts": [
+          {
+            "kind": "test_id",
+            "tier": 0,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 0,
+        "winningKind": "test_id",
+        "degraded": false,
+        "elapsedMs": 12
+      }
+    },
+    {
+      "stepId": "type_8",
+      "intent": "Enter the buyer's last name in the Checkout Information form",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 155,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox \"Last Name\"",
+        "attempts": [
+          {
+            "kind": "test_id",
+            "tier": 0,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 0,
+        "winningKind": "test_id",
+        "degraded": false,
+        "elapsedMs": 6
+      }
+    },
+    {
+      "stepId": "type_9",
+      "intent": "Enter the buyer's postal code in the Checkout Information form",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 87,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox \"Zip/Postal Code\"",
+        "attempts": [
+          {
+            "kind": "test_id",
+            "tier": 0,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 0,
+        "winningKind": "test_id",
+        "degraded": false,
+        "elapsedMs": 6
+      }
+    },
+    {
+      "stepId": "click_10",
+      "intent": "Continue from checkout information to the checkout overview page",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 229,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "button \"Continue\"",
+        "attempts": [
+          {
+            "kind": "test_id",
+            "tier": 0,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 0,
+        "winningKind": "test_id",
+        "degraded": false,
+        "elapsedMs": 6
+      }
+    }
+  ],
+  "degradedResolutions": 0,
+  "evidence": {
+    "runId": "replay-20260814T232712-01",
+    "bundlePath": "runs/replay-20260814T232712-01",
+    "screenshots": [
+      "runs/replay-20260814T232712-01/screenshots/037-replay-success.png"
+    ],
+    "domSnapshots": []
+  },
+  "status": "success",
+  "outputs": {}
+}
