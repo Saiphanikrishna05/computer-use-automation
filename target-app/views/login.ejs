@@ -1,0 +1,41 @@
+<%- include('_head') %>
+
+<table border="1" cellpadding="0" cellspacing="0" bgcolor="#eceae4">
+  <tr>
+    <td>
+      <table border="0" cellpadding="6" cellspacing="0" width="380">
+        <tr bgcolor="<%= tenant.accentColor %>">
+          <td colspan="2"><font face="Verdana, Arial" size="2" color="#ffffff"><b>Operator Sign-On</b></font></td>
+        </tr>
+        <% if (error) { %>
+        <tr>
+          <td colspan="2" bgcolor="#f3d7d7">
+            <font face="Verdana, Arial" size="1" color="#8b1a1a"><b><%= error %></b></font>
+          </td>
+        </tr>
+        <% } %>
+        <form method="post" action="/auth">
+        <tr>
+          <td width="110"><font face="Verdana, Arial" size="1">User ID</font></td>
+          <td><input type="text" name="username" id="ctl_<%= rid %>_u" size="24" value=""></td>
+        </tr>
+        <tr>
+          <td><font face="Verdana, Arial" size="1">Password</font></td>
+          <td><input type="password" name="password" id="ctl_<%= rid %>_p" size="24"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><input type="submit" name="ok" id="ctl_<%= rid %>_s" value="Sign On"></td>
+        </tr>
+        </form>
+      </table>
+    </td>
+  </tr>
+</table>
+
+<br>
+<font face="Verdana, Arial" size="1" color="#4a4a4a">
+  Demonstration environment. Sign on with <b>teller01</b> / <b>demo-password</b>.
+</font>
+
+<%- include('_foot') %>

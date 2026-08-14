@@ -1,0 +1,52 @@
+<%- include('_head') %>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tr><td><font face="Verdana, Arial" size="2" color="<%= tenant.accentColor %>"><b>Open Sub-Account</b></font></td></tr>
+</table>
+<br>
+
+<table border="1" cellpadding="0" cellspacing="0" bgcolor="#eceae4" width="520">
+  <tr><td>
+    <table border="0" cellpadding="6" cellspacing="0" width="100%">
+      <tr bgcolor="<%= tenant.accentColor %>">
+        <td colspan="2"><font face="Verdana, Arial" size="2" color="#ffffff"><b>New Account Request</b></font></td>
+      </tr>
+      <% if (error) { %>
+      <tr><td colspan="2" bgcolor="#f3d7d7"><font face="Verdana, Arial" size="1" color="#8b1a1a"><b><%= error %></b></font></td></tr>
+      <% } %>
+      <form method="post" action="/console/content/sub_account">
+      <input type="hidden" name="memberId" value="<%= member.id %>">
+      <tr>
+        <td width="150"><font face="Verdana, Arial" size="1">Member</font></td>
+        <td><font face="Verdana, Arial" size="1"><b><%= member.name %></b> (<%= member.id %>)</font></td>
+      </tr>
+      <tr>
+        <td><font face="Verdana, Arial" size="1">Product Type</font></td>
+        <td>
+          <select name="productType" id="ctl_<%= rid %>_t">
+            <option value="">-- select --</option>
+            <option value="Savings">Savings</option>
+            <option value="Checking">Checking</option>
+            <option value="Money Market">Money Market</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td><font face="Verdana, Arial" size="1">Initial Deposit</font></td>
+        <td><input type="text" name="initialDeposit" id="ctl_<%= rid %>_d" size="14" value=""></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td><input type="submit" name="submit" id="ctl_<%= rid %>_x" value="Submit Request"></td>
+      </tr>
+      </form>
+    </table>
+  </td></tr>
+</table>
+
+<br>
+<font face="Verdana, Arial" size="1" color="#8b1a1a">
+  Submitting this request opens a live account on the host. This action cannot be reversed from this terminal.
+</font>
+
+<%- include('_foot') %>

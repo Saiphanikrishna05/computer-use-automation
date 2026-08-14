@@ -1,0 +1,30 @@
+<%- include('_head') %>
+
+<table border="1" cellpadding="0" cellspacing="0" bgcolor="#eceae4" width="460">
+  <tr><td>
+    <table border="0" cellpadding="6" cellspacing="0" width="100%">
+      <tr bgcolor="#8b1a1a">
+        <td><font face="Verdana, Arial" size="2" color="#ffffff"><b>Authorisation Required</b></font></td>
+      </tr>
+      <tr>
+        <td>
+          <font face="Verdana, Arial" size="1">
+            <b>Entitlement check failed for member <%= memberId %>.</b><br><br>
+            Your operator profile is not entitled to view this record. Contact a
+            branch supervisor to request a temporary entitlement override.
+          </font>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <form method="get" action="/console/content">
+            <input type="hidden" name="view" value="search">
+            <input type="submit" name="back" id="ctl_<%= rid %>_r" value="Return to Search">
+          </form>
+        </td>
+      </tr>
+    </table>
+  </td></tr>
+</table>
+
+<%- include('_foot') %>

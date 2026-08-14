@@ -1,0 +1,263 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "open_sub_account",
+  "version": 1,
+  "title": "Open a sub-account for an existing member",
+  "description": "Signs on to the servicing console, opens a member's record, completes the new sub-account request form and submits it to the host. This CHANGES STATE: submitting the request opens a live account and cannot be reversed from the terminal. The final step is classified irreversible and will not run unattended.",
+  "target": {
+    "surface": "web",
+    "app": { "vendor": "meridian", "product": "servicing-console", "versionRange": "1.x" },
+    "entryUrlTemplate": "{{baseUrl}}/"
+  },
+  "approval": {
+    "state": "approved",
+    "approvedBy": "seed",
+    "approvedAt": "2026-08-13T00:00:00.000Z",
+    "note": "Approved so the escalation path can be demonstrated. Note that approval does NOT authorise the irreversible step — that still requires a human at run time."
+  },
+  "maxRisk": "mutate_irreversible",
+
+  "inputs": [
+    { "name": "memberId", "type": "string", "description": "Six-digit member number.", "required": true, "sensitivity": "none", "pattern": "^\\d{6}$", "example": "100001" },
+    { "name": "productType", "type": "string", "description": "Product to open: Savings, Checking or Money Market.", "required": true, "sensitivity": "none", "example": "Savings" },
+    { "name": "initialDeposit", "type": "string", "description": "Opening deposit as a dollar amount, e.g. 25.00.", "required": true, "sensitivity": "financial", "pattern": "^\\d+(\\.\\d{2})?$", "example": "25.00" },
+    { "name": "operatorId", "type": "string", "description": "Operator user ID. Injected by the runtime credential store.", "required": true, "sensitivity": "pii", "injected": true },
+    { "name": "operatorPassword", "type": "string", "description": "Operator password. Injected by the runtime credential store.", "required": true, "sensitivity": "secret", "injected": true }
+  ],
+
+  "outputs": [
+    {
+      "name": "reference",
+      "type": "string",
+      "description": "Host reference number for the accepted sub-account request.",
+      "required": true,
+      "sensitivity": "none",
+      "extract": {
+        "source": "text",
+        "transforms": ["collapse_whitespace"],
+        "target": {
+          "description": "Reference value cell on the confirmation screen",
+          "framePath": [{ "name": "contentFrame" }],
+          "ordinal": 0,
+          "anchor": { "containerName": "Request Accepted" },
+          "candidates": [{ "kind": "label", "text": "Reference", "expect": "cell", "positional": true }]
+        }
+      }
+    }
+  ],
+
+  "steps": [
+    {
+      "id": "enter_operator_id",
+      "intent": "Type the operator user ID into the sign-on form",
+      "risk": "mutate_reversible",
+      "action": {
+        "kind": "type",
+        "valueTemplate": "{{operatorId}}",
+        "target": {
+          "description": "User ID field on the sign-on screen",
+          "framePath": [],
+          "anchor": { "containerName": "Operator Sign-On" },
+          "candidates": [{ "kind": "label", "text": "User ID", "positional": true, "expect": "control" }]
+        }
+      }
+    },
+    {
+      "id": "enter_operator_password",
+      "intent": "Type the operator password into the sign-on form",
+      "risk": "mutate_reversible",
+      "action": {
+        "kind": "type",
+        "secret": true,
+        "valueTemplate": "{{operatorPassword}}",
+        "target": {
+          "description": "Password field on the sign-on screen",
+          "framePath": [],
+          "anchor": { "containerName": "Operator Sign-On" },
+          "candidates": [{ "kind": "label", "text": "Password", "positional": true, "expect": "control" }]
+        }
+      }
+    },
+    {
+      "id": "submit_signon",
+      "intent": "Submit the sign-on form",
+      "risk": "mutate_reversible",
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "Sign On button",
+          "framePath": [],
+          "candidates": [{ "kind": "role_name", "role": "button", "name": "Sign On", "exact": true }]
+        }
+      }
+    },
+    {
+      "id": "await_search_screen",
+      "intent": "Wait for the member search screen",
+      "risk": "read",
+      "action": {
+        "kind": "wait_for",
+        "timeoutMs": 15000,
+        "condition": { "kind": "text_present", "text": "Member Search", "framePath": [{ "name": "contentFrame" }] }
+      }
+    },
+    {
+      "id": "enter_member_id",
+      "intent": "Type the member number into the Member Search panel",
+      "risk": "mutate_reversible",
+      "action": {
+        "kind": "type",
+        "valueTemplate": "{{memberId}}",
+        "target": {
+          "description": "Member ID field in the Member Search panel",
+          "framePath": [{ "name": "contentFrame" }],
+          "anchor": { "containerName": "Member Search" },
+          "candidates": [{ "kind": "label", "text": "Member ID", "positional": true, "expect": "control" }]
+        }
+      }
+    },
+    {
+      "id": "submit_search",
+      "intent": "Run the member search",
+      "risk": "mutate_reversible",
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "Search button in the Member Search panel",
+          "framePath": [{ "name": "contentFrame" }],
+          "anchor": { "containerName": "Member Search" },
+          "candidates": [{ "kind": "role_name", "role": "button", "name": "Search", "exact": true }]
+        }
+      }
+    },
+    {
+      "id": "open_form",
+      "intent": "Open the new sub-account request form for this member",
+      "risk": "mutate_reversible",
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "Open Sub-Account button on the member detail screen",
+          "framePath": [{ "name": "contentFrame" }],
+          "candidates": [{ "kind": "role_name", "role": "button", "name": "Open Sub-Account", "exact": true }]
+        }
+      },
+      "postconditions": [
+        { "kind": "text_present", "text": "New Account Request", "framePath": [{ "name": "contentFrame" }] }
+      ]
+    },
+    {
+      "id": "choose_product",
+      "intent": "Choose the product type for the new sub-account",
+      "risk": "mutate_reversible",
+      "action": {
+        "kind": "select",
+        "valueTemplate": "{{productType}}",
+        "target": {
+          "description": "Product Type dropdown on the new account request form",
+          "framePath": [{ "name": "contentFrame" }],
+          "anchor": { "containerName": "New Account Request" },
+          "candidates": [{ "kind": "label", "text": "Product Type", "positional": true, "expect": "control" }]
+        }
+      }
+    },
+    {
+      "id": "enter_deposit",
+      "intent": "Enter the opening deposit amount",
+      "risk": "mutate_reversible",
+      "action": {
+        "kind": "type",
+        "valueTemplate": "{{initialDeposit}}",
+        "target": {
+          "description": "Initial Deposit field on the new account request form",
+          "framePath": [{ "name": "contentFrame" }],
+          "anchor": { "containerName": "New Account Request" },
+          "candidates": [{ "kind": "label", "text": "Initial Deposit", "positional": true, "expect": "control" }]
+        }
+      }
+    },
+    {
+      "id": "submit_request",
+      "intent": "Submit the sub-account request to the host. This opens a live account and cannot be undone.",
+      "risk": "mutate_irreversible",
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "Submit Request button on the new account request form",
+          "framePath": [{ "name": "contentFrame" }],
+          "anchor": { "containerName": "New Account Request" },
+          "candidates": [{ "kind": "role_name", "role": "button", "name": "Submit Request", "exact": true }]
+        }
+      }
+    }
+  ],
+
+  "checkpoint": {
+    "description": "The host has accepted the sub-account request and returned a reference number",
+    "condition": {
+      "kind": "all",
+      "of": [
+        { "kind": "text_present", "text": "Request Accepted", "framePath": [{ "name": "contentFrame" }] },
+        { "kind": "text_present", "text": "submitted to the host", "framePath": [{ "name": "contentFrame" }] }
+      ]
+    }
+  },
+
+  "outcomes": [
+    {
+      "code": "MEMBER_NOT_FOUND",
+      "description": "The host has no member record for the supplied member number.",
+      "when": { "kind": "text_present", "text": "No member record found", "framePath": [{ "name": "contentFrame" }] },
+      "extract": []
+    },
+    {
+      "code": "PERMISSION_DENIED",
+      "description": "The signed-on operator is not entitled to service this member.",
+      "when": { "kind": "text_present", "text": "Entitlement check failed", "framePath": [{ "name": "contentFrame" }] },
+      "extract": []
+    },
+    {
+      "code": "REQUEST_REJECTED",
+      "description": "The application rejected the request details; the account was not opened.",
+      "when": { "kind": "text_present", "text": "Product type is required", "framePath": [{ "name": "contentFrame" }] },
+      "extract": []
+    }
+  ],
+
+  "recovery": [
+    {
+      "code": "ACCEPT_SYSTEM_DIALOG",
+      "description": "An informational confirm() is blocking the page; acknowledging it changes no data.",
+      "when": { "kind": "dialog_present" },
+      "then": [{ "kind": "accept_dialog" }],
+      "maxAttempts": 3
+    }
+  ],
+
+  "failures": [
+    {
+      "code": "APP_ERROR",
+      "description": "The servicing application returned its unhandled-exception screen",
+      "when": { "kind": "text_present", "text": "An unexpected error has occurred", "framePath": [{ "name": "contentFrame" }] }
+    },
+    {
+      "code": "SESSION_EXPIRED",
+      "description": "The host closed the terminal session",
+      "when": { "kind": "text_present", "text": "Your session has expired" }
+    }
+  ],
+
+  "provenance": {
+    "discoveredAt": "2026-08-13T00:00:00.000Z",
+    "runId": "seed-reference",
+    "goal": "Open a new sub-account for a member and reach the confirmation screen",
+    "model": "hand-authored reference",
+    "humanEdits": [
+      {
+        "at": "2026-08-13T00:00:00.000Z",
+        "by": "engineer",
+        "note": "Hand-authored rather than discovered, because the discovery agent is forbidden from performing irreversible actions and therefore cannot walk this flow to its end. That constraint is deliberate; this artifact exists to exercise the escalation path it creates."
+      }
+    ]
+  }
+}

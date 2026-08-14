@@ -1,0 +1,32 @@
+<%- include('_head') %>
+
+<table border="1" cellpadding="0" cellspacing="0" bgcolor="#e4ece4" width="520">
+  <tr><td>
+    <table border="0" cellpadding="6" cellspacing="0" width="100%">
+      <tr bgcolor="#2f5d3a">
+        <td colspan="2"><font face="Verdana, Arial" size="2" color="#ffffff"><b>Request Accepted</b></font></td>
+      </tr>
+      <tr>
+        <td colspan="2"><font face="Verdana, Arial" size="1"><b>Sub-account request has been submitted to the host.</b></font></td>
+      </tr>
+      <tr>
+        <td width="150"><font face="Verdana, Arial" size="1">Reference</font></td>
+        <td><font face="Verdana, Arial" size="1"><b><%= reference %></b></font></td>
+      </tr>
+      <tr>
+        <td><font face="Verdana, Arial" size="1">Member</font></td>
+        <td><font face="Verdana, Arial" size="1"><%= member.name %> (<%= member.id %>)</font></td>
+      </tr>
+      <tr>
+        <td><font face="Verdana, Arial" size="1">Product Type</font></td>
+        <td><font face="Verdana, Arial" size="1"><%= productType %></font></td>
+      </tr>
+      <tr>
+        <td><font face="Verdana, Arial" size="1">Initial Deposit</font></td>
+        <td><font face="Verdana, Arial" size="1">$<%= initialDeposit %></font></td>
+      </tr>
+    </table>
+  </td></tr>
+</table>
+
+<%- include('_foot') %>

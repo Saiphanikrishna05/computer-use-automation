@@ -1,0 +1,673 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "lookup_member_savings_balance",
+  "version": 1,
+  "title": "Look up a member's savings balance",
+  "description": "Signs on to the Northpoint FCU Meridian Core Servicing Console, searches the Member Search panel by Member ID, and reads the member's Savings account current balance from the Accounts table on the Member Detail screen. Returns savingsBalance (money), plus memberId, memberName and memberStatus for verification. Read-only: it performs no transactions and changes no records.",
+  "target": {
+    "surface": "web",
+    "app": {
+      "vendor": "meridian",
+      "product": "servicing-console",
+      "versionRange": "1.x"
+    },
+    "entryUrlTemplate": "{{baseUrl}}/"
+  },
+  "approval": {
+    "state": "approved",
+    "approvedBy": "sai",
+    "approvedAt": "2026-08-14T04:01:58.843464Z",
+    "note": "Outcome and failure conditions confirmed against the live console after correcting the model's hypothesised wording."
+  },
+  "inputs": [
+    {
+      "name": "operatorId",
+      "type": "string",
+      "description": "Servicing console operator user ID. Injected by the runtime credential store.",
+      "required": true,
+      "sensitivity": "pii",
+      "injected": true
+    },
+    {
+      "name": "operatorPassword",
+      "type": "string",
+      "description": "Servicing console operator password. Injected by the runtime credential store.",
+      "required": true,
+      "sensitivity": "secret",
+      "injected": true
+    },
+    {
+      "name": "memberId",
+      "type": "string",
+      "description": "The member number to look up, as entered in the Member ID field of the Member Search panel.",
+      "required": true,
+      "sensitivity": "none",
+      "pattern": "^\\d{6}$",
+      "example": "100001",
+      "injected": false
+    }
+  ],
+  "outputs": [
+    {
+      "name": "savingsBalance",
+      "type": "money",
+      "description": "Current balance of the member's Savings account from the Accounts table",
+      "required": true,
+      "sensitivity": "financial",
+      "extract": {
+        "target": {
+          "description": "cell \"$4,182.55\" in the Accounts panel",
+          "framePath": [
+            {
+              "name": "contentFrame",
+              "urlPattern": "/console/content/search",
+              "ordinal": 1
+            }
+          ],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Savings",
+              "positional": true,
+              "expect": "cell",
+              "column": "Current Balance"
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.33203125,
+              "yFraction": 0.29555555555555557
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "Accounts"
+          },
+          "evidence": {
+            "role": "cell",
+            "accessibleName": "$4,182.55",
+            "tag": "td",
+            "textSnippet": "$4,182.55",
+            "boundingBox": {
+              "x": 350,
+              "y": 255,
+              "width": 150,
+              "height": 22
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "source": "text",
+        "transforms": [
+          "collapse_whitespace",
+          "money"
+        ]
+      }
+    },
+    {
+      "name": "memberName",
+      "type": "string",
+      "description": "Full name of the member, to confirm the correct record was retrieved",
+      "required": true,
+      "sensitivity": "pii",
+      "extract": {
+        "target": {
+          "description": "cell \"Dolores Ashcroft\" in the Member Profile panel",
+          "framePath": [
+            {
+              "name": "contentFrame",
+              "urlPattern": "/console/content/search",
+              "ordinal": 1
+            }
+          ],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Name",
+              "positional": true,
+              "expect": "cell"
+            },
+            {
+              "kind": "label",
+              "text": "Name",
+              "positional": true,
+              "expect": "cell",
+              "column": "100001"
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.19140625,
+              "yFraction": 0.14444444444444443
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "Member Profile",
+            "nearestLabel": "Name"
+          },
+          "evidence": {
+            "role": "cell",
+            "accessibleName": "Dolores Ashcroft",
+            "tag": "td",
+            "textSnippet": "Dolores Ashcroft",
+            "boundingBox": {
+              "x": 140,
+              "y": 119,
+              "width": 210,
+              "height": 22
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "source": "text",
+        "transforms": [
+          "collapse_whitespace"
+        ]
+      }
+    },
+    {
+      "name": "memberId",
+      "type": "string",
+      "description": "Member ID shown on the retrieved Member Profile, to confirm it matches the requested member",
+      "required": true,
+      "sensitivity": "pii",
+      "extract": {
+        "target": {
+          "description": "cell \"100001\" in the Member Profile panel",
+          "framePath": [
+            {
+              "name": "contentFrame",
+              "urlPattern": "/console/content/search",
+              "ordinal": 1
+            }
+          ],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Member ID",
+              "positional": true,
+              "expect": "cell"
+            },
+            {
+              "kind": "label",
+              "text": "Member ID",
+              "positional": true,
+              "expect": "cell"
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.19140625,
+              "yFraction": 0.12
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "Member Profile",
+            "nearestLabel": "Member ID"
+          },
+          "evidence": {
+            "role": "cell",
+            "accessibleName": "100001",
+            "tag": "td",
+            "textSnippet": "100001",
+            "boundingBox": {
+              "x": 140,
+              "y": 97,
+              "width": 210,
+              "height": 22
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "source": "text",
+        "transforms": [
+          "collapse_whitespace"
+        ]
+      }
+    },
+    {
+      "name": "memberStatus",
+      "type": "string",
+      "description": "Membership status shown on the Member Profile panel (e.g. Active)",
+      "required": true,
+      "sensitivity": "none",
+      "extract": {
+        "target": {
+          "description": "cell \"Active\" in the Member Profile panel",
+          "framePath": [
+            {
+              "name": "contentFrame",
+              "urlPattern": "/console/content/search",
+              "ordinal": 1
+            }
+          ],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Status",
+              "positional": true,
+              "expect": "cell"
+            },
+            {
+              "kind": "label",
+              "text": "Member ID",
+              "positional": true,
+              "expect": "cell"
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.43984375,
+              "yFraction": 0.12
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "Member Profile",
+            "nearestLabel": "Status"
+          },
+          "evidence": {
+            "role": "cell",
+            "accessibleName": "Active",
+            "tag": "td",
+            "textSnippet": "Active",
+            "boundingBox": {
+              "x": 480,
+              "y": 97,
+              "width": 166,
+              "height": 22
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "source": "text",
+        "transforms": [
+          "collapse_whitespace"
+        ]
+      }
+    }
+  ],
+  "steps": [
+    {
+      "id": "type_1",
+      "intent": "Enter the operator ID in the Operator Sign-On panel",
+      "action": {
+        "kind": "type",
+        "target": {
+          "description": "textbox labelled \"User ID\" in the Operator Sign-On panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "User ID",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "input[name=\"username\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.178515625,
+              "yFraction": 0.09055555555555556
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "Operator Sign-On"
+          },
+          "evidence": {
+            "role": "textbox",
+            "tag": "input",
+            "boundingBox": {
+              "x": 138,
+              "y": 71,
+              "width": 181,
+              "height": 21
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "{{operatorId}}",
+        "clearFirst": true,
+        "secret": true
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "type_2",
+      "intent": "Enter the operator password in the Operator Sign-On panel",
+      "action": {
+        "kind": "type",
+        "target": {
+          "description": "textbox labelled \"Password\" in the Operator Sign-On panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Password",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "input[name=\"password\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.178515625,
+              "yFraction": 0.1272222222222222
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "Operator Sign-On"
+          },
+          "ordinal": 1,
+          "evidence": {
+            "role": "textbox",
+            "tag": "input",
+            "boundingBox": {
+              "x": 138,
+              "y": 104,
+              "width": 181,
+              "height": 21
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "{{operatorPassword}}",
+        "clearFirst": true,
+        "secret": true
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "click_3",
+      "intent": "Submit the operator sign-on form to access the servicing console",
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "button \"Sign On\" in the Operator Sign-On panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "role_name",
+              "role": "button",
+              "name": "Sign On",
+              "exact": true
+            },
+            {
+              "kind": "structural",
+              "css": "input[name=\"ok\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.132879638671875,
+              "yFraction": 0.1638888888888889
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "Operator Sign-On"
+          },
+          "evidence": {
+            "role": "button",
+            "accessibleName": "Sign On",
+            "tag": "input",
+            "boundingBox": {
+              "x": 138,
+              "y": 137,
+              "width": 64.171875,
+              "height": 21
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        }
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "type_4",
+      "intent": "Type the member number into the Member ID field of the Member Search panel",
+      "action": {
+        "kind": "type",
+        "target": {
+          "description": "textbox labelled \"Member ID\" in the Member Search panel",
+          "framePath": [
+            {
+              "name": "contentFrame",
+              "urlPattern": "/console/content",
+              "ordinal": 1
+            }
+          ],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Member ID",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "input[name=\"memberId\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.172265625,
+              "yFraction": 0.09055555555555556
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "Member Search"
+          },
+          "evidence": {
+            "role": "textbox",
+            "tag": "input",
+            "boundingBox": {
+              "x": 158,
+              "y": 71,
+              "width": 125,
+              "height": 21
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "{{memberId}}",
+        "clearFirst": true,
+        "secret": false
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "click_5",
+      "intent": "Run the member search for the entered member ID",
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "button \"Search\" in the Member Search panel",
+          "framePath": [
+            {
+              "name": "contentFrame",
+              "urlPattern": "/console/content",
+              "ordinal": 1
+            }
+          ],
+          "candidates": [
+            {
+              "kind": "role_name",
+              "role": "button",
+              "name": "Search",
+              "exact": true
+            },
+            {
+              "kind": "structural",
+              "css": "input[name=\"go\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.14619140625,
+              "yFraction": 0.1638888888888889
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "Member Search"
+          },
+          "evidence": {
+            "role": "button",
+            "accessibleName": "Search",
+            "tag": "input",
+            "boundingBox": {
+              "x": 158,
+              "y": 137,
+              "width": 58.25,
+              "height": 21
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        }
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    }
+  ],
+  "checkpoint": {
+    "description": "The Member Detail screen is displayed for the requested member, with a Member Profile panel and an Accounts table containing a Savings row showing a Current Balance.",
+    "condition": {
+      "kind": "text_present",
+      "text": "Member Detail",
+      "framePath": [],
+      "caseSensitive": false
+    }
+  },
+  "outcomes": [
+    {
+      "code": "MEMBER_NOT_FOUND",
+      "description": "No member exists with the supplied member ID, so the console stays on the search screen and reports no match instead of opening Member Detail.",
+      "when": {
+        "kind": "text_present",
+        "text": "No member record found",
+        "framePath": [],
+        "caseSensitive": false
+      },
+      "extract": []
+    },
+    {
+      "code": "PERMISSION_DENIED",
+      "description": "The signed-on operator is not entitled to view this member record.",
+      "when": {
+        "kind": "text_present",
+        "text": "Entitlement check failed",
+        "framePath": [],
+        "caseSensitive": false
+      },
+      "extract": []
+    }
+  ],
+  "recovery": [
+    {
+      "code": "ACCEPT_SYSTEM_DIALOG",
+      "description": "A native dialog is blocking the page. Acknowledging it is required before any further step can run. Review whether acknowledging is safe for this flow before approving.",
+      "when": {
+        "kind": "dialog_present"
+      },
+      "then": [
+        {
+          "kind": "accept_dialog"
+        }
+      ],
+      "maxAttempts": 3
+    }
+  ],
+  "failures": [
+    {
+      "code": "APP_ERROR",
+      "description": "The servicing application returned its unhandled-exception screen",
+      "when": {
+        "kind": "text_present",
+        "text": "An unexpected error has occurred",
+        "framePath": [],
+        "caseSensitive": false
+      }
+    },
+    {
+      "code": "SESSION_EXPIRED",
+      "description": "The host closed the terminal session",
+      "when": {
+        "kind": "text_present",
+        "text": "Your session has expired",
+        "framePath": [],
+        "caseSensitive": false
+      }
+    }
+  ],
+  "maxRisk": "mutate_reversible",
+  "provenance": {
+    "discoveredAt": "2026-08-14T04:01:24.409Z",
+    "runId": "discovery-20260814T040048-01",
+    "goal": "Look up member 100001 and read their current savings balance",
+    "model": "claude-opus-5",
+    "evidencePath": "runs/discovery-20260814T040048-01",
+    "humanEdits": [
+      {
+        "at": "2026-08-14T04:01:26.478Z",
+        "by": "sai",
+        "note": "approved for unattended replay: verified"
+      },
+      {
+        "at": "2026-08-14T04:01:58.843464Z",
+        "by": "sai",
+        "note": "Draft review before approval. MEMBER_NOT_FOUND: detection text corrected from \"No member found\" to \"No member record found\" (the model hypothesised the wording; the exact string came from the observed text of a replay against member 999999). | PERMISSION_DENIED: added. The discovery run never met a restricted member, so the model had no reason to propose it \u2014 the gap a single happy-path run always leaves. | Declared APP_ERROR and SESSION_EXPIRED hard-failure rules; a successful run cannot observe either."
+      }
+    ],
+    "validation": {
+      "checkedAt": "2026-08-14T04:01:24.702Z",
+      "warnings": [
+        "1 declared outcome(s) were hypothesised from a single successful run and have not been observed. Confirm the exact on-screen wording of each before approving: MEMBER_NOT_FOUND (\"No member found\")"
+      ],
+      "rejected": []
+    }
+  }
+}

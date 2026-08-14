@@ -1,0 +1,23 @@
+<%- include('_head') %>
+
+<table border="1" cellpadding="0" cellspacing="0" bgcolor="#f0e6e6" width="520">
+  <tr><td>
+    <table border="0" cellpadding="6" cellspacing="0" width="100%">
+      <tr bgcolor="#5a1414">
+        <td><font face="Verdana, Arial" size="2" color="#ffffff"><b>Application Error</b></font></td>
+      </tr>
+      <tr>
+        <td>
+          <font face="Verdana, Arial" size="1">
+            <b>An unexpected error has occurred. Reference <%= code %>.</b><br><br>
+            <%= detail %><br><br>
+            Note the reference number and contact the Meridian Core service desk.
+            Do not retry the transaction more than twice.
+          </font>
+        </td>
+      </tr>
+    </table>
+  </td></tr>
+</table>
+
+<%- include('_foot') %>

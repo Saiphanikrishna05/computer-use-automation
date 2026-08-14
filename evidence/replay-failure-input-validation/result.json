@@ -1,0 +1,22 @@
+{
+  "capabilityId": "lookup_member_savings_balance",
+  "capabilityVersion": 1,
+  "tenantId": "northpoint-fcu",
+  "startedAt": "2026-08-14T04:02:16.162Z",
+  "finishedAt": "2026-08-14T04:02:16.163Z",
+  "durationMs": 1,
+  "steps": [],
+  "degradedResolutions": 0,
+  "evidence": {
+    "runId": "replay-20260814T040215-01",
+    "bundlePath": "runs/replay-20260814T040215-01",
+    "screenshots": [],
+    "domSnapshots": []
+  },
+  "status": "failure",
+  "error": {
+    "code": "INPUT_VALIDATION_FAILED",
+    "expected": "inputs matching the declared contract for lookup_member_savings_balance",
+    "observed": "Parameter \"memberId\" does not match required pattern ^\\d{6}$"
+  }
+}

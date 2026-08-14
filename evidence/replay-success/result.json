@@ -1,0 +1,141 @@
+{
+  "capabilityId": "lookup_member_savings_balance",
+  "capabilityVersion": 1,
+  "tenantId": "northpoint-fcu",
+  "startedAt": "2026-08-14T04:02:00.509Z",
+  "finishedAt": "2026-08-14T04:02:02.048Z",
+  "durationMs": 1539,
+  "steps": [
+    {
+      "stepId": "type_1",
+      "intent": "Enter the operator ID in the Operator Sign-On panel",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 216,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"User ID\" in the Operator Sign-On panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 34
+      }
+    },
+    {
+      "stepId": "type_2",
+      "intent": "Enter the operator password in the Operator Sign-On panel",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 243,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"Password\" in the Operator Sign-On panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 9
+      }
+    },
+    {
+      "stepId": "click_3",
+      "intent": "Submit the operator sign-on form to access the servicing console",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 275,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "button \"Sign On\" in the Operator Sign-On panel",
+        "attempts": [
+          {
+            "kind": "role_name",
+            "tier": 1,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 1,
+        "winningKind": "role_name",
+        "degraded": false,
+        "elapsedMs": 5
+      }
+    },
+    {
+      "stepId": "type_4",
+      "intent": "Type the member number into the Member ID field of the Member Search panel",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 120,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"Member ID\" in the Member Search panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 12
+      }
+    },
+    {
+      "stepId": "click_5",
+      "intent": "Run the member search for the entered member ID",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 260,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "button \"Search\" in the Member Search panel",
+        "attempts": [
+          {
+            "kind": "role_name",
+            "tier": 1,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 1,
+        "winningKind": "role_name",
+        "degraded": false,
+        "elapsedMs": 7
+      }
+    }
+  ],
+  "degradedResolutions": 1,
+  "evidence": {
+    "runId": "replay-20260814T040159-01",
+    "bundlePath": "runs/replay-20260814T040159-01",
+    "screenshots": [
+      "runs/replay-20260814T040159-01/screenshots/026-replay-success.png"
+    ],
+    "domSnapshots": []
+  },
+  "status": "success",
+  "outputs": {
+    "savingsBalance": 4182.55,
+    "memberName": "Dolores Ashcroft",
+    "memberId": "100001",
+    "memberStatus": "Active"
+  }
+}

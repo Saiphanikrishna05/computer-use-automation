@@ -1,0 +1,143 @@
+{
+  "capabilityId": "lookup_member_savings_balance",
+  "capabilityVersion": 1,
+  "tenantId": "northpoint-fcu",
+  "startedAt": "2026-08-14T04:02:11.002Z",
+  "finishedAt": "2026-08-14T04:02:12.362Z",
+  "durationMs": 1360,
+  "steps": [
+    {
+      "stepId": "type_1",
+      "intent": "Enter the operator ID in the Operator Sign-On panel",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 169,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"User ID\" in the Operator Sign-On panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 16
+      }
+    },
+    {
+      "stepId": "type_2",
+      "intent": "Enter the operator password in the Operator Sign-On panel",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 244,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"Password\" in the Operator Sign-On panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 8
+      }
+    },
+    {
+      "stepId": "click_3",
+      "intent": "Submit the operator sign-on form to access the servicing console",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 279,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "button \"Sign On\" in the Operator Sign-On panel",
+        "attempts": [
+          {
+            "kind": "role_name",
+            "tier": 1,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 1,
+        "winningKind": "role_name",
+        "degraded": false,
+        "elapsedMs": 7
+      }
+    },
+    {
+      "stepId": "type_4",
+      "intent": "Type the member number into the Member ID field of the Member Search panel",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 121,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"Member ID\" in the Member Search panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 12
+      }
+    },
+    {
+      "stepId": "click_5",
+      "intent": "Run the member search for the entered member ID",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 260,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "button \"Search\" in the Member Search panel",
+        "attempts": [
+          {
+            "kind": "role_name",
+            "tier": 1,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 1,
+        "winningKind": "role_name",
+        "degraded": false,
+        "elapsedMs": 5
+      }
+    }
+  ],
+  "degradedResolutions": 0,
+  "evidence": {
+    "runId": "replay-20260814T040210-01",
+    "bundlePath": "runs/replay-20260814T040210-01",
+    "screenshots": [
+      "runs/replay-20260814T040210-01/screenshots/021-declared-failure-session-expired.png"
+    ],
+    "domSnapshots": [
+      "runs/replay-20260814T040210-01/dom/022-declared-failure-session-expired.html"
+    ]
+  },
+  "status": "failure",
+  "error": {
+    "code": "SESSION_EXPIRED",
+    "expected": "the application to be in a usable state",
+    "observed": "The host closed the terminal session (page contains \"Your session has expired\")",
+    "detail": "SERVICING Member Search Account Inquiry Transaction History ADMINISTRATION Sign Off Northpoint FCU · Meridian Core 1.4.2 Session Ended Your session has expired. The terminal session was closed by the host after a period of inactivity. Sign on again to continue. Return to sign-on Meridian Core Servicing Console · session terminal T-0114 · unauthorised access is prohibited"
+  }
+}

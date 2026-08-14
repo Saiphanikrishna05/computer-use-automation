@@ -1,0 +1,55 @@
+<%- include('_head') %>
+
+<table border="1" cellpadding="0" cellspacing="0" bgcolor="#eceae4">
+  <tr><td>
+    <table border="0" cellpadding="6" cellspacing="0" width="430">
+      <tr bgcolor="<%= tenant.accentColor %>">
+        <td colspan="2"><font face="Verdana, Arial" size="2" color="#ffffff"><b>Member Search</b></font></td>
+      </tr>
+      <% if (error) { %>
+      <tr><td colspan="2" bgcolor="#f3d7d7"><font face="Verdana, Arial" size="1" color="#8b1a1a"><b><%= error %></b></font></td></tr>
+      <% } %>
+      <form method="post" action="/console/content/search">
+      <tr>
+        <td width="130"><font face="Verdana, Arial" size="1"><%= tenant.labels.memberIdField %></font></td>
+        <td><input type="text" name="memberId" id="ctl_<%= rid %>_m" size="16" maxlength="6" value="<%= query || '' %>"></td>
+      </tr>
+      <tr>
+        <td><font face="Verdana, Arial" size="1">Surname</font></td>
+        <td><input type="text" name="surname" id="ctl_<%= rid %>_n" size="24"></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td><input type="submit" name="go" id="ctl_<%= rid %>_g" value="<%= tenant.labels.searchButton %>">&nbsp;<input type="reset" name="clr" id="ctl_<%= rid %>_c" value="Clear"></td>
+      </tr>
+      </form>
+    </table>
+  </td></tr>
+</table>
+
+<br>
+
+<!--
+  Second panel repeating the same field label. This is not decoration: it makes
+  a name-only match ambiguous, so anything driving this screen has to carry
+  container context rather than the label alone.
+-->
+<table border="1" cellpadding="0" cellspacing="0" bgcolor="#eceae4">
+  <tr><td>
+    <table border="0" cellpadding="6" cellspacing="0" width="430">
+      <tr bgcolor="#7f8b96">
+        <td colspan="2"><font face="Verdana, Arial" size="2" color="#ffffff"><b>Recent Terminal Activity</b></font></td>
+      </tr>
+      <tr>
+        <td width="130"><font face="Verdana, Arial" size="1"><%= tenant.labels.memberIdField %></font></td>
+        <td><input type="text" name="recentMemberId" id="ctl_<%= rid %>_h" size="16" value="" readonly></td>
+      </tr>
+      <tr>
+        <td><font face="Verdana, Arial" size="1">Last Inquiry</font></td>
+        <td><font face="Verdana, Arial" size="1">No activity this session</font></td>
+      </tr>
+    </table>
+  </td></tr>
+</table>
+
+<%- include('_foot') %>
