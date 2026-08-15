@@ -17,11 +17,26 @@
     "submit_search": {
       "target": {
         "description": "Find Member button in the Member Search panel",
-        "framePath": [{ "name": "mainFrame" }],
-        "anchor": { "containerName": "Member Search" },
+        "framePath": [
+          {
+            "name": "mainFrame"
+          }
+        ],
+        "anchor": {
+          "containerName": "Member Search"
+        },
         "candidates": [
-          { "kind": "role_name", "role": "button", "name": "Find Member", "exact": true },
-          { "kind": "structural", "css": "input[name='go']", "ordinal": 0 }
+          {
+            "kind": "role_name",
+            "role": "button",
+            "name": "Find Member",
+            "exact": true
+          },
+          {
+            "kind": "structural",
+            "css": "input[name='go']",
+            "ordinal": 0
+          }
         ],
         "evidence": {
           "role": "button",
@@ -34,16 +49,94 @@
     "enter_member_id": {
       "target": {
         "description": "Member Number field in the Member Search panel",
-        "framePath": [{ "name": "mainFrame" }],
-        "anchor": { "containerName": "Member Search" },
+        "framePath": [
+          {
+            "name": "mainFrame"
+          }
+        ],
+        "anchor": {
+          "containerName": "Member Search"
+        },
         "candidates": [
-          { "kind": "label", "text": "Member Number", "positional": true, "expect": "control" },
-          { "kind": "structural", "css": "input[name='memberId']", "ordinal": 0 }
+          {
+            "kind": "label",
+            "text": "Member Number",
+            "positional": true,
+            "expect": "control"
+          },
+          {
+            "kind": "structural",
+            "css": "input[name='memberId']",
+            "ordinal": 0
+          }
         ],
         "evidence": {
           "role": "textbox",
           "tag": "input",
           "textSnippet": "This tenant labels the field 'Member Number'. As with the search button, an identically-labelled field exists in the Recent Terminal Activity panel, so the container anchor is still load-bearing."
+        }
+      }
+    },
+    "type_4": {
+      "target": {
+        "description": "Member Number field in the Member Search panel",
+        "framePath": [
+          {
+            "name": "mainFrame"
+          }
+        ],
+        "anchor": {
+          "containerName": "Member Search"
+        },
+        "candidates": [
+          {
+            "kind": "label",
+            "text": "Member Number",
+            "positional": true,
+            "expect": "control"
+          },
+          {
+            "kind": "structural",
+            "css": "input[name='memberId']",
+            "ordinal": 0
+          }
+        ],
+        "evidence": {
+          "role": "textbox",
+          "tag": "input",
+          "textSnippet": "This tenant labels the field 'Member Number'. As with the search button, an identically-labelled field exists in the Recent Terminal Activity panel, so the container anchor is still load-bearing."
+        }
+      }
+    },
+    "click_5": {
+      "target": {
+        "description": "Find Member button in the Member Search panel",
+        "framePath": [
+          {
+            "name": "mainFrame"
+          }
+        ],
+        "anchor": {
+          "containerName": "Member Search"
+        },
+        "candidates": [
+          {
+            "kind": "role_name",
+            "role": "button",
+            "name": "Find Member",
+            "exact": true
+          },
+          {
+            "kind": "structural",
+            "css": "input[name='go']",
+            "ordinal": 0
+          }
+        ],
+        "evidence": {
+          "role": "button",
+          "tag": "input",
+          "accessibleName": "Find Member",
+          "textSnippet": "This tenant's build labels the search action 'Find Member' rather than 'Search'. Wording differences in an accessible name cannot be absorbed by fuzzy matching without making every button match every other, so this is an explicit override."
         }
       }
     }
@@ -55,23 +148,40 @@
       "when": {
         "kind": "text_present",
         "text": "System Notice",
-        "framePath": [{ "name": "mainFrame" }]
+        "framePath": [
+          {
+            "name": "mainFrame"
+          }
+        ]
       },
       "then": [
         {
           "kind": "click",
           "target": {
             "description": "Acknowledge button on the system notice",
-            "framePath": [{ "name": "mainFrame" }],
-            "candidates": [
-              { "kind": "role_name", "role": "button", "name": "Acknowledge", "exact": true }
+            "framePath": [
+              {
+                "name": "mainFrame"
+              }
             ],
-            "evidence": { "role": "button", "tag": "input", "accessibleName": "Acknowledge" }
+            "candidates": [
+              {
+                "kind": "role_name",
+                "role": "button",
+                "name": "Acknowledge",
+                "exact": true
+              }
+            ],
+            "evidence": {
+              "role": "button",
+              "tag": "input",
+              "accessibleName": "Acknowledge"
+            }
           }
         }
       ],
       "maxAttempts": 2
     }
   ],
-  "notes": "Cascade runs the same Meridian Core build as Northpoint, deployed with different frame names and slightly different field wording, plus a login-time notice. Three differences needed an explicit override; one did not — the accounts table labels the savings row 'Regular Savings', and the base artifact's non-exact label matching absorbs that without any entry here. That asymmetry is the point of the overlay: it carries only what fuzzy matching legitimately cannot."
+  "notes": "Cascade runs the same Meridian Core build as Northpoint, deployed with different frame names and slightly different field wording, plus a login-time notice. Three differences needed an explicit override; one did not \u2014 the accounts table labels the savings row 'Regular Savings', and the base artifact's non-exact label matching absorbs that without any entry here. That asymmetry is the point of the overlay: it carries only what fuzzy matching legitimately cannot. stepOverrides are keyed by step id, which couples an overlay to a particular recording: the hand-authored capability names its steps enter_member_id and submit_search, while the discovered one generates type_4 and click_5. Both are listed so this overlay covers both capabilities. That coupling is a real limitation of the format rather than a quirk of this file \u2014 re-recording a capability silently orphans its overrides, and the only reason the shipped artifact still worked was that both tenants happen to share a form field name, so the structural tier caught it."
 }

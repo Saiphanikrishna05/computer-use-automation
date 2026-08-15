@@ -2,16 +2,16 @@
   "capabilityId": "lookup_member_savings_balance",
   "capabilityVersion": 1,
   "tenantId": "cascade-cu",
-  "startedAt": "2026-08-15T04:05:02.784Z",
-  "finishedAt": "2026-08-15T04:05:05.474Z",
-  "durationMs": 2690,
+  "startedAt": "2026-08-15T20:48:35.095Z",
+  "finishedAt": "2026-08-15T20:48:37.761Z",
+  "durationMs": 2666,
   "steps": [
     {
       "stepId": "type_1",
       "intent": "Enter the operator ID in the Operator Sign-On panel",
       "action": "type",
       "status": "ok",
-      "elapsedMs": 184,
+      "elapsedMs": 195,
       "recoveries": [],
       "resolution": {
         "targetDescription": "textbox labelled \"User ID\" in the Operator Sign-On panel",
@@ -26,7 +26,7 @@
         "winningTier": 2,
         "winningKind": "label",
         "degraded": false,
-        "elapsedMs": 28
+        "elapsedMs": 29
       }
     },
     {
@@ -34,7 +34,7 @@
       "intent": "Enter the operator password in the Operator Sign-On panel",
       "action": "type",
       "status": "ok",
-      "elapsedMs": 254,
+      "elapsedMs": 244,
       "recoveries": [],
       "resolution": {
         "targetDescription": "textbox labelled \"Password\" in the Operator Sign-On panel",
@@ -57,7 +57,7 @@
       "intent": "Submit the operator sign-on form to access the servicing console",
       "action": "click",
       "status": "recovered",
-      "elapsedMs": 288,
+      "elapsedMs": 276,
       "recoveries": [
         {
           "code": "ACKNOWLEDGE_SYSTEM_NOTICE",
@@ -78,7 +78,7 @@
         "winningTier": 1,
         "winningKind": "role_name",
         "degraded": false,
-        "elapsedMs": 11
+        "elapsedMs": 10
       }
     },
     {
@@ -86,28 +86,22 @@
       "intent": "Type the member number into the Member ID field of the Member Search panel",
       "action": "type",
       "status": "ok",
-      "elapsedMs": 121,
+      "elapsedMs": 120,
       "recoveries": [],
       "resolution": {
-        "targetDescription": "textbox labelled \"Member ID\" in the Member Search panel",
+        "targetDescription": "Member Number field in the Member Search panel",
         "attempts": [
           {
             "kind": "label",
             "tier": 2,
-            "matchCount": 0,
-            "chosen": false
-          },
-          {
-            "kind": "structural",
-            "tier": 5,
             "matchCount": 1,
             "chosen": true
           }
         ],
-        "winningTier": 5,
-        "winningKind": "structural",
-        "degraded": true,
-        "elapsedMs": 17
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 14
       }
     },
     {
@@ -118,34 +112,28 @@
       "elapsedMs": 256,
       "recoveries": [],
       "resolution": {
-        "targetDescription": "button \"Search\" in the Member Search panel",
+        "targetDescription": "Find Member button in the Member Search panel",
         "attempts": [
           {
             "kind": "role_name",
             "tier": 1,
-            "matchCount": 0,
-            "chosen": false
-          },
-          {
-            "kind": "structural",
-            "tier": 5,
             "matchCount": 1,
             "chosen": true
           }
         ],
-        "winningTier": 5,
-        "winningKind": "structural",
-        "degraded": true,
-        "elapsedMs": 7
+        "winningTier": 1,
+        "winningKind": "role_name",
+        "degraded": false,
+        "elapsedMs": 5
       }
     }
   ],
-  "degradedResolutions": 2,
+  "degradedResolutions": 0,
   "evidence": {
-    "runId": "replay-20260815T040502-01",
-    "bundlePath": "runs/replay-20260815T040502-01",
+    "runId": "replay-20260815T204834-01",
+    "bundlePath": "runs/replay-20260815T204834-01",
     "screenshots": [
-      "runs/replay-20260815T040502-01/screenshots/029-replay-success.png"
+      "runs/replay-20260815T204834-01/screenshots/027-replay-success.png"
     ],
     "domSnapshots": []
   },
