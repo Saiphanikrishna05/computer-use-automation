@@ -188,8 +188,6 @@ after that is deterministic.
   ◂ {"status":"outcome","outcome":"MEMBER_NOT_FOUND",...}
 ```
 
----
-
 ### 8. Surviving a change to the application
 
 The claim the whole design rests on is that a capability recorded once keeps
@@ -200,7 +198,7 @@ already-committed artifact*.
 ./scripts/demo-drift.sh
 ```
 
-It reworders the search button, re-orders the accounts table columns, inserts a
+It rewords the search button, re-orders the accounts table columns, inserts a
 new column, and wraps every cell in a `<span>` — then replays without
 re-recording anything.
 
@@ -272,6 +270,8 @@ Two things to notice. Every step there resolves at **tier 0 (`test_id`)**,
 because Sauce Labs ships `data-test` attributes — while the legacy console has
 none and resolves at tier 2. And the model stopped short of clicking *Finish* on
 its own, because submitting the order is irreversible.
+
+---
 
 ---
 
