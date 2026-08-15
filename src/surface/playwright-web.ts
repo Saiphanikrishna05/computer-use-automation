@@ -624,7 +624,26 @@ export class PlaywrightWebSurface implements SurfaceDriver {
         .evaluate(
           ({ indices, attr }) => {
             const els = (window as unknown as { __cuaNodes: Element[] }).__cuaNodes ?? [];
-            for (const i of indices) els[i]?.setAttribute(attr, '1');
+            const marked: Element[] = [];
+            for (const i of indices) {
+              const el = els[i];
+              if (el) {
+                el.setAttribute(attr, '1');
+                marked.push(el);
+              }
+            }
+
+            // Mask only the deepest match. An element's text includes its
+            // descendants' text, so a tax ID in one cell also matches the row,
+            // the table, and the body — and masking those blacks out the whole
+            // screen. A screenshot that hides everything is not evidence, it
+            // is an absence of evidence, so keep the innermost element and
+            // release its ancestors.
+            for (const el of marked) {
+              if (marked.some((other) => other !== el && el.contains(other))) {
+                el.removeAttribute(attr);
+              }
+            }
           },
           { indices: sensitive, attr: MASK_ATTRIBUTE },
         )

@@ -8,6 +8,16 @@ agent invokes it by name with typed arguments.
 The design write-up is in **[REPORT.md](REPORT.md)**. Evidence from real runs is
 in **[evidence/](evidence/)**.
 
+![A capability replaying against an application that changed underneath it](docs/demo.gif)
+
+*A capability recorded once by an LLM, replaying with no model in the loop —
+first against the application it was recorded on, then against the same
+application after a vendor point release reworded a button, re-ordered the
+accounts columns and inserted a new one. Same answer, and the run reports which
+locator weakened. Regenerate it yourself with `npm run demo:gif`; no API key
+needed. (The masked cells are the redaction layer — sensitive regions are
+covered before the image exists.)*
+
 ---
 
 ## Two screens, and why they look nothing alike
