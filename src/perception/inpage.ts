@@ -244,17 +244,34 @@ export function collectUiNodes(): RawSnapshot {
       if (t) out.row = t;
     }
 
-    // The header row is *not* reliably row 0. A legacy panel table's first row
-    // is usually a colspan'd title bar ("Accounts"), and the real column
-    // headings sit in the row beneath it. Matching on cell count finds the
-    // heading row and skips title bars, which have a different arity by
-    // construction.
+    // Finding the header row takes two tests, and the second one matters more
+    // than it looks.
+    //
+    // Matching cell count skips the colspan'd title bar ("Accounts") that a
+    // legacy panel table puts in row 0. But cell count alone is not enough:
+    // a *label/value grid* — "Member ID | 100001 | Status | Active" — is not a
+    // table at all, it is a form rendered with <td>. Its first row has the
+    // same arity as every other, so it gets mistaken for headings and every
+    // cell below inherits a column header of "100001".
+    //
+    // So the candidate must also *look* like a header: styled as a row (a
+    // bgcolor of its own) or emphasised in every cell. A label/value grid
+    // emphasises only its values, which is exactly what distinguishes it.
+    const looksLikeHeaderRow = (candidate: HTMLTableRowElement): boolean => {
+      if (candidate.hasAttribute('bgcolor')) return true;
+      const cells = Array.from(candidate.cells);
+      if (cells.length === 0) return false;
+      const withText = cells.filter((c) => ownText(c).length > 0);
+      if (withText.length === 0) return false;
+      return withText.every((c) => c.tagName === 'TH' || c.querySelector('b, strong, th') !== null);
+    };
+
     const rows = Array.from(table.rows ?? []);
     const myIndex = rows.indexOf(row);
     let headerRow: HTMLTableRowElement | undefined;
     for (let i = 0; i < myIndex; i += 1) {
       const candidate = rows[i];
-      if (candidate && candidate.cells.length === row.cells.length) {
+      if (candidate && candidate.cells.length === row.cells.length && looksLikeHeaderRow(candidate)) {
         headerRow = candidate;
         break;
       }

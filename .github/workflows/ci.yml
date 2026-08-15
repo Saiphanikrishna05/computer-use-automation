@@ -1,0 +1,39 @@
+name: CI
+
+# The suite is deliberately runnable without an API key: discovery is the only
+# path that needs a model, and everything else — perception, resolution, the
+# replay engine, policy, redaction — is verifiable without one. That is a
+# property worth protecting, so CI never gets a key.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - run: npm ci
+
+      # The resolution tests drive a real Chromium against real markup, because
+      # the thing under test is the interaction with real layout.
+      - run: npx playwright install --with-deps chromium
+
+      - run: npm run typecheck
+      - run: npm test
+
+      - name: No secrets in tracked files
+        run: |
+          if git grep -nE 'sk-ant-api[0-9]' -- . ':!*.md'; then
+            echo "::error::An API key appears in tracked files"; exit 1
+          fi
+          if git ls-files | grep -qx '.env'; then
+            echo "::error::.env is tracked"; exit 1
+          fi

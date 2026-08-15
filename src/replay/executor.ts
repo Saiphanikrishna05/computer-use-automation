@@ -100,6 +100,13 @@ export class ReplayEngine {
   private readonly domSnapshots: string[] = [];
   private degradedResolutions = 0;
   private values: Record<string, unknown> = {};
+  /**
+   * Recoveries that fired before any step was in flight — clearing a login
+   * interstitial, for instance. They have no step to attach to yet, so they
+   * are buffered and flushed onto the next step that starts. Dropping them
+   * would make the commonest recovery of all invisible in the result.
+   */
+  private pendingRecoveries: RecoveryReport[] = [];
 
   constructor(private readonly options: ReplayOptions) {}
 
@@ -301,9 +308,11 @@ export class ReplayEngine {
       }
 
       const last = this.steps[this.steps.length - 1];
-      if (last) {
+      if (last && last.status !== 'failed') {
         last.recoveries.push(report);
         if (report.succeeded && last.status === 'ok') last.status = 'recovered';
+      } else {
+        this.pendingRecoveries.push(report);
       }
       return true;
     }
@@ -362,6 +371,14 @@ export class ReplayEngine {
       elapsedMs: 0,
       recoveries: [],
     };
+    // Anything recovered on the way in belongs to this step: it is why the
+    // step could run at all.
+    if (this.pendingRecoveries.length > 0) {
+      report.recoveries.push(...this.pendingRecoveries);
+      report.status = 'recovered';
+      this.pendingRecoveries = [];
+    }
+
     this.steps.push(report);
     logger.event('step_started', `${step.id}: ${step.intent}`, { action: step.action.kind, risk: step.risk });
 
@@ -661,6 +678,19 @@ export class ReplayEngine {
 
   private base(startedAt: string, t0: number) {
     const { artifact, logger } = this.options;
+    if (this.pendingRecoveries.length > 0) {
+      // The run ended before a step could claim them. Surface them as a
+      // synthetic entry rather than losing them.
+      this.steps.push({
+        stepId: '(before first step)',
+        intent: 'clearing the surface before the flow could begin',
+        action: 'recovery',
+        status: 'recovered',
+        elapsedMs: 0,
+        recoveries: this.pendingRecoveries,
+      });
+      this.pendingRecoveries = [];
+    }
     return {
       capabilityId: artifact.id,
       capabilityVersion: artifact.version,

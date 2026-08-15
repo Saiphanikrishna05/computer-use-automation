@@ -185,3 +185,39 @@ describe('candidate resolution', () => {
     expect(matches).toContain(button.index);
   });
 });
+
+describe('label/value grids are not tables', () => {
+  const GRID = `<html><body>
+    <table border="1"><tr><td>
+      <table border="0">
+        <tr bgcolor="#1c3f60"><td colspan="4"><b>Member Profile</b></td></tr>
+        <tr><td>Member ID</td><td><b>100001</b></td><td>Status</td><td>Active</td></tr>
+        <tr><td>Name</td><td>Dolores Ashcroft</td><td>Member Since</td><td>11/02/1994</td></tr>
+      </table>
+    </td></tr></table>
+  </body></html>`;
+
+  it('does not treat the first row of a label/value grid as column headings', async () => {
+    // "Member ID | 100001 | Status | Active" is a form rendered with <td>, not
+    // a table with headings. Reading row 1 as headers gives every cell below a
+    // column header of "100001" — a qualifier made of record data, which is
+    // both meaningless and different for every member.
+    const page2 = await browser.newPage();
+    await page2.setContent(GRID);
+    await page2.evaluate('globalThis.__name = globalThis.__name || function (f) { return f; }');
+    const snap = (await page2.evaluate(collectUiNodes)) as RawSnapshot;
+
+    const name = snap.nodes.find((n) => n.text === 'Dolores Ashcroft')!;
+    expect(name.rowHeader).toBe('Name');
+    expect(name.columnHeader).toBeUndefined();
+    await page2.close();
+  });
+
+  it('still reads column headings from a row that is actually styled as one', async () => {
+    // The accounts table's heading row carries its own bgcolor and emphasises
+    // every cell. That is what a real header row looks like in this markup.
+    const balance = snapshot.nodes.find((n) => n.text === '$4,182.55')!;
+    expect(balance.rowHeader).toBe('Savings');
+    expect(balance.columnHeader).toBe('Current Balance');
+  });
+});

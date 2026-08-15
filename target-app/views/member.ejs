@@ -29,6 +29,12 @@
         <td><font face="Verdana, Arial" size="1">Date of Birth</font></td>
         <td><font face="Verdana, Arial" size="1"><%= member.dateOfBirth %></font></td>
       </tr>
+      <% if (member.memo) { %>
+      <tr>
+        <td><font face="Verdana, Arial" size="1">Account Memo</font></td>
+        <td colspan="3"><font face="Verdana, Arial" size="1"><%= member.memo %></font></td>
+      </tr>
+      <% } %>
       <tr>
         <td><font face="Verdana, Arial" size="1">E-Mail</font></td>
         <td><font face="Verdana, Arial" size="1"><%= member.email %></font></td>
