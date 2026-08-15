@@ -87,6 +87,26 @@ program
   });
 
 program
+  .command('stability')
+  .description('Replay a capability N times and report per-step locator stability.')
+  .argument('<capability>', 'capability id')
+  .option('-i, --input <key=value>', 'capability input (repeatable)', collectInputs, {})
+  .option('-t, --tenant <id>', 'tenant to run against', DEFAULT_TENANT)
+  .option('-n, --runs <n>', 'how many times to replay', (v) => Number(v), 5)
+  .action(async (capability: string, opts) => {
+    const { runStabilityCommand } = await import('./stability-command.js');
+    process.exit(
+      await runStabilityCommand({
+        capability,
+        inputs: opts.input,
+        tenant: opts.tenant,
+        runs: opts.runs,
+        headless: true,
+      }),
+    );
+  });
+
+program
   .command('agent-demo')
   .description('Give an AI agent a request and let it choose and invoke a capability from the catalog.')
   .argument('<request>', 'what to ask the agent, in natural language')

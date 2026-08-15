@@ -2,16 +2,16 @@
   "capabilityId": "lookup_member_savings_balance",
   "capabilityVersion": 1,
   "tenantId": "northpoint-fcu",
-  "startedAt": "2026-08-15T01:22:35.264Z",
-  "finishedAt": "2026-08-15T01:22:36.653Z",
-  "durationMs": 1389,
+  "startedAt": "2026-08-15T04:04:48.563Z",
+  "finishedAt": "2026-08-15T04:04:49.942Z",
+  "durationMs": 1379,
   "steps": [
     {
       "stepId": "type_1",
       "intent": "Enter the operator ID in the Operator Sign-On panel",
       "action": "type",
       "status": "ok",
-      "elapsedMs": 170,
+      "elapsedMs": 169,
       "recoveries": [],
       "resolution": {
         "targetDescription": "textbox labelled \"User ID\" in the Operator Sign-On panel",
@@ -34,7 +34,7 @@
       "intent": "Enter the operator password in the Operator Sign-On panel",
       "action": "type",
       "status": "ok",
-      "elapsedMs": 241,
+      "elapsedMs": 242,
       "recoveries": [],
       "resolution": {
         "targetDescription": "textbox labelled \"Password\" in the Operator Sign-On panel",
@@ -57,7 +57,7 @@
       "intent": "Submit the operator sign-on form to access the servicing console",
       "action": "click",
       "status": "ok",
-      "elapsedMs": 280,
+      "elapsedMs": 284,
       "recoveries": [],
       "resolution": {
         "targetDescription": "button \"Sign On\" in the Operator Sign-On panel",
@@ -80,7 +80,7 @@
       "intent": "Type the member number into the Member ID field of the Member Search panel",
       "action": "type",
       "status": "ok",
-      "elapsedMs": 121,
+      "elapsedMs": 120,
       "recoveries": [],
       "resolution": {
         "targetDescription": "textbox labelled \"Member ID\" in the Member Search panel",
@@ -103,7 +103,7 @@
       "intent": "Run the member search for the entered member ID",
       "action": "click",
       "status": "ok",
-      "elapsedMs": 278,
+      "elapsedMs": 265,
       "recoveries": [],
       "resolution": {
         "targetDescription": "button \"Search\" in the Member Search panel",
@@ -118,16 +118,16 @@
         "winningTier": 1,
         "winningKind": "role_name",
         "degraded": false,
-        "elapsedMs": 8
+        "elapsedMs": 7
       }
     }
   ],
   "degradedResolutions": 0,
   "evidence": {
-    "runId": "replay-20260815T012235-01",
-    "bundlePath": "runs/replay-20260815T012235-01",
+    "runId": "replay-20260815T040448-01",
+    "bundlePath": "runs/replay-20260815T040448-01",
     "screenshots": [
-      "runs/replay-20260815T012235-01/screenshots/020-outcome-member-not-found.png"
+      "runs/replay-20260815T040448-01/screenshots/020-outcome-member-not-found.png"
     ],
     "domSnapshots": []
   },

@@ -104,7 +104,21 @@ screenshot and DOM snapshot.
 **Drift.** Since the UI is stable, the signal isn't layout change but *tier
 degradation*: a step that used to resolve at tier 2 and now resolves at tier 5
 hasn't failed yet, but is one change from breaking. `degradedResolutions` is on
-every result.
+every result, and `npm run stability` aggregates it across N runs — a step
+resolving through *different* tiers on different runs is the real warning, since
+the same page is answering the same question two ways.
+
+This is tested rather than asserted (`./scripts/demo-drift.sh`,
+`evidence/replay-{before,after}-ui-drift/`). Applying a vendor point release —
+reword a button, re-order the accounts columns, insert a column, wrap the cells
+— and replaying the unchanged artifact produces two distinct results. The
+balance still resolves at tier 2 because it is addressed as "the Savings row,
+Current Balance column"; the column moved and it did not matter, where a
+positional selector would now be reading the inserted Status column and
+reporting "Open" as a balance. The reworded button could not survive on name,
+dropped to the structural tier, and was flagged. Nothing failed; the signal
+fired anyway. That gap — still correct, now weaker — is the whole reason the
+tier is recorded.
 
 Two bugs found by building rather than reasoning. A unit test caught that
 `Number('')` is `0`, so a balance field showing an em-dash would have been
@@ -257,9 +271,9 @@ escalation path it creates.
    step with a deliberately bad input and *observe* the not-found screen instead
    of hypothesizing it. This would have caught all four wrong outcomes in §2
    without a human. Highest value by some distance.
-2. **Multi-run stability scoring** — replay N times, record tier distribution per
-   step, gate `draft → approved` on it. The telemetry exists; only the
-   aggregation is missing.
+2. **Wire stability scoring into the approval gate.** `npm run stability`
+   reports per-step tier distribution and exits 1/2/0, so CI can already block
+   on it; `catalog approve` does not yet consult it.
 3. **A real approval workflow** — authenticated reviewer, append-only audit,
    artifact diffs reviewed in a pull request.
 4. **A UIA driver** against one genuine Windows application, to find out which

@@ -47,6 +47,30 @@
       <tr bgcolor="<%= tenant.accentColor %>">
         <td colspan="4"><font face="Verdana, Arial" size="2" color="#ffffff"><b>Accounts</b></font></td>
       </tr>
+      <% if (drifted) { %>
+      <!--
+        Post-upgrade layout. The columns have been re-ordered, a new "Status"
+        column inserted, and the cells wrapped in <span>s by the new template
+        engine. Nothing about the flow changed — but every positional selector
+        pointing at this table is now wrong.
+      -->
+      <tr bgcolor="#c6cfd8">
+        <td width="140"><font face="Verdana, Arial" size="1"><b>Account Type</b></font></td>
+        <td width="130"><font face="Verdana, Arial" size="1"><b>Current Balance</b></font></td>
+        <td width="90"><font face="Verdana, Arial" size="1"><b>Status</b></font></td>
+        <td width="160"><font face="Verdana, Arial" size="1"><b>Account Number</b></font></td>
+        <td><font face="Verdana, Arial" size="1"><b>Date Opened</b></font></td>
+      </tr>
+      <% member.accounts.forEach(function (acct) { %>
+      <tr>
+        <td><span><font face="Verdana, Arial" size="1"><%= acct.type %></font></span></td>
+        <td><span><font face="Verdana, Arial" size="1"><b><%= formatMoney(acct.balance) %></b></font></span></td>
+        <td><span><font face="Verdana, Arial" size="1">Open</font></span></td>
+        <td><span><font face="Verdana, Arial" size="1"><%= acct.number %></font></span></td>
+        <td><span><font face="Verdana, Arial" size="1"><%= acct.opened %></font></span></td>
+      </tr>
+      <% }); %>
+      <% } else { %>
       <tr bgcolor="#b8c4d0">
         <td width="150"><font face="Verdana, Arial" size="1"><b>Account Type</b></font></td>
         <td width="170"><font face="Verdana, Arial" size="1"><b>Account Number</b></font></td>
@@ -61,6 +85,7 @@
         <td><font face="Verdana, Arial" size="1"><%= acct.opened %></font></td>
       </tr>
       <% }); %>
+      <% } %>
     </table>
   </td></tr>
 </table>

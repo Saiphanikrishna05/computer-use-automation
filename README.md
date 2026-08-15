@@ -10,6 +10,35 @@ in **[evidence/](evidence/)**.
 
 ---
 
+## Two screens, and why they look nothing alike
+
+![The stand-in servicing console](docs/target-app-member-detail.png)
+
+**This is the application being automated, and it is ugly on purpose.** It is a
+stand-in for the class of software the brief is about — *"legacy web app
+(server-rendered, framesets, deeply nested tables, non-semantic markup, no test
+IDs)"*. Every hostile property is load-bearing:
+
+| What it looks like | What it forces the system to solve |
+|---|---|
+| A real `<frameset>` | Frame traversal is mandatory, not optional |
+| Table layout, `<font>` tags | No semantic structure to lean on |
+| `id="ctl_a1b2_m"`, regenerated every render | ID selectors are worthless |
+| No `<label for>` anywhere | Labels must be inferred from the adjacent cell |
+| "Member ID" in two different panels | A name-only match is ambiguous by construction |
+
+Make this screen pretty and every problem worth solving disappears with it.
+
+![The operator console](docs/operator-console.png)
+
+**This is the system's own surface**, and it is the one that should look like a
+product. It is what an operator sees when automation stops and asks for a human:
+why it stopped, the live session it was driving, and the two distinct ways to
+finish — *I cleared the blocker* (retry the step) or *I performed this step
+myself* (skip it, so an irreversible action is not done twice).
+
+---
+
 ## Setup
 
 Requires Node 20+.
@@ -161,7 +190,44 @@ after that is deterministic.
 
 ---
 
-### 8. Proof it isn't overfitted to my own markup *(needs the API key)*
+### 8. Surviving a change to the application
+
+The claim the whole design rests on is that a capability recorded once keeps
+working. So test it: apply a vendor point release and replay the *same,
+already-committed artifact*.
+
+```bash
+./scripts/demo-drift.sh
+```
+
+It reworders the search button, re-orders the accounts table columns, inserts a
+new column, and wraps every cell in a `<span>` — then replays without
+re-recording anything.
+
+```
+before   degraded locators 0    savingsBalance 4182.55
+after    degraded locators 1    savingsBalance 4182.55
+
+  tier 2 via label       cell "$4,182.55" in the Accounts panel
+  tier 5 via structural  button "Search" in the Member Search panel   <<< DEGRADED
+        tried role_name  → 0 match(es)
+```
+
+Two different things happened, and both matter. The balance still resolved at
+**tier 2**, addressed as *"the Savings row, Current Balance column"* — the column
+physically moved and it did not matter. A positional selector would now be
+reading the newly-inserted **Status** column and reporting `"Open"` as a balance.
+
+The reworded button could not survive on name, so it dropped to the structural
+tier and was **flagged**. Nothing failed. But the capability is now one change
+away from failing, and we know before a caller does.
+
+```bash
+# The same signal, aggregated over repeated runs — exit 0 healthy, 2 degraded, 1 blocked
+npm run stability -- lookup_member_savings_balance -i memberId=100001 -n 5
+```
+
+### 9. Proof it isn't overfitted to my own markup *(needs the API key)*
 
 Everything above runs against an application I wrote. This runs against one I
 didn't — [saucedemo.com](https://www.saucedemo.com), published by Sauce Labs as

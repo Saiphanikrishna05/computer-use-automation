@@ -241,8 +241,8 @@ function renderConsole(items: PendingIntervention[], lease: ControlLease): strin
       </dl>
 
       <h3>Live session</h3>
-      <p class="muted">This is the same browser session the automation was driving. Click the image to click the page.</p>
       <img id="screen-${entry.id}" class="screen" src="/intervention/${entry.id}/screen.png" alt="live session">
+      <p class="hint">The same browser session the automation was driving — same cookies, same frame state. Click the image to click the page. Sensitive regions are masked before capture.</p>
 
       ${
         entry.state === 'waiting'
@@ -280,35 +280,87 @@ function renderConsole(items: PendingIntervention[], lease: ControlLease): strin
   return `<!doctype html>
 <html><head><meta charset="utf-8"><title>Operator console</title>
 <style>
-  :root { color-scheme: light dark; }
-  body { font: 15px/1.55 ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif; margin: 0; padding: 2rem; background: #f6f7f9; color: #16181d; }
-  @media (prefers-color-scheme: dark) { body { background: #0f1115; color: #e6e8ec; } article { background: #171a21 !important; border-color: #2a2f3a !important; } input { background:#0f1115; color:#e6e8ec; border-color:#2a2f3a; } }
-  header { max-width: 60rem; margin: 0 auto 1.5rem; }
-  h1 { font-size: 1.15rem; margin: 0 0 .35rem; }
-  article { max-width: 60rem; margin: 0 auto 1.5rem; background: #fff; border: 1px solid #dfe3e8; border-radius: 10px; padding: 1.25rem 1.5rem; }
-  h2 { font-size: 1rem; margin: 0 0 .75rem; display: flex; align-items: center; gap: .6rem; }
-  h3 { font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; opacity: .6; margin: 1.25rem 0 .5rem; }
-  dl { display: grid; grid-template-columns: 11rem 1fr; gap: .3rem .75rem; margin: 0; font-size: .9rem; }
-  dt { opacity: .6; }
+  :root {
+    color-scheme: light dark;
+    --bg: #f4f6f8; --panel: #ffffff; --line: #dde3ea; --ink: #16181d; --muted: #5b6472;
+    --accent: #1c3f60; --warn-bg: #fff4d6; --warn-ink: #7a5209;
+    --live-bg: #dcfce7; --live-ink: #14532d; --danger: #8b1a1a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e1116; --panel: #161a21; --line: #262c36; --ink: #e6e8ec; --muted: #9099a8;
+      --accent: #7fb2e5; --warn-bg: #3a2f10; --warn-ink: #f0d089;
+      --live-bg: #12331f; --live-ink: #86efac;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1.5rem 4rem;
+    background: var(--bg); color: var(--ink);
+    font: 15px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  .wrap { max-width: 68rem; margin: 0 auto; }
+  header { display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.75rem; }
+  h1 { font-size: 1.05rem; margin: 0; letter-spacing: -0.01em; }
+  .lease {
+    font-size: .78rem; font-variant-numeric: tabular-nums;
+    padding: .2rem .6rem; border-radius: 999px; border: 1px solid var(--line);
+    background: var(--panel); color: var(--muted);
+  }
+  .lease strong { color: var(--ink); font-weight: 600; }
+  article {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+    padding: 1.4rem 1.6rem; margin-bottom: 1.5rem;
+    box-shadow: 0 1px 2px rgba(16,24,40,.04);
+  }
+  h2 { font-size: .95rem; margin: 0 0 1rem; display: flex; align-items: center; gap: .6rem; }
+  h3 {
+    font-size: .72rem; text-transform: uppercase; letter-spacing: .07em;
+    color: var(--muted); margin: 1.5rem 0 .6rem; font-weight: 600;
+  }
+  dl { display: grid; grid-template-columns: 10rem 1fr; gap: .45rem 1rem; margin: 0; font-size: .88rem; }
+  dt { color: var(--muted); }
   dd { margin: 0; }
-  .pill { font-size: .7rem; text-transform: uppercase; letter-spacing: .05em; padding: .15rem .5rem; border-radius: 999px; background: #fde68a; color: #713f12; }
-  .pill.in_progress { background: #bbf7d0; color: #14532d; }
-  .screen { width: 100%; border: 1px solid #dfe3e8; border-radius: 6px; cursor: crosshair; display: block; }
-  form, .controls { margin-top: .75rem; display: flex; gap: .5rem; flex-wrap: wrap; }
-  input { padding: .4rem .6rem; border: 1px solid #cfd4dc; border-radius: 6px; font: inherit; }
-  button { padding: .4rem .9rem; border-radius: 6px; border: 1px solid #cfd4dc; background: #eef1f5; font: inherit; cursor: pointer; }
-  button.primary { background: #1c3f60; color: #fff; border-color: #1c3f60; }
-  button.danger { background: #7f1d1d; color: #fff; border-color: #7f1d1d; }
-  .actions { font-size: .85rem; padding-left: 1.1rem; }
-  .muted { opacity: .55; }
-  code { background: rgba(127,127,127,.16); padding: .05rem .3rem; border-radius: 4px; }
+  .pill {
+    font-size: .68rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 600;
+    padding: .2rem .55rem; border-radius: 999px; background: var(--warn-bg); color: var(--warn-ink);
+  }
+  .pill.in_progress { background: var(--live-bg); color: var(--live-ink); }
+  .screen {
+    width: 100%; border: 1px solid var(--line); border-radius: 8px;
+    cursor: crosshair; display: block; background: #fff;
+  }
+  .hint { font-size: .8rem; color: var(--muted); margin: .5rem 0 0; }
+  form, .controls { margin-top: 1rem; display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
+  input {
+    padding: .45rem .7rem; border: 1px solid var(--line); border-radius: 7px;
+    font: inherit; background: var(--bg); color: var(--ink); min-width: 9rem;
+  }
+  input:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  button {
+    padding: .45rem 1rem; border-radius: 7px; border: 1px solid var(--line);
+    background: var(--bg); color: var(--ink); font: inherit; font-weight: 500; cursor: pointer;
+  }
+  button:hover { border-color: var(--muted); }
+  button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  button.danger { background: transparent; color: var(--danger); border-color: var(--danger); }
+  .actions { font-size: .85rem; padding-left: 0; list-style: none; margin: 0; }
+  .actions li { padding: .3rem 0; border-bottom: 1px dashed var(--line); }
+  .actions li:last-child { border-bottom: 0; }
+  .muted { color: var(--muted); }
+  code {
+    background: color-mix(in srgb, var(--muted) 16%, transparent);
+    padding: .1rem .35rem; border-radius: 4px; font-size: .85em;
+  }
 </style></head>
 <body>
-  <header>
-    <h1>Operator console</h1>
-    <p class="muted">Control lease: <strong>${lease.state}</strong> · held by <strong>${lease.holder}</strong></p>
-  </header>
-  ${body}
+  <div class="wrap">
+    <header>
+      <h1>Operator console</h1>
+      <span class="lease">control lease <strong>${lease.state}</strong> · held by <strong>${lease.holder}</strong></span>
+    </header>
+    ${body}
+  </div>
 <script>
   // Forward a click on the screenshot to the same coordinate on the live page.
   document.querySelectorAll('.screen').forEach((img) => {

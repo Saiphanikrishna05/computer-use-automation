@@ -20,7 +20,9 @@
       </tr>
       <tr>
         <td></td>
-        <td><input type="submit" name="go" id="ctl_<%= rid %>_g" value="<%= tenant.labels.searchButton %>">&nbsp;<input type="reset" name="clr" id="ctl_<%= rid %>_c" value="Clear"></td>
+        <!-- Post-upgrade the action was reworded to "Search Member". An exact
+             role+name match no longer holds; the ladder has to earn its keep. -->
+        <td><input type="submit" name="go" id="ctl_<%= rid %>_g" value="<%= drifted ? 'Search Member' : tenant.labels.searchButton %>">&nbsp;<input type="reset" name="clr" id="ctl_<%= rid %>_c" value="Clear"></td>
       </tr>
       </form>
     </table>

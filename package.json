@@ -15,7 +15,8 @@
     "agent-demo": "tsx src/cli/index.ts agent-demo",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "stability": "tsx src/cli/index.ts stability"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.68.0",

@@ -54,7 +54,22 @@ curl -s -X POST "$TARGET/_admin/reset" -o /dev/null
 ESC=$(ls -1dt runs/*/ | head -1)
 rm -rf evidence/replay-escalation-irreversible
 cp -R "$ESC" evidence/replay-escalation-irreversible
+# The console screenshot is captured mid-handoff by demo-escalation.sh; it is
+# the only visual record that the human-facing surface exists.
+[ -f /tmp/cua-operator-console.png ] && cp /tmp/cua-operator-console.png evidence/replay-escalation-irreversible/screenshots/operator-console.png
 echo "   → evidence/replay-escalation-irreversible"
+
+echo "── ui drift resilience ──"
+curl -s -X POST "$TARGET/_admin/reset" -o /dev/null
+npx tsx src/cli/index.ts replay "$CAP" -i memberId=100001 --headless --no-operator >/dev/null 2>&1
+BEFORE=$(ls -1dt runs/*/ | head -1)
+rm -rf evidence/replay-before-ui-drift && cp -R "$BEFORE" evidence/replay-before-ui-drift
+curl -s -X POST -H 'content-type: application/json' -d '{"enabled":true}' "$TARGET/_admin/drift" -o /dev/null
+npx tsx src/cli/index.ts replay "$CAP" -i memberId=100001 --headless --no-operator >/dev/null 2>&1
+AFTER=$(ls -1dt runs/*/ | head -1)
+rm -rf evidence/replay-after-ui-drift && cp -R "$AFTER" evidence/replay-after-ui-drift
+curl -s -X POST "$TARGET/_admin/reset" -o /dev/null
+echo "   → evidence/replay-before-ui-drift and evidence/replay-after-ui-drift"
 
 # Playwright videos are large and add nothing a screenshot does not.
 find evidence -type d -name video -exec rm -rf {} + 2>/dev/null

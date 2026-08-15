@@ -2,16 +2,16 @@
   "capabilityId": "lookup_member_savings_balance",
   "capabilityVersion": 1,
   "tenantId": "northpoint-fcu",
-  "startedAt": "2026-08-15T04:04:56.312Z",
-  "finishedAt": "2026-08-15T04:04:57.703Z",
-  "durationMs": 1391,
+  "startedAt": "2026-08-15T04:05:19.618Z",
+  "finishedAt": "2026-08-15T04:05:21.074Z",
+  "durationMs": 1456,
   "steps": [
     {
       "stepId": "type_1",
       "intent": "Enter the operator ID in the Operator Sign-On panel",
       "action": "type",
       "status": "ok",
-      "elapsedMs": 169,
+      "elapsedMs": 172,
       "recoveries": [],
       "resolution": {
         "targetDescription": "textbox labelled \"User ID\" in the Operator Sign-On panel",
@@ -26,7 +26,7 @@
         "winningTier": 2,
         "winningKind": "label",
         "degraded": false,
-        "elapsedMs": 15
+        "elapsedMs": 16
       }
     },
     {
@@ -34,7 +34,7 @@
       "intent": "Enter the operator password in the Operator Sign-On panel",
       "action": "type",
       "status": "ok",
-      "elapsedMs": 234,
+      "elapsedMs": 238,
       "recoveries": [],
       "resolution": {
         "targetDescription": "textbox labelled \"Password\" in the Operator Sign-On panel",
@@ -57,7 +57,7 @@
       "intent": "Submit the operator sign-on form to access the servicing console",
       "action": "click",
       "status": "ok",
-      "elapsedMs": 277,
+      "elapsedMs": 282,
       "recoveries": [],
       "resolution": {
         "targetDescription": "button \"Sign On\" in the Operator Sign-On panel",
@@ -80,7 +80,7 @@
       "intent": "Type the member number into the Member ID field of the Member Search panel",
       "action": "type",
       "status": "ok",
-      "elapsedMs": 121,
+      "elapsedMs": 119,
       "recoveries": [],
       "resolution": {
         "targetDescription": "textbox labelled \"Member ID\" in the Member Search panel",
@@ -95,7 +95,7 @@
         "winningTier": 2,
         "winningKind": "label",
         "degraded": false,
-        "elapsedMs": 10
+        "elapsedMs": 9
       }
     },
     {
@@ -103,7 +103,7 @@
       "intent": "Run the member search for the entered member ID",
       "action": "click",
       "status": "ok",
-      "elapsedMs": 295,
+      "elapsedMs": 271,
       "recoveries": [],
       "resolution": {
         "targetDescription": "button \"Search\" in the Member Search panel",
@@ -118,26 +118,22 @@
         "winningTier": 1,
         "winningKind": "role_name",
         "degraded": false,
-        "elapsedMs": 6
+        "elapsedMs": 7
       }
     }
   ],
   "degradedResolutions": 0,
   "evidence": {
-    "runId": "replay-20260815T040456-01",
-    "bundlePath": "runs/replay-20260815T040456-01",
+    "runId": "replay-20260815T040519-01",
+    "bundlePath": "runs/replay-20260815T040519-01",
     "screenshots": [
-      "runs/replay-20260815T040456-01/screenshots/021-declared-failure-session-expired.png"
+      "runs/replay-20260815T040519-01/screenshots/025-replay-success.png"
     ],
-    "domSnapshots": [
-      "runs/replay-20260815T040456-01/dom/022-declared-failure-session-expired.html"
-    ]
+    "domSnapshots": []
   },
-  "status": "failure",
-  "error": {
-    "code": "SESSION_EXPIRED",
-    "expected": "the application to be in a usable state",
-    "observed": "The host closed the terminal session (page contains \"Your session has expired\")",
-    "detail": "SERVICING Member Search Account Inquiry Transaction History ADMINISTRATION Sign Off Northpoint FCU · Meridian Core 1.4.2 Session Ended Your session has expired. The terminal session was closed by the host after a period of inactivity. Sign on again to continue. Return to sign-on Meridian Core Servicing Console · session terminal T-0114 · unauthorised access is prohibited"
+  "status": "success",
+  "outputs": {
+    "savingsBalance": 4182.55,
+    "memberName": "Dolores Ashcroft"
   }
 }

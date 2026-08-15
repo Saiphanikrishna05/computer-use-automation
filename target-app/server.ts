@@ -57,6 +57,17 @@ export function createApp(tenant: TenantConfig) {
   const sessions = new Map<string, Session>();
   const faults = new FaultStore();
 
+  /**
+   * Simulates a vendor point release: the kind of change that actually happens
+   * to enterprise software between releases. A button is reworded, a table's
+   * columns are re-ordered, a new column appears, the styling is refreshed.
+   *
+   * Nothing about the *flow* changes — which is exactly the case a recorded
+   * capability is supposed to survive, and the case that separates a locator
+   * ladder from a stored selector.
+   */
+  let drifted = false;
+
   app.set('view engine', 'ejs');
   app.set('views', join(here, 'views'));
   app.use(express.urlencoded({ extended: false }));
@@ -65,6 +76,7 @@ export function createApp(tenant: TenantConfig) {
   // Base render locals every view gets.
   app.use((req: Request, res: Response, next: NextFunction) => {
     res.locals.tenant = tenant;
+    res.locals.drifted = drifted;
     res.locals.rid = rid();
     res.locals.formatMoney = formatMoney;
     next();
@@ -136,7 +148,15 @@ export function createApp(tenant: TenantConfig) {
   app.post('/_admin/reset', (_req, res) => {
     faults.reset();
     sessions.clear();
+    drifted = false;
     res.json({ ok: true });
+  });
+
+  app.get('/_admin/drift', (_req, res) => res.json({ drifted }));
+
+  app.post('/_admin/drift', (req, res) => {
+    drifted = req.body?.enabled !== false;
+    res.json({ drifted });
   });
 
   // -------------------------------------------------------------------------

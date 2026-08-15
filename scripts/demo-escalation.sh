@@ -52,6 +52,9 @@ echo "── operator takes control of the live session ──"
 curl -s -X POST "$CONSOLE/intervention/$INTERVENTION/take" \
   -H 'content-type: application/json' -d '{"operatorId":"supervisor-04"}' -o /dev/null
 
+echo "── capturing the operator console for the evidence bundle ──"
+npx tsx scripts/capture-console.ts "$CONSOLE/" /tmp/cua-operator-console.png || true
+
 echo "── operator performs the irreversible submit themselves ──"
 # Focus is still in the deposit field where the automation left it, so Enter
 # submits the form. This lands on the same page, in the same session.
