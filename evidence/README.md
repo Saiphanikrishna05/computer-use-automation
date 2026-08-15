@@ -28,6 +28,7 @@ exactly as it happened.
 | `replay-failure-input-validation/` | A malformed member ID is rejected against the declared input contract before the application is touched at all. |
 | `replay-escalation-irreversible/` | The irreversible step is refused by policy, a human takes control of the same live session, performs the submit, and hands back. Their actions are in the log. |
 | `replay-tenant-b-cascade/` | The same base artifact plus a small tenant overlay, replayed against a second institution running the same vendor product. |
+| `discovery-first-run-unvalidated/` | **The first discovery run, kept deliberately.** All four business outcomes the model declared were wrong — `SIGN_ON_FAILED` was keyed on `"Operator Sign-On"`, the title of the sign-on panel itself, so every replay would have terminated on turn zero. This is the run that produced `src/discovery/validate.ts`, and the same three conditions are the fixtures in `tests/validate.test.ts`. |
 | `discovery-saucedemo-public-site/` | A discovery run against **saucedemo.com** — third-party markup I did not write. Proof the perception and locator layers are not overfitted to my own stand-in application. The model also declined to click *Finish*, unprompted, because submitting the order is irreversible. |
 | `replay-saucedemo-public-site/` | That capability replayed deterministically. 10/10 steps, zero degraded locators. |
 

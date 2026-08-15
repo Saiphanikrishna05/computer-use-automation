@@ -1,0 +1,289 @@
+[
+  {
+    "turn": 1,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "text",
+        "text": "I'll start by observing the current screen."
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_017LDRCuQfapoaZwaLT45z9a",
+        "name": "observe",
+        "input": {},
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 2,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_01HEs9ZE6yYtj3FQHeY9eJ5J",
+        "name": "type",
+        "input": {
+          "ref": "main#5",
+          "text": "teller01",
+          "intent": "Enter the operator ID in the Operator Sign-On panel"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 3,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_01QWwnJcbgegNUhTkNpNJpBz",
+        "name": "type",
+        "input": {
+          "ref": "main#7",
+          "text": "[redacted:literal]",
+          "intent": "Enter the operator password in the Operator Sign-On panel"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 4,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_01RpdX73WYiGbxxz3t5mqxVy",
+        "name": "click",
+        "input": {
+          "ref": "main#8",
+          "intent": "Submit the operator sign-on form to access the servicing console"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 5,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_012cYEm1gnZCJ1W6cEwtZQoC",
+        "name": "observe",
+        "input": {},
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 6,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_01JHLgEpsXeQT2PTqWbAQpSW",
+        "name": "type",
+        "input": {
+          "ref": "contentFrame#5",
+          "text": "100001",
+          "intent": "Type the member number into the Member ID field of the Member Search panel"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 7,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_014wk97cQdSXM3EQTP1StchF",
+        "name": "click",
+        "input": {
+          "ref": "contentFrame#8",
+          "intent": "Run the member search for the entered member ID"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 8,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_013MsALovo3Rz7dQNUsAjUZu",
+        "name": "observe",
+        "input": {},
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 9,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "text",
+        "text": "The member detail loaded. Let me extract the savings balance and member name."
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01JG9HeUdNzTMAT9BUoef9Ku",
+        "name": "extract_value",
+        "input": {
+          "ref": "contentFrame#29",
+          "name": "savingsBalance",
+          "type": "money",
+          "description": "Current balance of the member's Savings account",
+          "sensitivity": "financial"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 10,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_01AcqgY5D5S8iFviRmbJLVpC",
+        "name": "extract_value",
+        "input": {
+          "ref": "contentFrame#10",
+          "name": "memberName",
+          "type": "string",
+          "description": "Full name of the member, to confirm the correct record was retrieved",
+          "sensitivity": "pii"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 11,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_01Po6VLVDQqJQ6DU8nrVz7jA",
+        "name": "extract_value",
+        "input": {
+          "ref": "contentFrame#6",
+          "name": "memberId",
+          "type": "string",
+          "description": "Member ID shown on the retrieved Member Profile, confirming the searched member",
+          "sensitivity": "financial"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 12,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_01LJYWijm9zjJtPxmKUEL94G",
+        "name": "extract_value",
+        "input": {
+          "ref": "contentFrame#8",
+          "name": "memberStatus",
+          "type": "string",
+          "description": "Membership status (e.g. Active, Closed)",
+          "sensitivity": "none"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 13,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "thinking",
+        "thinking": "",
+        "signature": "CAIS9wEKhwEIEBgCKkCFAhgAgv9fzLlNwWpc4MMgmXhxAzQCwlKWmG4tUNyNBVLILnWb35bdcfgoWYJBN1a4bWLuJHYhteIumZjFJKwhMg1jbGF1ZGUtb3B1cy01OAFCCHRoaW5raW5nWiQyZDczZDMwZi03MzE2LTRkOWMtOGZmNS01ZWIzZTNiMTNkOGUSDOGy0M8ecsvMUJ6KbhoMbXvk3Tb4IZmhpPryIjCWKR0zjC5Oa4Qi5bwQVbJsVbke33Gg2buP/h3XsBDkEt8ylNQUE6wjqjxpJOZCwKwqHQZXMVbKTAiRGhjSwBwCGC1/XGcOLc+dszXaMcykGAE="
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01LY5bcRurnNHHvUaQs4YdoJ",
+        "name": "finish",
+        "input": {
+          "capabilityId": "lookup_member_savings_balance",
+          "title": "Look up a member's savings balance",
+          "description": "Signs on to the Meridian Core Servicing Console, searches the Member Search panel by Member ID, and reads the resulting Member Detail screen. Returns memberId, memberName, memberStatus and savingsBalance (the Current Balance of the Savings row in the Accounts table). Read-only: it performs no transactions and changes no records.",
+          "parameters": [
+            {
+              "name": "memberId",
+              "type": "string",
+              "description": "The credit union member number to look up.",
+              "value": "100001",
+              "pattern": "^\\d{6}$"
+            }
+          ],
+          "checkpointDescription": "The Member Detail screen is displayed with a Member Profile panel showing the searched Member ID, and an Accounts panel containing a Savings row with a Current Balance amount.",
+          "checkpointText": "Member Profile",
+          "expectedOutcomes": [
+            {
+              "code": "MEMBER_NOT_FOUND",
+              "description": "No member exists for the supplied Member ID, so the Member Detail screen is not reached.",
+              "textWhenPresent": "No member found"
+            },
+            {
+              "code": "NO_SAVINGS_ACCOUNT",
+              "description": "The member record loads but the Accounts table contains no Savings row, so no savings balance can be read.",
+              "textWhenPresent": "Accounts table present without a \"Savings\" row"
+            },
+            {
+              "code": "SIGN_ON_FAILED",
+              "description": "The operator credentials were rejected and the console was never reached.",
+              "textWhenPresent": "Operator Sign-On"
+            },
+            {
+              "code": "NOT_ENTITLED",
+              "description": "The signed-on operator lacks entitlement to view this member's account balances.",
+              "textWhenPresent": "Not authorized"
+            }
+          ]
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  }
+]

@@ -55,6 +55,10 @@ paths are guesses — and in the first real run all four were wrong. One
 page itself*, so every replay would have terminated on turn zero reporting a
 sign-on failure.
 
+That run is kept as `evidence/discovery-first-run-unvalidated/`, and its three
+conditions are the fixtures in `tests/validate.test.ts` — the claim is checkable
+rather than anecdotal.
+
 That produced a mechanism I hadn't planned: **post-discovery validation**
 (`src/discovery/validate.ts`) evaluates every declared condition against both the
 success state and the entry state. A condition holding in either is broken by
