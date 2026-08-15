@@ -235,8 +235,13 @@ fallback on replay failure — the obvious next feature; I preferred replay to h
 exactly one mode.
 
 **Known imperfections.** The column-header heuristic picks the first row with a
-matching cell count, which on a label/value grid yields a meaningless column
-qualifier — harmless, since it only appears as a secondary candidate, but wrong.
+matching cell count, which on a label/value grid ("Member ID | 100001 | Status |
+Active") finds no qualifier at all. The drift counter caught the consequence
+before it broke anything: a row-label candidate matched every value cell in its
+row and the ladder fell through to *coordinates*, tier 6. Fixed by recording a
+cell's position within its own row as the descriptor ordinal, so the choice is
+deterministic rather than positional-by-pixel; the underlying heuristic is still
+wrong for grids that are not tables.
 `open_sub_account` is hand-authored rather than discovered, because the discovery
 agent is forbidden from irreversible actions and so cannot walk that flow to its
 end; that constraint is deliberate, and the artifact exists to exercise the

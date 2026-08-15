@@ -42,6 +42,8 @@ export interface RawUiNode {
   attributes: Record<string, string>;
   box?: { x: number; y: number; width: number; height: number };
   ordinalAmongPeers: number;
+  /** For a table cell, its position within its own row. */
+  cellIndex?: number;
 }
 
 export interface RawSnapshot {
@@ -372,6 +374,8 @@ export function collectUiNodes(): RawSnapshot {
       node.nearestLabel = label.text;
       node.nearestLabelPositional = label.positional;
     }
+    const ownCell = el.closest('td, th') as HTMLTableCellElement | null;
+    if (ownCell === el && ownCell.cellIndex >= 0) node.cellIndex = ownCell.cellIndex;
     if (headers.row) node.rowHeader = headers.row;
     if (headers.column) node.columnHeader = headers.column;
     if (container.role) node.containerRole = container.role;

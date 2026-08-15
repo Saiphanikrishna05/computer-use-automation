@@ -9,7 +9,7 @@
       },
       {
         "type": "tool_use",
-        "id": "toolu_01N1pFqeBrE3dRXWZv6zimzM",
+        "id": "toolu_018U91dNNUHPv7xunEwpH8JL",
         "name": "observe",
         "input": {},
         "caller": {
@@ -28,7 +28,7 @@
       },
       {
         "type": "tool_use",
-        "id": "toolu_01GkME1WsmpwxcbgLPo7wxq6",
+        "id": "toolu_01M5h36uvEiBSzSP1VSzGCNw",
         "name": "type",
         "input": {
           "ref": "main#5",
@@ -41,7 +41,7 @@
       },
       {
         "type": "tool_use",
-        "id": "toolu_013PhvU3uYpZWHL8uvPmxyVn",
+        "id": "toolu_01DepdtcNVbUTt59yGDeByyv",
         "name": "type",
         "input": {
           "ref": "main#7",
@@ -60,7 +60,7 @@
     "content": [
       {
         "type": "tool_use",
-        "id": "toolu_01E7ierjPvHL3PJkbVe1X1dh",
+        "id": "toolu_014c4nhM34PA5YXtoNppaJuJ",
         "name": "click",
         "input": {
           "ref": "main#8",
@@ -78,7 +78,7 @@
     "content": [
       {
         "type": "tool_use",
-        "id": "toolu_01UH7Gt5ZBfceS21p3XoT9oz",
+        "id": "toolu_016AbHBf3A866H5DSvn4gZks",
         "name": "observe",
         "input": {},
         "caller": {
@@ -93,7 +93,7 @@
     "content": [
       {
         "type": "tool_use",
-        "id": "toolu_01B5rRQzUp66B4y4s8bMshmc",
+        "id": "toolu_01K8yduLjEcHBNFB5SMVDV77",
         "name": "type",
         "input": {
           "ref": "contentFrame#5",
@@ -112,7 +112,7 @@
     "content": [
       {
         "type": "tool_use",
-        "id": "toolu_01GKEB5i1wJYx6TQ2Ricob8q",
+        "id": "toolu_019qwx6tDgyNXN3xAycqXBtv",
         "name": "click",
         "input": {
           "ref": "contentFrame#8",
@@ -130,7 +130,7 @@
     "content": [
       {
         "type": "tool_use",
-        "id": "toolu_016PsjYHtKAv2tFjMYV1fE1i",
+        "id": "toolu_01VLwMwwMU1cawuEPGXgPu3T",
         "name": "observe",
         "input": {},
         "caller": {
@@ -145,11 +145,11 @@
     "content": [
       {
         "type": "text",
-        "text": "The member detail loaded. Let me extract the savings balance and member name."
+        "text": "The member detail is displayed. Let me extract the savings balance and member name."
       },
       {
         "type": "tool_use",
-        "id": "toolu_01Gg9F8gkNriDCmXFtSxxPzU",
+        "id": "toolu_01Dm6M6kqe6rhvvUc8NYW5xy",
         "name": "extract_value",
         "input": {
           "ref": "contentFrame#29",
@@ -164,13 +164,13 @@
       },
       {
         "type": "tool_use",
-        "id": "toolu_01MuhAnpPkY6zgLDJGBBpCMC",
+        "id": "toolu_0115Hn59A9tWi8kAGzCdnX4f",
         "name": "extract_value",
         "input": {
           "ref": "contentFrame#10",
           "name": "memberName",
           "type": "string",
-          "description": "Full name of the member, to confirm the correct record was retrieved",
+          "description": "Full name of the member on the Member Profile panel",
           "sensitivity": "pii"
         },
         "caller": {
@@ -184,54 +184,18 @@
     "role": "assistant",
     "content": [
       {
-        "type": "tool_use",
-        "id": "toolu_01DMRrw2H3ePjzjSfce6mU11",
-        "name": "extract_value",
-        "input": {
-          "ref": "contentFrame#6",
-          "name": "memberId",
-          "type": "string",
-          "description": "Member ID shown on the retrieved Member Profile, to confirm it matches the requested member",
-          "sensitivity": "pii"
-        },
-        "caller": {
-          "type": "direct"
-        }
-      },
-      {
-        "type": "tool_use",
-        "id": "toolu_01Q2WR5PJ1UADnXBov2F5PyS",
-        "name": "extract_value",
-        "input": {
-          "ref": "contentFrame#8",
-          "name": "memberStatus",
-          "type": "string",
-          "description": "Membership status shown on the Member Profile panel (e.g. Active)",
-          "sensitivity": "none"
-        },
-        "caller": {
-          "type": "direct"
-        }
-      }
-    ]
-  },
-  {
-    "turn": 10,
-    "role": "assistant",
-    "content": [
-      {
         "type": "thinking",
         "thinking": "",
-        "signature": "CAIS7AcKhwEIEBgCKkAZLQ2a7KlmjKq7HSDy7t2odoCaKR3WA08CZQmJGxS84ucHj3GBQbO3mL5EkmojNuend4+7b+DVFIlCAIm4fBJIMg1jbGF1ZGUtb3B1cy01OAFCCHRoaW5raW5nWiQyZDczZDMwZi03MzE2LTRkOWMtOGZmNS01ZWIzZTNiMTNkOGUSDJlTQCtLxkL9OKPhAhoMVp9iDKoKzFLOjPqyIjCgw9DrFWJjGlQzY1Kze2XVEIIRNFrv0PX3IWP7KWKiaNceydrjxAHDGF0FnrPM96QqkQYT8X+/PwQkAPrrlLpuhCe4nL8Y3O/9WLqaIx8/TsnD/ZQkz+B0OhwXHQgBCxNAF1pAeSK/Xko5yf4qlZZoJuFZqA1plWiD6K2sHW7xE5C4ZHgLmluzhgtkP/6arL4noeUJPG/tnWxnqeJk/AB4zVCWAChX2Et5mhYA19OTkX7AY26SK5keFNP31tRjr7YInebTIqYrrOSPKgwK7DV3PP7HRWwOAFEmu3DYtPCebO5ZgUJhGeDQSGczLgj7H32/xlaIS30bObwoBtovTAiKmhLPgd5hR3Ko63RqmDCLD3lrKOY5DLU1wdhL4UtTPWXFS7monXKPljq9/t37ZlMdAyFg38GmsMG7RnFv7oxQY+6cE/aoVKV3O58SMm347Bxv1HN1zmN/ZhhzQuDfzMJ6MAUj88EgI21PX3v8acf8CbU38Z1CDDzGvwwS+ZXgkd2tiXgfpJeXf3B9LmL+vqxbxmypnebS7M+xr2K0ByNBfmb1GnbXgJoj19CYrw6nm4RcYjJbdBQw8D57pfU0wIEu62ju75iVE2cKVl8d0szmq71QmZyi8hZvKVKBaLi2JmbqmBaQhU0KkGAR5zBIoOrIhW8yNYw4F+f+WRz//0lr7rUSWONiLLijs2knetafQ7sIY5JIVx+2RTjdGKvfwaapT7zrQ+T+A3pQYgriKAEQLrR7kzT/3Zx06GSb7iOLDutvNbt2uIh79D+hcKZpjYbSmBoLVtlk47QgyrXEmolVRYUtK5luIsC/XZBqMAeoD0szQaywBUYXlnA2g1lL2qFj6b/1USlrmG/r8/qhAeojzwlV9T7Fbu8ae9ju0wA5DOlIHQPJvEqA66GJu/lvRXRfhsGF1Irx2suXWI3jl1fSTKpln0oiG6FfPKmX7jLGJcg0cE2FkxjyIQFjyIiVpCLSDcfkqZWrg79YurVY3DHmMEwzvHRea5ZENxGMhVhhEV661+aOVN57MV9d1R7x8wg8OrhYfoQV+4t0KcRO1y52IXT+OkOsZVSM44Kq3E2zDBjy7dFeo1sTcE+q/lIiwkCCoZ2XpxgB"
+        "signature": "CAISzAMKhwEIEBgCKkAH/7zjkJGrcfCGvno7LMf78/E6Vx+fZ7zlKC2CuOq36NjyTj4YaL1NNfLG5dbGLMfWbhmyGlZSr8vad4JvUkxIMg1jbGF1ZGUtb3B1cy01OAFCCHRoaW5raW5nWiQyZDczZDMwZi03MzE2LTRkOWMtOGZmNS01ZWIzZTNiMTNkOGUSDF5eQgvZ0ySsVowQ4BoMPXA7vzZdOL3FcLfFIjCEBEgrvWzcq4oAjBEmQHyR99G7fYrEDw7TBH565VJk6UjgXwBir4Q6KLxBgICU03Uq8QF669b0YVp7RbvlgdVrev7p/18AADDppKFGaygyb/2xA86In1CTcs0fMdethaCnH64L82A74aVjeGMW6s57ST1N2dkIKnDOzRV37bnwnZH4gLZXSduAqNeCg/Y7TOhXu7VNH2xbLDI4tHcz60e/kFWFOyH60XQaLL4ST0QP5FyeDRbg0JmViS1OEFSGOoW0jvDRhYD6T82A6HTDDWQTQui/Qh6QcQf7iKc2G6MP2WtJBjc4yel+Th7SIDh6H/swCvPLBYo5UwyL7WiGpaIJpG11TWfB/rqD7jqrwaha5JtOjoMqx29DoiRaZuRPppFY1Ij9GAE="
       },
       {
         "type": "tool_use",
-        "id": "toolu_01KimZz7eppAbYf58H2eAqp8",
+        "id": "toolu_01CzfnWqhKSH29EAXYTsuKsN",
         "name": "finish",
         "input": {
           "capabilityId": "lookup_member_savings_balance",
           "title": "Look up a member's savings balance",
-          "description": "Signs on to the Northpoint FCU Meridian Core Servicing Console, searches the Member Search panel by Member ID, and reads the member's Savings account current balance from the Accounts table on the Member Detail screen. Returns savingsBalance (money), plus memberId, memberName and memberStatus for verification. Read-only: it performs no transactions and changes no records.",
+          "description": "Signs on to the Northpoint FCU Meridian Core Servicing Console, searches the Member Search panel by Member ID, and returns the member's name and the Current Balance of their Savings account from the Accounts table on the Member Detail screen. Read-only: it performs no transactions and changes no data.",
           "parameters": [
             {
               "name": "memberId",
@@ -241,13 +205,23 @@
               "value": "100001"
             }
           ],
-          "checkpointDescription": "The Member Detail screen is displayed for the requested member, with a Member Profile panel and an Accounts table containing a Savings row showing a Current Balance.",
-          "checkpointText": "Member Detail",
+          "checkpointDescription": "The Member Detail screen is shown with the Member Profile panel for the requested member and an Accounts table containing a Savings row with a Current Balance.",
+          "checkpointText": "Member Profile",
           "expectedOutcomes": [
             {
               "code": "MEMBER_NOT_FOUND",
-              "description": "No member exists with the supplied member ID, so the console stays on the search screen and reports no match instead of opening Member Detail.",
+              "description": "No member exists with the supplied member ID, so the Member Detail screen is not reached.",
               "textWhenPresent": "No member found"
+            },
+            {
+              "code": "SIGN_ON_FAILED",
+              "description": "The operator credentials were rejected and the console could not be reached.",
+              "textWhenPresent": "Invalid credentials"
+            },
+            {
+              "code": "NO_SAVINGS_ACCOUNT",
+              "description": "The member exists but has no Savings account row in the Accounts table, so no savings balance can be returned.",
+              "textWhenPresent": "No accounts on file"
             }
           ]
         },

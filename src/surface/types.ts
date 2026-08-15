@@ -75,6 +75,8 @@ export interface UiNode {
    */
   rowHeader?: string;
   columnHeader?: string;
+  /** For a table cell, its position within its own row. */
+  cellIndex?: number;
 
   placeholder?: string;
   /** Values from password fields are never captured, logged, or sent onward. */

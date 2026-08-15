@@ -153,9 +153,7 @@ export function descriptorFor(node: UiNode, viewport: { width: number; height: n
           // nothing must not reach disk pretending to be usable.
           [{ kind: 'text', text: isUsableAsLocator(node.text) ? node.text : '', exact: false }],
     ...(Object.keys(anchor).length > 0 ? { anchor } : {}),
-    // Only recorded when the element genuinely had peers; a gratuitous ordinal
-    // would let an ambiguous match silently resolve instead of being reported.
-    ...(node.ordinalAmongPeers > 0 ? { ordinal: node.ordinalAmongPeers } : {}),
+    ...(ordinalFor(node) !== undefined ? { ordinal: ordinalFor(node) } : {}),
     evidence: {
       role: node.role,
       ...(isUsableAsLocator(node.name) ? { accessibleName: node.name } : {}),
@@ -165,6 +163,28 @@ export function descriptorFor(node: UiNode, viewport: { width: number; height: n
       viewport,
     },
   };
+}
+
+/**
+ * Which match to take when a candidate legitimately resolves to several.
+ *
+ * For a table cell this is its position within its own row, minus the row
+ * header. A label/value grid — "Member ID | 100001 | Status | Active" — has no
+ * column headings for the row-label candidate to qualify against, so that
+ * candidate matches every value cell in the row. Recording the position makes
+ * the choice deterministic; without it the ladder falls through to
+ * coordinates, which is both brittle and a silent downgrade.
+ *
+ * Everything else records an ordinal only when it genuinely had peers. A
+ * gratuitous ordinal would let an ambiguous match resolve quietly instead of
+ * being reported, which is the failure mode this whole design is built to
+ * avoid.
+ */
+function ordinalFor(node: UiNode): number | undefined {
+  if (CELL_ROLES.has(node.role) && typeof node.cellIndex === 'number' && node.cellIndex > 0) {
+    return node.cellIndex - 1;
+  }
+  return node.ordinalAmongPeers > 0 ? node.ordinalAmongPeers : undefined;
 }
 
 function clamp01(n: number): number {

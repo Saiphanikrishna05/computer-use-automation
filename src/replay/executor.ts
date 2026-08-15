@@ -537,6 +537,15 @@ export class ReplayEngine {
 
     for (const spec of specs) {
       const resolved = await driver.resolve(spec.extract.target);
+
+      // Output extraction resolves targets exactly as steps do, so it must
+      // report them the same way. Without this the drift counter could
+      // increment with nothing in the log to explain it — a headline signal
+      // that cannot be investigated is not a signal.
+      logger.event('resolution', `output "${spec.name}" → ${resolved.report.winningKind ?? 'unresolved'}`, {
+        report: resolved.report,
+      });
+
       if (!resolved.ok) {
         if (!spec.required) continue;
         await this.captureFailureEvidence(`extract-${spec.name}`);

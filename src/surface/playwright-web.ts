@@ -342,6 +342,7 @@ export class PlaywrightWebSurface implements SurfaceDriver {
         : {}),
       ...(raw.rowHeader !== undefined ? { rowHeader: this.redactor.text(raw.rowHeader) } : {}),
       ...(raw.columnHeader !== undefined ? { columnHeader: this.redactor.text(raw.columnHeader) } : {}),
+      ...(raw.cellIndex !== undefined ? { cellIndex: raw.cellIndex } : {}),
       attributes: raw.attributes,
       ...(raw.box ? { box: raw.box } : {}),
       tag: raw.tag,
