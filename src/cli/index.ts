@@ -28,7 +28,7 @@ function collectInputs(value: string, previous: Record<string, string>): Record<
 program
   .command('replay')
   .description('Replay a saved capability deterministically. No model is involved.')
-  .argument('<capability>', 'capability id, e.g. lookup_member_balance')
+  .argument('<capability>', 'capability id, e.g. lookup_member_savings_balance')
   .option('-i, --input <key=value>', 'capability input (repeatable)', collectInputs, {})
   .option('-v, --capability-version <n>', 'pin a specific artifact version', (v) => Number(v))
   .option('-t, --tenant <id>', `tenant to run against (${Object.keys(TENANT_RUNTIMES).join(', ')})`, DEFAULT_TENANT)

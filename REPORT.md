@@ -163,9 +163,9 @@ model regardless and stability scoring aggregates telemetry the drift signal
 already produced. Not built: a desktop driver (interface and design only), a full
 co-browsing console, multi-tenant plumbing. `restart_from_step` is in the schema
 and throws, because re-entering the step loop mid-recovery makes a run non-linear
-and its evidence unreadable. `open_sub_account` is hand-authored, since the
-discovery agent is forbidden irreversible actions and cannot walk that flow to
-its end — and the artifact exists to exercise the escalation path that constraint
+and its evidence unreadable. `open_sub_account` is the one hand-authored capability, since
+the discovery agent is forbidden irreversible actions and cannot walk that flow
+to its end — and the artifact exists to exercise the escalation path that constraint
 creates. Column headings are still inferred heuristically: right for tables,
 wrong for grids that are not tables. Overlay overrides are keyed by step id, which couples them to a
 particular recording: re-recording a capability orphans every override written

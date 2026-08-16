@@ -94,6 +94,14 @@ Leave it running in its own terminal.
 
 ## The demo path
 
+Everything below, narrated and in order, with a visible browser:
+
+```bash
+./scripts/demo.sh
+```
+
+Or step through it yourself:
+
 ### 1. Discover a capability with an LLM *(needs the API key)*
 
 ```bash

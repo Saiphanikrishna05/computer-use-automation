@@ -188,7 +188,7 @@ export const DISCOVERY_TOOLS: Anthropic.Tool[] = [
       properties: {
         capabilityId: {
           type: 'string',
-          description: 'snake_case identifier a calling agent will invoke, e.g. lookup_member_balance.',
+          description: 'snake_case identifier a calling agent will invoke, e.g. lookup_member_savings_balance.',
         },
         title: { type: 'string', description: 'Short human-readable title.' },
         description: {

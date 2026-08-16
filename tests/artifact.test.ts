@@ -5,17 +5,17 @@ import { applyOverlay } from '../src/artifact/store.js';
 import { toolDefinitionFor } from '../src/catalog/tools.js';
 
 const artifact = CapabilityArtifactSchema.parse(
-  JSON.parse(readFileSync('artifacts/lookup_member_balance.v1.json', 'utf8')),
+  JSON.parse(readFileSync('artifacts/lookup_member_savings_balance.v1.json', 'utf8')),
 );
 // The capability-scoped overlay, which is where step overrides live: they are
 // keyed by step id, and step ids belong to a recording.
 const overlay = TenantOverlaySchema.parse(
-  JSON.parse(readFileSync('artifacts/tenants/cascade-cu.lookup_member_balance.json', 'utf8')),
+  JSON.parse(readFileSync('artifacts/tenants/cascade-cu.lookup_member_savings_balance.json', 'utf8')),
 );
 
 describe('artifact schema', () => {
   it('parses the committed capability', () => {
-    expect(artifact.id).toBe('lookup_member_balance');
+    expect(artifact.id).toBe('lookup_member_savings_balance');
     expect(artifact.steps.length).toBeGreaterThan(0);
   });
 
@@ -92,7 +92,7 @@ describe('tenant overlay', () => {
 
   it('applies per-step target overrides for wording the base cannot absorb', () => {
     const { artifact: specialized } = applyOverlay(artifact, overlay);
-    const submit = specialized.steps.find((s) => s.id === 'submit_search')!;
+    const submit = specialized.steps.find((s) => s.id === 'click_5')!;
     const action = submit.action as { target: { candidates: Array<{ name?: string }> } };
     expect(action.target.candidates.some((c) => c.name === 'Find Member')).toBe(true);
   });
@@ -127,7 +127,7 @@ describe('agent-facing tool definition', () => {
   const tool = toolDefinitionFor(artifact);
 
   it('publishes the capability under its invocable name', () => {
-    expect(tool.name).toBe('lookup_member_balance');
+    expect(tool.name).toBe('lookup_member_savings_balance');
   });
 
   it('never exposes injected credentials to the calling agent', () => {
