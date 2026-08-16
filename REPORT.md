@@ -165,10 +165,14 @@ and its evidence unreadable. `open_sub_account` is hand-authored, since the
 discovery agent is forbidden irreversible actions and cannot walk that flow to
 its end — and the artifact exists to exercise the escalation path that constraint
 creates. Column headings are still inferred heuristically: right for tables,
-wrong for grids that are not tables. And overlay overrides are keyed by step id,
-which couples them to a particular recording — re-recording a capability
-silently orphans its overrides, as it did here until the run's own drift counter
-showed two locators falling to the structural tier on the second tenant.
+wrong for grids that are not tables. Overlay overrides are keyed by step id, which couples them to a
+particular recording: re-recording a capability orphans every override written
+against the old ids. That happened here, and the run's own drift counter caught
+it — two locators on the second tenant resolving three tiers below where the
+overlay intended, while the run still passed. Overrides are now scoped to one
+capability per file, and an override matching no step aborts the run rather than
+doing nothing, because a capability running without its tenant's corrections is
+the failure this system exists to prevent.
 
 **Next**, in order: **outcome probing during discovery** — after success, re-run
 the parameterized step with a bad input and *observe* the not-found screen

@@ -84,10 +84,25 @@ export function saveOverlay(overlay: TenantOverlay): string {
   return path;
 }
 
-export function loadOverlay(tenantId: string): TenantOverlay {
-  const path = join(OVERLAY_DIR, `${tenantId}.json`);
-  if (!existsSync(path)) throw new Error(`No tenant overlay at ${path}`);
-  return TenantOverlaySchema.parse(JSON.parse(readFileSync(path, 'utf8')));
+/**
+ * Loads a tenant's overlay, preferring one written for this specific
+ * capability.
+ *
+ * `<tenant>.<capability>.json` wins over the tenant-wide `<tenant>.json`.
+ * Step overrides are keyed by step id, and step ids belong to a *recording* —
+ * so an overlay that patches specific steps is really scoped to one
+ * capability, and pretending otherwise is what let a set of overrides sit in
+ * the wrong file doing nothing.
+ */
+export function loadOverlay(tenantId: string, capabilityId?: string): TenantOverlay {
+  const candidates = capabilityId
+    ? [join(OVERLAY_DIR, `${tenantId}.${capabilityId}.json`), join(OVERLAY_DIR, `${tenantId}.json`)]
+    : [join(OVERLAY_DIR, `${tenantId}.json`)];
+
+  for (const path of candidates) {
+    if (existsSync(path)) return TenantOverlaySchema.parse(JSON.parse(readFileSync(path, 'utf8')));
+  }
+  throw new Error(`No tenant overlay for "${tenantId}" at ${candidates.join(' or ')}`);
 }
 
 export function listOverlays(): TenantOverlay[] {
@@ -172,6 +187,33 @@ export function applyOverlay(
   }
 
   if (Object.keys(overlay.stepOverrides).length > 0) {
+    // An override that matches no step is a configuration error, and it has to
+    // be a loud one.
+    //
+    // Overrides are keyed by step id, which couples an overlay to a particular
+    // recording: re-record a capability and the generated ids change, orphaning
+    // every override written against the old ones. That happened here. Nothing
+    // failed — the overlay carried this tenant's reworded button and its
+    // relabelled field, neither was applied, and two locators quietly resolved
+    // three tiers lower than intended. The run still passed, only because both
+    // tenants happen to share a form field name.
+    //
+    // A capability running without its tenant's corrections is precisely the
+    // failure this system exists to prevent, so refusing to start is the
+    // correct behaviour: a wrong screen acted on confidently is worse than a
+    // replay that stops and says why.
+    const stepIds = new Set(next.steps.map((s) => s.id));
+    const orphaned = Object.keys(overlay.stepOverrides).filter((id) => !stepIds.has(id));
+    if (orphaned.length > 0) {
+      throw new Error(
+        `Tenant overlay "${overlay.tenantId}" declares an override for step(s) ` +
+          `${orphaned.map((id) => `"${id}"`).join(', ')}, which do not exist in capability ` +
+          `"${artifact.id}" v${artifact.version} (its steps are ` +
+          `${[...stepIds].map((id) => `"${id}"`).join(', ')}). ` +
+          `This usually means the capability was re-recorded and the overlay was not updated.`,
+      );
+    }
+
     next = {
       ...next,
       steps: next.steps

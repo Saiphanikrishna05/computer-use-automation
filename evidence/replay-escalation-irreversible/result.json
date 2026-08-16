@@ -2,16 +2,16 @@
   "capabilityId": "open_sub_account",
   "capabilityVersion": 1,
   "tenantId": "northpoint-fcu",
-  "startedAt": "2026-08-15T21:50:19.455Z",
-  "finishedAt": "2026-08-15T21:50:31.116Z",
-  "durationMs": 11661,
+  "startedAt": "2026-08-16T01:44:17.194Z",
+  "finishedAt": "2026-08-16T01:44:28.881Z",
+  "durationMs": 11687,
   "steps": [
     {
       "stepId": "enter_operator_id",
       "intent": "Type the operator user ID into the sign-on form",
       "action": "type",
       "status": "ok",
-      "elapsedMs": 1072,
+      "elapsedMs": 1091,
       "recoveries": [],
       "resolution": {
         "targetDescription": "User ID field on the sign-on screen",
@@ -26,7 +26,7 @@
         "winningTier": 2,
         "winningKind": "label",
         "degraded": false,
-        "elapsedMs": 14
+        "elapsedMs": 17
       }
     },
     {
@@ -34,7 +34,7 @@
       "intent": "Type the operator password into the sign-on form",
       "action": "type",
       "status": "ok",
-      "elapsedMs": 1156,
+      "elapsedMs": 1166,
       "recoveries": [],
       "resolution": {
         "targetDescription": "Password field on the sign-on screen",
@@ -49,7 +49,7 @@
         "winningTier": 2,
         "winningKind": "label",
         "degraded": false,
-        "elapsedMs": 14
+        "elapsedMs": 9
       }
     },
     {
@@ -57,7 +57,7 @@
       "intent": "Submit the sign-on form",
       "action": "click",
       "status": "ok",
-      "elapsedMs": 264,
+      "elapsedMs": 280,
       "recoveries": [],
       "resolution": {
         "targetDescription": "Sign On button",
@@ -72,7 +72,7 @@
         "winningTier": 1,
         "winningKind": "role_name",
         "degraded": false,
-        "elapsedMs": 11
+        "elapsedMs": 14
       }
     },
     {
@@ -88,79 +88,10 @@
       "intent": "Type the member number into the Member Search panel",
       "action": "type",
       "status": "ok",
-      "elapsedMs": 115,
+      "elapsedMs": 118,
       "recoveries": [],
       "resolution": {
         "targetDescription": "Member ID field in the Member Search panel",
-        "attempts": [
-          {
-            "kind": "label",
-            "tier": 2,
-            "matchCount": 1,
-            "chosen": true
-          }
-        ],
-        "winningTier": 2,
-        "winningKind": "label",
-        "degraded": false,
-        "elapsedMs": 11
-      }
-    },
-    {
-      "stepId": "submit_search",
-      "intent": "Run the member search",
-      "action": "click",
-      "status": "ok",
-      "elapsedMs": 254,
-      "recoveries": [],
-      "resolution": {
-        "targetDescription": "Search button in the Member Search panel",
-        "attempts": [
-          {
-            "kind": "role_name",
-            "tier": 1,
-            "matchCount": 1,
-            "chosen": true
-          }
-        ],
-        "winningTier": 1,
-        "winningKind": "role_name",
-        "degraded": false,
-        "elapsedMs": 5
-      }
-    },
-    {
-      "stepId": "open_form",
-      "intent": "Open the new sub-account request form for this member",
-      "action": "click",
-      "status": "ok",
-      "elapsedMs": 270,
-      "recoveries": [],
-      "resolution": {
-        "targetDescription": "Open Sub-Account button on the member detail screen",
-        "attempts": [
-          {
-            "kind": "role_name",
-            "tier": 1,
-            "matchCount": 1,
-            "chosen": true
-          }
-        ],
-        "winningTier": 1,
-        "winningKind": "role_name",
-        "degraded": false,
-        "elapsedMs": 19
-      }
-    },
-    {
-      "stepId": "choose_product",
-      "intent": "Choose the product type for the new sub-account",
-      "action": "select",
-      "status": "ok",
-      "elapsedMs": 26,
-      "recoveries": [],
-      "resolution": {
-        "targetDescription": "Product Type dropdown on the new account request form",
         "attempts": [
           {
             "kind": "label",
@@ -176,11 +107,80 @@
       }
     },
     {
+      "stepId": "submit_search",
+      "intent": "Run the member search",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 255,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "Search button in the Member Search panel",
+        "attempts": [
+          {
+            "kind": "role_name",
+            "tier": 1,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 1,
+        "winningKind": "role_name",
+        "degraded": false,
+        "elapsedMs": 6
+      }
+    },
+    {
+      "stepId": "open_form",
+      "intent": "Open the new sub-account request form for this member",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 265,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "Open Sub-Account button on the member detail screen",
+        "attempts": [
+          {
+            "kind": "role_name",
+            "tier": 1,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 1,
+        "winningKind": "role_name",
+        "degraded": false,
+        "elapsedMs": 18
+      }
+    },
+    {
+      "stepId": "choose_product",
+      "intent": "Choose the product type for the new sub-account",
+      "action": "select",
+      "status": "ok",
+      "elapsedMs": 23,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "Product Type dropdown on the new account request form",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 9
+      }
+    },
+    {
       "stepId": "enter_deposit",
       "intent": "Enter the opening deposit amount",
       "action": "type",
       "status": "ok",
-      "elapsedMs": 79,
+      "elapsedMs": 81,
       "recoveries": [],
       "resolution": {
         "targetDescription": "Initial Deposit field on the new account request form",
@@ -195,7 +195,7 @@
         "winningTier": 2,
         "winningKind": "label",
         "degraded": false,
-        "elapsedMs": 5
+        "elapsedMs": 6
       }
     },
     {
@@ -209,19 +209,19 @@
           "code": "HUMAN_CHANGE",
           "attempt": 1,
           "succeeded": true,
-          "note": "supervisor-04 at 2026-08-15T21:50:30.829Z: input \"initialDeposit\""
+          "note": "supervisor-04 at 2026-08-16T01:44:28.596Z: input \"initialDeposit\""
         },
         {
           "code": "HUMAN_CLICK",
           "attempt": 1,
           "succeeded": true,
-          "note": "supervisor-04 at 2026-08-15T21:50:30.830Z: input \"submit\""
+          "note": "supervisor-04 at 2026-08-16T01:44:28.598Z: input \"submit\""
         },
         {
           "code": "HUMAN_SUBMIT",
           "attempt": 1,
           "succeeded": true,
-          "note": "supervisor-04 at 2026-08-15T21:50:30.831Z: form \"\""
+          "note": "supervisor-04 at 2026-08-16T01:44:28.598Z: form \"\""
         }
       ],
       "resolution": {
@@ -244,16 +244,16 @@
   ],
   "degradedResolutions": 0,
   "evidence": {
-    "runId": "replay-20260815T215019-01",
-    "bundlePath": "runs/replay-20260815T215019-01",
+    "runId": "replay-20260816T014417-01",
+    "bundlePath": "runs/replay-20260816T014417-01",
     "screenshots": [
-      "runs/replay-20260815T215019-01/screenshots/036-escalation-submit-request.png",
-      "runs/replay-20260815T215019-01/screenshots/053-replay-success.png"
+      "runs/replay-20260816T014417-01/screenshots/036-escalation-submit-request.png",
+      "runs/replay-20260816T014417-01/screenshots/053-replay-success.png"
     ],
     "domSnapshots": []
   },
   "status": "success",
   "outputs": {
-    "reference": "SA-09E7D8"
+    "reference": "SA-58BF70"
   }
 }

@@ -40,7 +40,7 @@ export async function runReplayCommand(options: ReplayCommandOptions): Promise<R
     : configured;
   const base = loadArtifact(options.capability, options.version);
 
-  const overlay = tenant.overlayId ? loadOverlay(tenant.overlayId) : undefined;
+  const overlay = tenant.overlayId ? loadOverlay(tenant.overlayId, base.id) : undefined;
   const specialized = applyOverlay(base, overlay);
 
   const runId = newRunId('replay');

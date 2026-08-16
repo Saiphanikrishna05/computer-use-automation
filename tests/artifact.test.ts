@@ -7,8 +7,10 @@ import { toolDefinitionFor } from '../src/catalog/tools.js';
 const artifact = CapabilityArtifactSchema.parse(
   JSON.parse(readFileSync('artifacts/lookup_member_balance.v1.json', 'utf8')),
 );
+// The capability-scoped overlay, which is where step overrides live: they are
+// keyed by step id, and step ids belong to a recording.
 const overlay = TenantOverlaySchema.parse(
-  JSON.parse(readFileSync('artifacts/tenants/cascade-cu.json', 'utf8')),
+  JSON.parse(readFileSync('artifacts/tenants/cascade-cu.lookup_member_balance.json', 'utf8')),
 );
 
 describe('artifact schema', () => {
@@ -39,6 +41,27 @@ describe('artifact schema', () => {
 });
 
 describe('tenant overlay', () => {
+  it('refuses to run when an override matches no step, instead of silently doing nothing', () => {
+    // The bug this pins. Overrides are keyed by step id, and step ids belong to
+    // a recording — so re-recording a capability orphans every override written
+    // against the old ids. It happened: this tenant's reworded button and
+    // relabelled field went un-applied, two locators quietly resolved three
+    // tiers lower, and the run still passed because both tenants happen to
+    // share a form field name.
+    //
+    // A capability running without its tenant's corrections is the exact
+    // failure this system exists to prevent, so it has to be loud.
+    const stale = {
+      ...overlay,
+      stepOverrides: { ...overlay.stepOverrides, a_step_that_was_renamed: { skip: true } },
+    };
+
+    expect(() => applyOverlay(artifact, stale)).toThrowError(/a_step_that_was_renamed/);
+    // And it must say what the capability's steps actually are, so the fix is
+    // obvious from the message alone.
+    expect(() => applyOverlay(artifact, stale)).toThrowError(new RegExp(artifact.steps[0]!.id));
+  });
+
   it('rewrites frame names everywhere they appear, not just in steps', () => {
     const { artifact: specialized, appliedChanges } = applyOverlay(artifact, overlay);
 
