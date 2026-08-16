@@ -1,5 +1,5 @@
 /**
- * `stability` — replay a capability N times and report how reliably it runs.
+ * `stability`, replay a capability N times and report how reliably it runs.
  *
  * The useful output is not the pass rate. A capability that passes ten times
  * out of ten while three of its steps resolve through the structural tier is
@@ -100,12 +100,12 @@ export async function runStabilityCommand(opts: StabilityOptions): Promise<numbe
 
   const verdict =
     failures > 0
-      ? 'NOT STABLE — at least one run failed outright.'
+      ? 'NOT STABLE, at least one run failed outright.'
       : unstable > 0
-        ? 'UNSTABLE LOCATORS — a step resolved through different tiers across runs; the page is answering the same question two ways.'
+        ? 'UNSTABLE LOCATORS, a step resolved through different tiers across runs; the page is answering the same question two ways.'
         : weak > 0
-          ? 'STABLE BUT DEGRADED — every run passed, but a locator is resolving below the tier it was recorded at. Re-record before it breaks.'
-          : 'STABLE — every run passed at the recorded locator tier.';
+          ? 'STABLE BUT DEGRADED, every run passed, but a locator is resolving below the tier it was recorded at. Re-record before it breaks.'
+          : 'STABLE, every run passed at the recorded locator tier.';
 
   process.stdout.write(`\n  ${verdict}\n${'─'.repeat(72)}\n\n`);
 
@@ -114,7 +114,7 @@ export async function runStabilityCommand(opts: StabilityOptions): Promise<numbe
   //
   // Degradation deliberately does not block. A capability resolving through a
   // weaker tier still works, and failing it would stop a working automation on
-  // a warning — which is the opposite of what an early-warning signal is for.
+  // a warning, which is the opposite of what an early-warning signal is for.
   // It exits 2 so CI can surface it without gating on it.
   if (failures > 0 || unstable > 0) return 1;
   return weak > 0 ? 2 : 0;

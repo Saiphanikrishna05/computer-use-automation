@@ -2,16 +2,16 @@
   "capabilityId": "lookup_member_savings_balance",
   "capabilityVersion": 1,
   "tenantId": "northpoint-fcu",
-  "startedAt": "2026-08-16T01:49:07.160Z",
-  "finishedAt": "2026-08-16T01:49:08.608Z",
-  "durationMs": 1448,
+  "startedAt": "2026-08-16T05:33:17.755Z",
+  "finishedAt": "2026-08-16T05:33:19.352Z",
+  "durationMs": 1597,
   "steps": [
     {
       "stepId": "type_1",
       "intent": "Enter the operator ID in the Operator Sign-On panel",
       "action": "type",
       "status": "ok",
-      "elapsedMs": 173,
+      "elapsedMs": 256,
       "recoveries": [],
       "resolution": {
         "targetDescription": "textbox labelled \"User ID\" in the Operator Sign-On panel",
@@ -26,7 +26,7 @@
         "winningTier": 2,
         "winningKind": "label",
         "degraded": false,
-        "elapsedMs": 16
+        "elapsedMs": 32
       }
     },
     {
@@ -34,7 +34,7 @@
       "intent": "Enter the operator password in the Operator Sign-On panel",
       "action": "type",
       "status": "ok",
-      "elapsedMs": 236,
+      "elapsedMs": 261,
       "recoveries": [],
       "resolution": {
         "targetDescription": "textbox labelled \"Password\" in the Operator Sign-On panel",
@@ -49,7 +49,7 @@
         "winningTier": 2,
         "winningKind": "label",
         "degraded": false,
-        "elapsedMs": 7
+        "elapsedMs": 8
       }
     },
     {
@@ -57,7 +57,7 @@
       "intent": "Submit the operator sign-on form to access the servicing console",
       "action": "click",
       "status": "ok",
-      "elapsedMs": 282,
+      "elapsedMs": 277,
       "recoveries": [],
       "resolution": {
         "targetDescription": "button \"Sign On\" in the Operator Sign-On panel",
@@ -72,7 +72,7 @@
         "winningTier": 1,
         "winningKind": "role_name",
         "degraded": false,
-        "elapsedMs": 6
+        "elapsedMs": 7
       }
     },
     {
@@ -103,7 +103,7 @@
       "intent": "Run the member search for the entered member ID",
       "action": "click",
       "status": "ok",
-      "elapsedMs": 261,
+      "elapsedMs": 279,
       "recoveries": [],
       "resolution": {
         "targetDescription": "button \"Search\" in the Member Search panel",
@@ -124,10 +124,10 @@
   ],
   "degradedResolutions": 0,
   "evidence": {
-    "runId": "replay-20260816T014906-01",
-    "bundlePath": "runs/replay-20260816T014906-01",
+    "runId": "replay-20260816T053316-01",
+    "bundlePath": "runs/replay-20260816T053316-01",
     "screenshots": [
-      "runs/replay-20260816T014906-01/screenshots/025-replay-success.png"
+      "runs/replay-20260816T053316-01/screenshots/025-replay-success.png"
     ],
     "domSnapshots": []
   },

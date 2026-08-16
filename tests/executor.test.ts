@@ -154,7 +154,7 @@ function engineFor(art: CapabilityArtifact, driver: SurfaceDriver, extra: Record
   });
 }
 
-describe('ReplayEngine — the happy path', () => {
+describe('ReplayEngine, the happy path', () => {
   it('runs the steps, verifies the checkpoint, and returns typed outputs', async () => {
     const { driver } = scriptedSurface(['SEARCH SCREEN', 'MEMBER PROFILE BALANCE=$4,182.55']);
     const result = await engineFor(artifact(), driver).run();
@@ -166,14 +166,14 @@ describe('ReplayEngine — the happy path', () => {
   });
 });
 
-describe('ReplayEngine — gates that run before anything is touched', () => {
+describe('ReplayEngine, gates that run before anything is touched', () => {
   it('refuses a draft capability', async () => {
     const { driver, clicks } = scriptedSurface(['SEARCH SCREEN', 'MEMBER PROFILE']);
     const result = await engineFor(artifact({ approval: { state: 'draft' } }), driver).run();
 
     expect(result.status).toBe('failure');
     if (result.status === 'failure') expect(result.error.code).toBe('ARTIFACT_NOT_APPROVED');
-    // Nothing was driven — the gate is before the surface, not after it.
+    // Nothing was driven, the gate is before the surface, not after it.
     expect(clicks).toHaveLength(0);
   });
 
@@ -195,7 +195,7 @@ describe('ReplayEngine — gates that run before anything is touched', () => {
   });
 });
 
-describe('ReplayEngine — precedence', () => {
+describe('ReplayEngine, precedence', () => {
   it('reports a business outcome instead of continuing to drive', async () => {
     // The single most important ordering rule in the engine: a run that
     // notices "no such member" and keeps clicking is the bug this prevents.
@@ -260,7 +260,7 @@ describe('ReplayEngine — precedence', () => {
   });
 });
 
-describe('ReplayEngine — recovery', () => {
+describe('ReplayEngine, recovery', () => {
   const recoveringArtifact = (maxAttempts: number) =>
     artifact({
       steps: [
@@ -307,7 +307,7 @@ describe('ReplayEngine — recovery', () => {
   });
 });
 
-describe('ReplayEngine — escalation', () => {
+describe('ReplayEngine, escalation', () => {
   const handler = (resolution: InterventionOutcome['resolution']): EscalationHandler => ({
     raise: vi.fn(async () => ({
       interventionId: 'int-test',

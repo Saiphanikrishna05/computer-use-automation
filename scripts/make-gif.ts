@@ -1,12 +1,12 @@
 /**
- * Builds the README's demo GIF from a live run — `npm run demo:gif`.
+ * Builds the README's demo GIF from a live run, `npm run demo:gif`.
  *
  * It films the claim the whole design rests on: a capability recorded once
  * against an application that then changes. Frames are captured from the real
  * browser while the real replay engine drives it, so this is a recording of the
  * system working, not an animation of it.
  *
- * No API key is needed, which is the point — a reviewer can regenerate this
+ * No API key is needed, which is the point, a reviewer can regenerate this
  * themselves. Pure JS end to end (pngjs + gifenc), so there is no ffmpeg or
  * ImageMagick to install.
  */
@@ -41,7 +41,7 @@ interface Frame {
   png: Buffer;
   caption: string;
   sub: string;
-  /** Frames to hold this one for — how a still becomes a beat. */
+  /** Frames to hold this one for, how a still becomes a beat. */
   hold: number;
 }
 
@@ -94,7 +94,7 @@ async function drive(caption: string, sub: string, resultCaption: string, holdLa
     //
     // The poll loop races the engine: masking mutates the DOM, screenshots,
     // then restores it, and a navigation mid-flight can make that silently
-    // no-op — which would put an unmasked tax ID in a file destined for a
+    // no-op, which would put an unmasked tax ID in a file destined for a
     // public repo. A settled capture is guaranteed to be masked, so the frames
     // that linger on screen are the ones taken deliberately.
     const settled = await driver.screenshot();
@@ -150,7 +150,7 @@ await fetch(`${TARGET}/_admin/reset`, { method: 'POST' });
 console.log('filming the capability as recorded…');
 const before = await drive(
   'A capability recorded once by an LLM.',
-  'Replaying it — no model in the loop.',
+  'Replaying it, no model in the loop.',
   'It works.',
   14,
 );
@@ -210,4 +210,4 @@ writeFileSync(OUT, Buffer.from(gif.bytes()));
 
 const kb = Buffer.from(gif.bytes()).length / 1024;
 console.log(`\n${OUT}  ${width}×${height}  ${(kb / 1024).toFixed(2)} MB`);
-if (kb > 4096) console.log('  ⚠ over 4 MB — reduce WIDTH or raise FRAME_MS');
+if (kb > 4096) console.log('  ⚠ over 4 MB, reduce WIDTH or raise FRAME_MS');

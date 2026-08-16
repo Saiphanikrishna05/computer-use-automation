@@ -115,7 +115,7 @@ describe('coerceOutput', () => {
 
   it('returns null rather than NaN when a numeric field cannot be parsed', () => {
     // NaN propagates silently through JSON; null is an answer a caller can check.
-    expect(coerceOutput('—', spec('money', ['money']))).toBeNull();
+    expect(coerceOutput('(none)', spec('money', ['money']))).toBeNull();
   });
 
   it('keeps leading zeros on account numbers by treating them as strings', () => {

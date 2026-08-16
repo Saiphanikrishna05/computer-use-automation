@@ -3,7 +3,7 @@
  *
  * The brief asks for an artifact "decoupled from the raw model transcript",
  * and this is where that decoupling happens. The transcript is a record of one
- * conversation — full of retries, dead ends, and reasoning that will never be
+ * conversation, full of retries, dead ends, and reasoning that will never be
  * true again. The artifact is a contract. Only actions that actually succeeded
  * become steps; everything else stays in the evidence bundle where it belongs.
  *
@@ -214,7 +214,7 @@ export class StepRecorder {
     }));
 
     // A dialog-acknowledgement rule is added unconditionally because an
-    // unhandled native modal blocks the surface entirely — every subsequent
+    // unhandled native modal blocks the surface entirely, every subsequent
     // step would fail with a misleading error. It is the one recovery that is
     // a property of the medium rather than of the application.
     const recovery: RecoveryRule[] = [
@@ -283,7 +283,7 @@ function rank(actionClass: ActionClass): number {
  * Rewrites concrete values into template references.
  *
  * Longest-first so a parameter whose value is a substring of another cannot
- * corrupt the longer one — replacing "100" before "100001" would leave
+ * corrupt the longer one, replacing "100" before "100001" would leave
  * "{{shortParam}}001" behind.
  */
 function templatize(value: string, params: DeclaredParameter[]): string {

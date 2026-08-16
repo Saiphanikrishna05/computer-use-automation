@@ -3,14 +3,14 @@
 # The claim this system rests on, tested rather than asserted.
 #
 # A capability is recorded once and expected to keep working. So: apply a
-# vendor point release to the application — reword a button, re-order the
-# accounts table, insert a new column, wrap every cell in a span — and replay
+# vendor point release to the application, reword a button, re-order the
+# accounts table, insert a new column, wrap every cell in a span, and replay
 # the *same, already-committed artifact*, unchanged.
 #
 # Two things should happen, and they are different things:
 #
 #   1. It still returns the right answer. The row/column addressing survives a
-#      column re-order that would silently break any nth-child selector — worse
+#      column re-order that would silently break any nth-child selector, worse
 #      than breaking, because it would read the wrong column and report it as
 #      fact.
 #
@@ -65,14 +65,14 @@ dim "  The flow itself does not change."
 curl -s -X POST -H 'content-type: application/json' -d '{"enabled":true}' "$TARGET/_admin/drift" >/dev/null
 dim "  → applied"
 
-bold "3 · After the upgrade — the SAME artifact, not re-recorded"
+bold "3 · After the upgrade, the SAME artifact, not re-recorded"
 npx tsx src/cli/index.ts replay $CAP -i memberId=100001 --headless --no-operator 2>/dev/null \
   | grep -E "degraded locators|^ +(savingsBalance|memberName)|^success"
 tiers
 
 bold "What just happened"
 dim "  The balance still resolved at tier 2, through 'the Savings row, Current"
-dim "  Balance column'. The column moved and it did not matter — a positional"
+dim "  Balance column'. The column moved and it did not matter, a positional"
 dim "  selector would now be reading the Status column and reporting it as a"
 dim "  balance."
 echo

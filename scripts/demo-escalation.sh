@@ -6,7 +6,7 @@
 # irreversible. Policy refuses to perform it, replay raises an intervention and
 # releases the control lease, and this script then plays the operator: it takes
 # control of the *same live session*, performs the submit itself, and hands
-# control back marked "I performed this step myself" — so the automation
+# control back marked "I performed this step myself", so the automation
 # continues from the next step rather than submitting a second time.
 #
 # Scripted rather than clicked so the whole thing is reproducible by a reviewer

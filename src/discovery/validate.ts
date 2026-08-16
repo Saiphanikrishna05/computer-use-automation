@@ -3,7 +3,7 @@
  *
  * The problem this solves showed up the first time a real model finished a run.
  * Asked to declare the business outcomes a caller would need to distinguish,
- * it produced four — and all four were wrong in ways that are obvious once
+ * it produced four, and all four were wrong in ways that are obvious once
  * stated and invisible in a JSON diff:
  *
  *   SIGN_ON_FAILED     → "Operator Sign-On", which is the title of the login
@@ -23,7 +23,7 @@
  *
  * So we check what is mechanically checkable. Every declared condition is
  * evaluated against the entry state. A condition that already holds before the
- * flow has run cannot be evidence that the flow produced it — that one is
+ * flow has run cannot be evidence that the flow produced it; that one is
  * provably broken, and it is removed rather than flagged. Conditions that
  * merely never matched anything are kept and flagged, because we genuinely do
  * not know whether they are wrong or simply describe a state we did not visit.
@@ -45,12 +45,12 @@ export interface ValidationResult {
  * A declared non-success condition has two states it must not hold in, and
  * both are sitting right in front of us when discovery finishes:
  *
- *   the SUCCESS state — we are standing on it. A condition that holds here
+ *   the SUCCESS state, we are standing on it. A condition that holds here
  *     fires on every successful replay. (The first model run declared
  *     NO_SAVINGS_ACCOUNT as the text "Savings", which appears in the accounts
  *     table of every member who *has* one.)
  *
- *   the ENTRY state — one navigation away. A condition that holds here fires
+ *   the ENTRY state, one navigation away. A condition that holds here fires
  *     before the capability has done anything at all.
  *
  * Checking success first matters, because getting back to the entry screen
@@ -84,7 +84,7 @@ export async function validateAgainstEntryState(
 
   // The artifact's own entry point, not an assumed base URL. Getting this
   // wrong sent the validator at a different origin than the one being
-  // explored, where the allowlist correctly refused it — the guardrail
+  // explored, where the allowlist correctly refused it, the guardrail
   // catching my own bug rather than an attack, which is the cheapest possible
   // way to find out.
   const entryUrl = interpolate(artifact.target.entryUrlTemplate, bindings);

@@ -1,12 +1,12 @@
 /**
- * The capability console — `npm run console`.
+ * The capability console, `npm run console`.
  *
  * The reviewer's view of what the system produced. REPORT §1 argues that a
  * capability should be reviewable the way a pull request is; this is that claim
  * made visible rather than asserted.
  *
  * It is deliberately read-only and deliberately thin. It renders what is
- * already on disk — the artifacts, and the evidence bundles from real runs —
+ * already on disk, the artifacts, and the evidence bundles from real runs -
  * and computes nothing of its own, so it cannot disagree with the system it
  * describes. Approving a capability is still a CLI action, because approval
  * should be a reviewed commit rather than a button someone clicks.
@@ -66,7 +66,7 @@ const esc = (s: unknown): string =>
 function primaryTier(step: CapabilityArtifact['steps'][number]): string {
   const target = 'target' in step.action ? step.action.target : undefined;
   const kind = target?.candidates?.[0]?.kind;
-  return kind ?? '—';
+  return kind ?? '(none)';
 }
 
 const TIER_ORDER = ['test_id', 'role_name', 'label', 'placeholder', 'text', 'structural', 'coordinates'];
@@ -137,16 +137,16 @@ function page(artifacts: CapabilityArtifact[], runs: RunSummary[], tenants: stri
         <p class="desc-long">${esc(a.description)}</p>
 
         <div class="grid">
-          <section><h3>Inputs <span class="hint">— what a calling agent supplies</span></h3>
+          <section><h3>Inputs <span class="hint">· what a calling agent supplies</span></h3>
             ${io(callerInputs, 'inputs')}</section>
-          <section><h3>Outputs <span class="hint">— what it gets back</span></h3>
+          <section><h3>Outputs <span class="hint">· what it gets back</span></h3>
             ${io(a.outputs, 'outputs')}</section>
         </div>
 
         ${
           injected.length === 0
             ? ''
-            : `<h3>Injected at runtime <span class="hint">— resolved by the credential store; never in the published tool schema</span></h3>
+            : `<h3>Injected at runtime <span class="hint">· resolved by the credential store; never in the published tool schema</span></h3>
                <ul class="io injected">${injected
                  .map(
                    (p) =>
@@ -157,7 +157,7 @@ function page(artifacts: CapabilityArtifact[], runs: RunSummary[], tenants: stri
                  .join('')}</ul>`
         }
 
-        <h3>Steps <span class="hint">— the locator tier each one leads with</span></h3>
+        <h3>Steps <span class="hint">· the locator tier each one leads with</span></h3>
         <table><thead><tr><th>id</th><th>intent</th><th>risk</th><th>primary locator</th></tr></thead>
         <tbody>${steps}</tbody></table>
 
@@ -165,7 +165,7 @@ function page(artifacts: CapabilityArtifact[], runs: RunSummary[], tenants: stri
         <div class="contract">${contract}</div>
 
         <footer>
-          recorded ${esc(a.provenance.discoveredAt?.slice(0, 10) ?? '—')}
+          recorded ${esc(a.provenance.discoveredAt?.slice(0, 10) ?? '(none)')}
           by <code>${esc(a.provenance.model)}</code>
           ${a.provenance.humanEdits?.length ? `· ${a.provenance.humanEdits.length} reviewed edit(s)` : ''}
           ${mine.length ? '' : ''}
@@ -265,7 +265,7 @@ function page(artifacts: CapabilityArtifact[], runs: RunSummary[], tenants: stri
   <h1>Capability console</h1>
   <p class="lede">Everything an LLM discovered, as it will be executed: the typed contract an
   agent calls, the locator each step leads with, and the failure conditions the capability
-  declares. Read-only — approval is a reviewed commit, not a button.</p>
+  declares. Read-only, approval is a reviewed commit, not a button.</p>
 
   ${cards || '<article><p class="none">No capabilities recorded yet. Run <code>npm run discover</code>.</p></article>'}
 
@@ -289,7 +289,7 @@ export function startConsole(port: number): Promise<void> {
 
   app.get('/', (_req, res) => {
     // Re-read on every request so the page always reflects disk, not a cache
-    // taken at boot — a console that can disagree with the artifacts is worse
+    // taken at boot, a console that can disagree with the artifacts is worse
     // than no console.
     res.type('html').send(page(listArtifacts(), loadRuns(), listOverlays().map((o) => o.tenantId)));
   });

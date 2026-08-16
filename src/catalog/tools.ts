@@ -3,7 +3,7 @@
  *
  * A saved artifact is turned into a tool definition an LLM can discover and
  * call by name with typed arguments. The generation is mechanical and derived
- * from the same artifact replay executes, which is the whole point — a
+ * from the same artifact replay executes, which is the whole point, a
  * hand-written tool schema sitting next to an automation is a second source of
  * truth, and the two drift the moment either changes.
  *
@@ -96,7 +96,7 @@ export function toolDefinitionFor(artifact: CapabilityArtifact): ToolDefinition 
 /**
  * Only approved capabilities are published. A draft is visible to a human via
  * `catalog list` but is not offered to an agent, so the approval gate is
- * enforced at discovery time rather than only at execution time — an agent
+ * enforced at discovery time rather than only at execution time, an agent
  * cannot call something it was never told about.
  */
 export function catalogToolDefinitions(): ToolDefinition[] {

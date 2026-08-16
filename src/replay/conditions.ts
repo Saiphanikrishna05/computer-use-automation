@@ -1,13 +1,13 @@
 /**
  * Condition evaluation.
  *
- * One evaluator serves four callers — step waits, the success checkpoint,
+ * One evaluator serves four callers, step waits, the success checkpoint,
  * business-outcome detection, and recovery triggers. That is the whole reason
  * the artifact has a single condition language: four evaluators would mean
  * four subtly different notions of what "the text is present" means, and the
  * difference would only surface as a production bug.
  *
- * Conditions never throw. An unresolvable target is `false`, not an error —
+ * Conditions never throw. An unresolvable target is `false`, not an error -
  * because "is the not-found banner showing?" must be answerable on a page
  * where it isn't, and an exception there would turn a clean business outcome
  * into a crash.

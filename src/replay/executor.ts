@@ -1,5 +1,5 @@
 /**
- * Deterministic replay — the production execution path.
+ * Deterministic replay: the production execution path.
  *
  * No model is consulted here. Given the same artifact, the same inputs and the
  * same application state, this does the same thing every time. That is the
@@ -9,9 +9,9 @@
  * The loop before each step is the interesting part, and its ordering is a
  * decision, not an accident:
  *
- *   1. business outcomes — is the app telling us something the caller needs?
- *   2. declared failures  — is the app broken in a way we recognise?
- *   3. recovery rules     — is this something we are allowed to fix ourselves?
+ *   1. business outcomes, is the app telling us something the caller needs?
+ *   2. declared failures , is the app broken in a way we recognise?
+ *   3. recovery rules    , is this something we are allowed to fix ourselves?
  *   4. the step itself
  *
  * Outcomes are checked first because "no such member" must win over any
@@ -87,7 +87,7 @@ export interface ReplayOptions {
   driver: SurfaceDriver;
   policy: PolicyEngine;
   logger: RunLogger;
-  /** Values bound into url templates — `baseUrl` and anything a tenant supplies. */
+  /** Values bound into url templates, `baseUrl` and anything a tenant supplies. */
   bindings?: Record<string, string>;
   tenantId?: string;
   escalation?: EscalationHandler;
@@ -101,7 +101,7 @@ export class ReplayEngine {
   private degradedResolutions = 0;
   private values: Record<string, unknown> = {};
   /**
-   * Recoveries that fired before any step was in flight — clearing a login
+   * Recoveries that fired before any step was in flight, clearing a login
    * interstitial, for instance. They have no step to attach to yet, so they
    * are buffered and flushed onto the next step that starts. Dropping them
    * would make the commonest recovery of all invisible in the result.
@@ -169,7 +169,7 @@ export class ReplayEngine {
 
             if (escalated.resolution === 'completed_manually') {
               // The operator performed this step by hand. Retrying it would
-              // repeat whatever they just did — on an irreversible step, twice.
+              // repeat whatever they just did, on an irreversible step, twice.
               logger.event('note', `step ${step.id} was completed manually by ${escalated.operatorId}`);
               const report = this.steps[this.steps.length - 1];
               if (report) {
@@ -252,7 +252,7 @@ export class ReplayEngine {
 
     for (const rule of artifact.failures) {
       if (await evaluateCondition(ctx, rule.when)) {
-        // Give recovery a chance before declaring it fatal — session expiry is
+        // Give recovery a chance before declaring it fatal, session expiry is
         // usually both (recoverable by re-auth, fatal if re-auth is exhausted).
         const recovered = await this.tryRecovery();
         if (recovered) continue;
@@ -557,7 +557,7 @@ export class ReplayEngine {
 
       // Output extraction resolves targets exactly as steps do, so it must
       // report them the same way. Without this the drift counter could
-      // increment with nothing in the log to explain it — a headline signal
+      // increment with nothing in the log to explain it, a headline signal
       // that cannot be investigated is not a signal.
       logger.event('resolution', `output "${spec.name}" → ${resolved.report.winningKind ?? 'unresolved'}`, {
         report: resolved.report,
@@ -580,7 +580,7 @@ export class ReplayEngine {
       const raw = await driver.read(resolved.element, spec.extract.source, spec.extract.attribute);
       values[spec.name] = coerceOutput(raw, spec);
 
-      // The extracted value itself is *not* redacted — returning it is the
+      // The extracted value itself is *not* redacted, returning it is the
       // whole point of the capability. It is the log line that gets redacted.
       logger.event('note', `extracted output "${spec.name}"`, {
         name: spec.name,
@@ -625,7 +625,7 @@ export class ReplayEngine {
       stepId: step.id,
       stepIntent: step.intent,
       code: failure.code,
-      reason: `${failure.expected} — but ${failure.observed}`,
+      reason: `${failure.expected}, but ${failure.observed}`,
       observed: (await driver.visibleText()).replace(/\s+/g, ' ').slice(0, 800),
       screenshotPath,
     });
@@ -640,7 +640,7 @@ export class ReplayEngine {
    *
    * A handoff must not be a hole in the audit trail. "Automation stopped,
    * something happened, automation resumed" is not an acceptable record of who
-   * touched a member's account — so what the human did lands in the same
+   * touched a member's account, so what the human did lands in the same
    * structure as what the automation did.
    */
   private recordHumanActions(step: Step, outcome: InterventionOutcome): void {

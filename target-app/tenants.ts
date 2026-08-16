@@ -2,7 +2,7 @@
  * Two institutions running the same vendor product.
  *
  * This is the multi-tenant story made concrete. Both tenants run "Meridian
- * Core — Servicing Console 1.x". The flow is identical. What differs is
+ * Core, Servicing Console 1.x". The flow is identical. What differs is
  * exactly what differs in the real world:
  *
  *   - branding and page titles,
@@ -12,7 +12,7 @@
  *
  * None of those are flow changes, so none of them justify re-recording the
  * capability. They are exactly the class of difference a tenant overlay is
- * supposed to absorb — which is the point the second tenant exists to prove.
+ * supposed to absorb, which is the point the second tenant exists to prove.
  */
 
 export interface TenantConfig {

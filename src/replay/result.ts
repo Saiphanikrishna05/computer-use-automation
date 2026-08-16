@@ -3,7 +3,7 @@
  *
  * The brief names the most common design mistake in this problem directly:
  * conflating a legitimate business answer with a crash. So the distinction is
- * made *structurally* rather than documented — a caller cannot accidentally
+ * made *structurally* rather than documented, a caller cannot accidentally
  * treat "no such member" as a failure, because it does not arrive on the
  * failure branch of the union.
  *
@@ -14,7 +14,7 @@
  *
  * Recoverable conditions do not appear here at all, and that is the point:
  * they are handled inside the run, recorded in the step reports, and are
- * invisible to the caller unless they exhaust their attempts — at which point
+ * invisible to the caller unless they exhaust their attempts, at which point
  * they become a failure with the recovery history attached.
  */
 
@@ -27,7 +27,7 @@ export type FailureCode =
   | 'TARGET_AMBIGUOUS'
   /** Flow ran to the end but the success condition did not hold. */
   | 'CHECKPOINT_FAILED'
-  /** A step's own assertion failed — the click "worked" but did nothing. */
+  /** A step's own assertion failed, the click "worked" but did nothing. */
   | 'POSTCONDITION_FAILED'
   | 'STEP_TIMEOUT'
   /** Blocked by the allowlist or the action-class ceiling. */

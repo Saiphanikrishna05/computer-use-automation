@@ -11,12 +11,12 @@
  *      instant the driver refuses every automation action, so nothing can race
  *      the operator who is about to take over.
  *   4. An operator opens the console, takes control (→ HUMAN), and works the
- *      *same live page* — either directly in the headed browser window or
+ *      *same live page*, either directly in the headed browser window or
  *      through the console's forwarded input. Everything they do is captured.
  *   5. They hand back (→ RESUMING → AUTOMATION) and the run continues on the
  *      same session, with the human's actions recorded in the evidence bundle.
  *
- * The console UI is deliberately thin — the brief puts a full co-browsing
+ * The console UI is deliberately thin, because the brief puts a full co-browsing
  * operator surface out of scope. What is *not* thin is the control-transfer
  * model underneath it, because that is the part that would be identical in a
  * real product.
@@ -81,7 +81,7 @@ export class ConsoleEscalationHandler implements EscalationHandler {
 
       process.stderr.write(
         `\n${'!'.repeat(72)}\n` +
-          `  HUMAN INTERVENTION REQUIRED — ${request.code}\n` +
+          `  HUMAN INTERVENTION REQUIRED, ${request.code}\n` +
           `  ${request.reason}\n` +
           `  capability: ${request.capabilityId} v${request.capabilityVersion}` +
           (request.stepId ? ` · step: ${request.stepId}` : '') +
@@ -178,7 +178,7 @@ export class ConsoleEscalationHandler implements EscalationHandler {
     });
 
     // Input forwarding. The point is that these land on the *same* page the
-    // automation was driving — same session, same cookies, same frame state —
+    // automation was driving, same session, same cookies, same frame state -
     // so a headless reviewer gets the identical control-transfer semantics a
     // headed operator gets by clicking in the browser window directly.
     app.post('/intervention/:id/click', async (req, res) => {
@@ -235,14 +235,14 @@ function renderConsole(items: PendingIntervention[], lease: ControlLease): strin
       <h2>${esc(entry.request.code)}<span class="pill ${entry.state}">${entry.state.replace('_', ' ')}</span></h2>
       <dl>
         <dt>capability</dt><dd>${esc(entry.request.capabilityId)} v${entry.request.capabilityVersion}</dd>
-        <dt>step</dt><dd>${esc(entry.request.stepId ?? '—')}${entry.request.stepIntent ? ` — ${esc(entry.request.stepIntent)}` : ''}</dd>
+        <dt>step</dt><dd>${esc(entry.request.stepId ?? '(none)')}${entry.request.stepIntent ? ` · ${esc(entry.request.stepIntent)}` : ''}</dd>
         <dt>why it stopped</dt><dd>${esc(entry.request.reason)}</dd>
         <dt>raised</dt><dd>${esc(entry.raisedAt)}</dd>
       </dl>
 
       <h3>Live session</h3>
       <img id="screen-${entry.id}" class="screen" src="/intervention/${entry.id}/screen.png" alt="live session">
-      <p class="hint">The same browser session the automation was driving — same cookies, same frame state. Click the image to click the page. Sensitive regions are masked before capture.</p>
+      <p class="hint">The same browser session the automation was driving, same cookies, same frame state. Click the image to click the page. Sensitive regions are masked before capture.</p>
 
       ${
         entry.state === 'waiting'
@@ -258,8 +258,8 @@ function renderConsole(items: PendingIntervention[], lease: ControlLease): strin
              <form method="post" action="/intervention/${entry.id}/resume">
                <input name="operatorId" value="operator">
                <input name="note" placeholder="what you did" size="34">
-               <button class="primary" name="mode" value="retry" type="submit">I cleared the blocker — retry the step</button>
-               <button class="primary" name="mode" value="performed" type="submit">I performed this step myself — continue</button>
+               <button class="primary" name="mode" value="retry" type="submit">I cleared the blocker, retry the step</button>
+               <button class="primary" name="mode" value="performed" type="submit">I performed this step myself, continue</button>
              </form>
              <form method="post" action="/intervention/${entry.id}/abort">
                <input type="hidden" name="operatorId" value="operator">

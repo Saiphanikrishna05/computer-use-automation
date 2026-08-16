@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Regenerates every image the README commits — `npm run docs:images`.
+# Regenerates every image the README commits, `npm run docs:images`.
 #
 # These are screenshots of running software, so they go stale the moment the
 # software changes, and a stale screenshot is a documented lie that nobody

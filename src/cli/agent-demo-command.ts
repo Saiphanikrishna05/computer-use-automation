@@ -1,5 +1,5 @@
 /**
- * `agent-demo` — the loop closed.
+ * `agent-demo`, the loop closed.
  *
  * An AI agent is given a request in natural language and the catalog of
  * approved capabilities as callable tools. It decides *what* to do; this
@@ -8,12 +8,12 @@
  * This is the shape the whole project exists to produce. The expensive,
  * non-deterministic reasoning happened once, during discovery. What runs in
  * production is a typed function call against a legacy screen that has no API
- * — and the agent invoking it neither knows nor needs to know that a browser
+ *, and the agent invoking it neither knows nor needs to know that a browser
  * was involved.
  *
  * The detail worth noticing is how a business outcome comes back. When the
  * capability returns MEMBER_NOT_FOUND, that is handed to the agent as a
- * successful tool result describing a real answer — not as an error. An agent
+ * successful tool result describing a real answer, not as an error. An agent
  * told "the tool failed" retries; an agent told "there is no such member"
  * reports it and stops. Getting that distinction right is the difference
  * between a system that gives up gracefully and one that hammers a host
@@ -25,11 +25,11 @@ import { catalogToolDefinitions } from '../catalog/tools.js';
 import { runReplayCommand } from './replay-command.js';
 import { modelConfig } from '../config.js';
 
-const SYSTEM = `You are an assistant used by staff inside a credit union's own servicing environment. The person talking to you is an authorised employee at their terminal, and the tools you have operate that institution's internal systems under their existing entitlements — the same screens they would drive by hand.
+const SYSTEM = `You are an assistant used by staff inside a credit union's own servicing environment. The person talking to you is an authorised employee at their terminal, and the tools you have operate that institution's internal systems under their existing entitlements, the same screens they would drive by hand.
 
 Use the tools to answer the request, then explain the result in plain language.
 
-Some tools return an "outcome" instead of data — that no such member exists, or that the signed-on operator is not entitled to view a record. These are real answers, not failures. Report them plainly and do not retry the call.`;
+Some tools return an "outcome" instead of data; that no such member exists, or that the signed-on operator is not entitled to view a record. These are real answers, not failures. Report them plainly and do not retry the call.`;
 
 export interface AgentDemoOptions {
   tenant: string;
@@ -99,7 +99,7 @@ export async function runAgentDemoCommand(request: string, opts: AgentDemoOption
     for (const use of toolUses) {
       process.stdout.write(
         `  ▸ agent invokes capability "${use.name}" with ${JSON.stringify(use.input)}\n` +
-          '    (executing deterministically — no model in the loop from here)\n\n',
+          '    (executing deterministically, no model in the loop from here)\n\n',
       );
 
       const result = await runReplayCommand({

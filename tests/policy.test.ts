@@ -3,7 +3,7 @@ import { PolicyEngine, DISCOVERY_POLICY, REPLAY_POLICY } from '../src/policy/eng
 
 const allowed = 'http://localhost:4173';
 
-describe('PolicyEngine — navigation allowlist', () => {
+describe('PolicyEngine, navigation allowlist', () => {
   const policy = new PolicyEngine({ ...REPLAY_POLICY, allowedOrigins: [allowed] });
 
   it('permits the allowlisted origin', () => {
@@ -40,7 +40,7 @@ describe('PolicyEngine — navigation allowlist', () => {
   });
 });
 
-describe('PolicyEngine — action risk', () => {
+describe('PolicyEngine, action risk', () => {
   it('will not let discovery commit an irreversible action at all', () => {
     // There is nothing to escalate to during exploration, so this is a flat
     // refusal rather than a request for authorisation.
@@ -89,7 +89,7 @@ describe('PolicyEngine — action risk', () => {
   });
 });
 
-describe('PolicyEngine — approval gate', () => {
+describe('PolicyEngine, approval gate', () => {
   it('refuses unattended replay of a draft capability', () => {
     const policy = new PolicyEngine({ ...REPLAY_POLICY, allowedOrigins: [allowed] });
     const decision = policy.checkArtifactApproval('draft');

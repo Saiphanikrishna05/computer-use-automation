@@ -15,7 +15,7 @@
  *
  *  3. **Screenshots are masked before they exist.** Sensitive regions are
  *     covered at capture time, so a PNG containing a member's tax ID is never
- *     written to disk in the first place — as opposed to being written and
+ *     written to disk in the first place, as opposed to being written and
  *     then cleaned up, which is not the same guarantee.
  */
 
@@ -88,7 +88,7 @@ export class PlaywrightWebSurface implements SurfaceDriver {
       this.emit('note', `native dialog raised: ${dialog.message()}`);
     });
 
-    // In a frameset app the interesting navigations are *frame* navigations —
+    // In a frameset app the interesting navigations are *frame* navigations -
     // a form in one pane retargets another. `page.waitForLoadState` does not
     // see those, so we track them ourselves.
     this.page.on('framenavigated', () => {
@@ -165,8 +165,8 @@ export class PlaywrightWebSurface implements SurfaceDriver {
   // -------------------------------------------------------------------------
 
   /**
-   * Resolves a frame path by name, then URL pattern, then — only if both fail
-   * — position. The ordering matters: frame *order* is one of the first things
+   * Resolves a frame path by name, then URL pattern, then, only if both fail
+   *, position. The ordering matters: frame *order* is one of the first things
    * that differs between two tenants running the same vendor build, so leaning
    * on it early would produce automation that appears to work and silently
    * drives the wrong pane.
@@ -253,7 +253,7 @@ export class PlaywrightWebSurface implements SurfaceDriver {
    * Playwright serializes an evaluated function via `Function.prototype
    * .toString()`. Our TypeScript is transpiled by esbuild with `keepNames`
    * enabled, which wraps every named function and arrow-const in a `__name()`
-   * call — a helper that exists in the Node module scope and not in the page.
+   * call, a helper that exists in the Node module scope and not in the page.
    * The serialized source therefore references an undefined identifier.
    *
    * Defining a no-op `__name` in the page satisfies it. The alternative is to
@@ -280,7 +280,7 @@ export class PlaywrightWebSurface implements SurfaceDriver {
       }
       // Frames navigate out from under us constantly in a frameset app. A
       // frame we cannot read this instant is not a run-ending problem, but it
-      // is worth surfacing — a frame that is *never* readable looks identical
+      // is worth surfacing, a frame that is *never* readable looks identical
       // to one that is merely busy unless the reason is recorded.
       this.emit('note', `frame not readable (${frame.name() || 'main'}): ${String(error).slice(0, 200)}`);
       return undefined;
@@ -330,7 +330,7 @@ export class PlaywrightWebSurface implements SurfaceDriver {
       framePath,
       // Every text-bearing field is redacted, not just the obvious ones.
       // `nearestLabel` is the cell adjacent to a control, and in an accounts
-      // table that neighbour is the account number — so an incomplete
+      // table that neighbour is the account number, so an incomplete
       // redaction here put a member's account number into the model's prompt
       // and into the saved artifact, via a field whose name does not suggest
       // it carries member data at all.
@@ -547,7 +547,7 @@ export class PlaywrightWebSurface implements SurfaceDriver {
    * Frame-scoped text, with a deliberately short frame wait and no throwing.
    *
    * This backs every text-based condition, and conditions are evaluated
-   * constantly — before every step, for every declared outcome and failure
+   * constantly, before every step, for every declared outcome and failure
    * rule. Two consequences follow. It must not throw, because "is the
    * not-found banner showing?" has to be answerable on a page where that frame
    * does not exist at all; a missing frame simply contains no text. And it must
@@ -604,7 +604,7 @@ export class PlaywrightWebSurface implements SurfaceDriver {
    * screenshot and is never present while an action runs.
    */
   /**
-   * Marks the regions a screenshot must cover, and — just as importantly —
+   * Marks the regions a screenshot must cover, and, just as importantly -
    * reports the frames it could not inspect.
    *
    * Redaction has to fail *closed*. If a frame cannot be collected, or marking
@@ -653,7 +653,7 @@ export class PlaywrightWebSurface implements SurfaceDriver {
 
             // Mask only the deepest match. An element's text includes its
             // descendants' text, so a tax ID in one cell also matches the row,
-            // the table, and the body — and masking those blacks out the whole
+            // the table, and the body, and masking those blacks out the whole
             // screen. A screenshot that hides everything is not evidence, it
             // is an absence of evidence, so keep the innermost element and
             // release its ancestors.
@@ -735,11 +735,11 @@ export class PlaywrightWebSurface implements SurfaceDriver {
    * This is the honest definition for a frameset application: a click in the
    * nav pane navigates the content pane, and neither `page.waitForLoadState`
    * nor the click's own auto-wait observes that. Waiting for quiet is the
-   * cheap, general answer — as opposed to hard-coding which action navigates
+   * cheap, general answer, as opposed to hard-coding which action navigates
    * which pane, which would be true only of this one app.
    */
   async waitForSettled(timeoutMs = 5_000): Promise<void> {
-    // Never wait on a page blocked behind a modal — the wait cannot succeed,
+    // Never wait on a page blocked behind a modal, the wait cannot succeed,
     // and burning the timeout hides the condition that actually needs handling.
     if (this.dialog) return;
 

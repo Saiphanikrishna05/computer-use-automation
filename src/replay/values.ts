@@ -2,7 +2,7 @@
  * Input binding and value transforms.
  *
  * Templates are `{{name}}` and nothing more. There is no expression syntax, no
- * conditionals, no arithmetic — deliberately. An artifact is a document a
+ * conditionals, no arithmetic, deliberately. An artifact is a document a
  * reviewer has to be able to read and approve; the moment it can compute, it
  * stops being reviewable and becomes a program, and "is this capability safe"
  * stops having a checkable answer.
@@ -135,7 +135,7 @@ export function coerceOutput(raw: string, spec: OutputSpec): unknown {
       const cleaned = transformed.replace(/[$,\s]/g, '');
       // `Number('')` is 0, not NaN. Without this guard a field showing an
       // em-dash, or one the transforms stripped to nothing, would be reported
-      // as a balance of zero — a wrong answer that looks entirely plausible
+      // as a balance of zero, a wrong answer that looks entirely plausible
       // and is exactly the kind a caller would act on. An absent value must
       // read as absent.
       if (cleaned === '' || cleaned === '-' || cleaned === '.') return null;

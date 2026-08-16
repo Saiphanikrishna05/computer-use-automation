@@ -7,8 +7,8 @@
  * candidate ladder from what perception measured about that element.
  *
  * The reason is not tidiness. A model asked to write a selector will write one
- * that works on the page in front of it — the volatile id, the nth-child path
- * — because it has no way to know which signals are durable. Synthesizing the
+ * that works on the page in front of it (the volatile id, the nth-child path)
+ * because it has no way to know which signals are durable. Synthesizing the
  * ladder from measured properties means every artifact gets the same, best
  * available set of signals, and improving that judgement improves every
  * capability ever recorded rather than only the next one.
@@ -26,7 +26,7 @@ const CELL_ROLES = new Set(['cell', 'columnheader', 'row']);
  *
  * This started as a leak fix and turned out to be a correctness fix. In an
  * accounts table the cell to the left of a balance is the *account number*, so
- * it becomes that balance's `nearestLabel` — and a locator built from it is
+ * it becomes that balance's `nearestLabel`, and a locator built from it is
  * wrong twice over. It writes a member's account number into an artifact that
  * gets committed and reviewed, and it cannot generalise: the whole point of the
  * capability is to run for a different member tomorrow, whose account number is
@@ -49,7 +49,7 @@ export function candidatesFor(node: UiNode): LocatorCandidate[] {
   // likely to survive a restyle, a framework upgrade, or a tenant rebrand.
   //
   // Except on a table cell, where the accessible name *is the cell's content*.
-  // "The cell named $4,182.55" is not an identifier, it is today's answer: it
+  // "The cell named $4,182.55" is not an identifier; it is today's answer: it
   // matches exactly one member and fails for every other, which is the reverse
   // of what a reusable capability needs. Cells are addressed by their row and
   // column instead, below.
@@ -89,7 +89,7 @@ export function candidatesFor(node: UiNode): LocatorCandidate[] {
 
   // A structural fallback, but only from attributes that mean something. This
   // application regenerates every element id on each render, so an id-based
-  // path would be a candidate that is guaranteed to fail — worse than none,
+  // path would be a candidate guaranteed to fail, which is worse than none:
   // because it burns a resolution attempt and muddies the drift signal.
   const nameAttr = node.attributes['name'];
   if (nameAttr && node.tag) {
@@ -98,8 +98,8 @@ export function candidatesFor(node: UiNode): LocatorCandidate[] {
 
   // Coordinates last, and as viewport fractions rather than pixels so a
   // different window size still lands on the control. This tier exists for
-  // surfaces that expose no tree at all — a Citrix-published app, a canvas
-  // widget — and its presence in the ladder is what keeps the schema honest
+  // surfaces that expose no tree at all: a Citrix-published app, or a canvas
+  // widget. Its presence in the ladder is what keeps the schema honest
   // about supporting them.
   if (node.box && node.box.width > 0 && node.box.height > 0) {
     const viewportWidth = 1280;
@@ -138,7 +138,7 @@ export function descriptorFor(node: UiNode, viewport: { width: number; height: n
   if (node.containerRole) anchor.containerRole = node.containerRole;
   if (isUsableAsLocator(node.containerName)) anchor.containerName = node.containerName;
   // The nearest label is recorded as an anchor only when it is not already
-  // carrying the identification — otherwise the anchor restates the candidate
+  // carrying the identification; otherwise the anchor restates the candidate
   // and narrows nothing.
   if (isUsableAsLocator(node.nearestLabel) && node.name) anchor.nearestLabel = node.nearestLabel;
 
@@ -169,7 +169,7 @@ export function descriptorFor(node: UiNode, viewport: { width: number; height: n
  * Which match to take when a candidate legitimately resolves to several.
  *
  * For a table cell this is its position within its own row, minus the row
- * header. A label/value grid — "Member ID | 100001 | Status | Active" — has no
+ * header. A label/value grid, "Member ID | 100001 | Status | Active", has no
  * column headings for the row-label candidate to qualify against, so that
  * candidate matches every value cell in the row. Recording the position makes
  * the choice deterministic; without it the ladder falls through to

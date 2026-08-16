@@ -6,7 +6,7 @@
  * computed accessible names, table geometry, visibility. A fake DOM would test
  * my model of the browser rather than the browser.
  *
- * The fixture reproduces the properties that make legacy console markup hard —
+ * The fixture reproduces the properties that make legacy console markup hard -
  * no test ids, no <label for>, table-based layout, ids regenerated per render,
  * and the same label text appearing in two panels.
  */
@@ -144,7 +144,7 @@ describe('candidate resolution', () => {
 
   it('absorbs tenant wording differences through non-exact matching', async () => {
     // A capability recorded against a tenant that says "Savings" still finds a
-    // tenant whose build says "Regular Savings" — no override needed.
+    // tenant whose build says "Regular Savings", no override needed.
     await page.evaluate(() => {
       const cells = Array.from(document.querySelectorAll('td'));
       const savings = cells.find((c) => c.textContent?.trim() === 'Savings');
@@ -200,7 +200,7 @@ describe('label/value grids are not tables', () => {
   it('does not treat the first row of a label/value grid as column headings', async () => {
     // "Member ID | 100001 | Status | Active" is a form rendered with <td>, not
     // a table with headings. Reading row 1 as headers gives every cell below a
-    // column header of "100001" — a qualifier made of record data, which is
+    // column header of "100001", a qualifier made of record data, which is
     // both meaningless and different for every member.
     const page2 = await browser.newPage();
     await page2.setContent(GRID);

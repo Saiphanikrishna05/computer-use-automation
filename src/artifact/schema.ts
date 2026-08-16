@@ -8,7 +8,7 @@
  *  1. A target is a *ranked set of candidate descriptors*, never a selector
  *     string. Legacy enterprise UIs have no test IDs and unstable markup, so a
  *     single selector is a single point of failure. Replay tries candidates in
- *     tier order and reports which tier won — that report is our drift signal.
+ *     tier order and reports which tier won; that report is our drift signal.
  *
  *  2. Business outcomes and recovery rules live *in the artifact*, not in the
  *     engine. "No such member" is a legitimate answer the caller needs, and
@@ -104,7 +104,7 @@ export const LocatorCandidateSchema = z.discriminatedUnion('kind', [
     /**
      * Whether the label identifies an input control or a table cell.
      *
-     * These are genuinely different questions on a screen built from tables —
+     * These are genuinely different questions on a screen built from tables -
      * "the field labelled Member ID" and "the cell in the Member ID row" are
      * both reasonable readings, and on this markup they resolve to different
      * elements. Making the caller say which keeps every lookup unambiguous
@@ -207,7 +207,7 @@ export const TargetDescriptorSchema = z.object({
 export type TargetDescriptor = z.infer<typeof TargetDescriptorSchema>;
 
 // ---------------------------------------------------------------------------
-// Conditions — one language, four uses
+// Conditions, one language, four uses
 // ---------------------------------------------------------------------------
 
 const LeafConditionSchema = z.discriminatedUnion('kind', [
@@ -226,7 +226,7 @@ const LeafConditionSchema = z.discriminatedUnion('kind', [
     caseSensitive: z.boolean().default(false),
   }),
   z.object({ kind: z.literal('url_matches'), pattern: z.string() }),
-  /** A native modal is up. Not expressible as an element query — the page is
+  /** A native modal is up. Not expressible as an element query, the page is
    *  blocked and cannot be inspected at all while one is open. */
   z.object({ kind: z.literal('dialog_present'), textContains: z.string().optional() }),
 ]);
@@ -251,7 +251,7 @@ export const ConditionSchema: z.ZodType<Condition, z.ZodTypeDef, unknown> = z.la
 );
 
 // ---------------------------------------------------------------------------
-// Typed inputs and outputs — the agent-facing contract
+// Typed inputs and outputs, the agent-facing contract
 // ---------------------------------------------------------------------------
 
 export const ValueTypeSchema = z.enum(['string', 'number', 'boolean', 'money']);
@@ -367,7 +367,7 @@ export type RecoveryAction = z.infer<typeof RecoveryActionSchema>;
 
 /**
  * A condition replay is allowed to handle by itself, with a bounded number of
- * attempts. Everything not declared here that goes wrong is a hard failure —
+ * attempts. Everything not declared here that goes wrong is a hard failure -
  * the engine never improvises.
  */
 export const RecoveryRuleSchema = z.object({
@@ -381,7 +381,7 @@ export type RecoveryRule = z.infer<typeof RecoveryRuleSchema>;
 
 /**
  * A condition that is neither a business answer nor something replay may fix
- * on its own — an application error page, an unrecoverable session drop.
+ * on its own, an application error page, an unrecoverable session drop.
  *
  * Declaring these alongside outcomes and recovery rules is what completes the
  * taxonomy: all three classes the brief asks us to separate are stated in the
@@ -421,7 +421,7 @@ export const ProvenanceSchema = z.object({
   /**
    * Result of the post-discovery validation pass. A single successful run
    * cannot observe the paths it did not take, so the model's declared outcomes
-   * are hypotheses — and hypotheses that are checkably wrong should not reach a
+   * are hypotheses, and hypotheses that are checkably wrong should not reach a
    * human reviewer disguised as findings.
    */
   validation: z
@@ -456,7 +456,7 @@ export const CapabilityArtifactSchema = z.object({
   schemaVersion: z.literal(SCHEMA_VERSION),
   /** Agent-facing tool name. Stable across versions; this is what a caller invokes. */
   id: z.string().regex(/^[a-z][a-z0-9_]*$/),
-  /** Monotonic. A new recording of the same flow bumps this, it does not replace. */
+  /** Monotonic. A new recording of the same flow bumps this; it does not replace. */
   version: z.number().int().positive(),
   title: z.string(),
   description: z.string().describe('what a calling agent needs to decide whether to invoke this'),
@@ -500,7 +500,7 @@ export type CapabilityArtifact = z.infer<typeof CapabilityArtifactSchema>;
  *
  * The rule is that an overlay may *bind* and *override*, never *extend the
  * flow*. If a tenant needs different steps, that is a different capability and
- * should be recorded as one — silently divergent step lists are how a
+ * should be recorded as one, silently divergent step lists are how a
  * "shared" artifact becomes N artifacts nobody can reason about.
  */
 export const TenantOverlaySchema = z.object({
@@ -527,7 +527,7 @@ export const TenantOverlaySchema = z.object({
       }),
     )
     .default({}),
-  /** Tenant-local interstitials — the classic "one CU has an extra MOTD modal". */
+  /** Tenant-local interstitials, the classic "one CU has an extra MOTD modal". */
   extraRecovery: z.array(RecoveryRuleSchema).default([]),
   notes: z.string().optional(),
 });

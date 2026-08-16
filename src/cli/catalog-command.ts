@@ -1,5 +1,5 @@
 /**
- * `catalog` — the agent-facing view of what capabilities exist.
+ * `catalog`, the agent-facing view of what capabilities exist.
  *
  * `schema` emits the exact JSON-Schema tool definition a calling agent would
  * receive. Generating it from the same Zod-validated artifact that replay
@@ -25,7 +25,7 @@ export async function runCatalogCommand(
       }
       process.stdout.write(`\n${artifacts.length} capabilit${artifacts.length === 1 ? 'y' : 'ies'}:\n\n`);
       for (const a of artifacts) {
-        const gate = a.approval.state === 'approved' ? 'approved' : 'DRAFT — will not replay unattended';
+        const gate = a.approval.state === 'approved' ? 'approved' : 'DRAFT, will not replay unattended';
         process.stdout.write(`  ${a.id}  v${a.version}\n`);
         process.stdout.write(`    ${a.title}\n`);
         process.stdout.write(`    risk: ${a.maxRisk} · ${gate}\n`);

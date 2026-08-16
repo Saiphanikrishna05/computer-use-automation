@@ -2,8 +2,8 @@
  * The surface abstraction.
  *
  * This is the only place in the system that knows *how* a surface is perceived
- * and acted upon. Everything above it — the artifact schema, the replay
- * engine, policy, escalation, evidence — is written against `UiNode` and
+ * and acted upon. Everything above it, the artifact schema, the replay
+ * engine, policy, escalation, evidence, is written against `UiNode` and
  * `TargetDescriptor` and has no idea whether it is driving a browser, a
  * Win32 window, or a terminal emulator.
  *
@@ -11,7 +11,7 @@
  * web accessibility tree and the desktop accessibility APIs (Windows UIA,
  * macOS AX, AT-SPI) already expose. Role, name, value, enabled/focusable
  * state, a container path and a bounding box exist in all of them. A desktop
- * driver is therefore a translation layer, not a redesign — and, critically,
+ * driver is therefore a translation layer, not a redesign, and, critically,
  * artifacts recorded through one driver describe controls in terms the other
  * driver can also resolve.
  */
@@ -33,7 +33,7 @@ export interface BoundingBox {
  * One control, normalized.
  *
  * `ref` is valid only within the snapshot that produced it. Nothing is ever
- * recorded into an artifact by `ref` — artifacts record descriptors, which are
+ * recorded into an artifact by `ref`, artifacts record descriptors, which are
  * re-resolved from scratch on every replay. This is the single most important
  * invariant for determinism: there is no hidden per-run state that a replay
  * could depend on.
@@ -70,7 +70,7 @@ export interface UiNode {
   /**
    * For table cells: the first cell of this row, and the cell at the same
    * index in the table's header row. Together they address a cell the way a
-   * person reads a table — "the Savings row, Current Balance column" — which
+   * person reads a table, "the Savings row, Current Balance column", which
    * survives re-ordering and restyling in a way `nth-child` does not.
    */
   rowHeader?: string;
@@ -82,7 +82,7 @@ export interface UiNode {
   /** Values from password fields are never captured, logged, or sent onward. */
   isPassword: boolean;
 
-  /** Allowlisted attributes only — never a dump of every attribute on the node. */
+  /** Allowlisted attributes only, never a dump of every attribute on the node. */
   attributes: Record<string, string>;
 
   box?: BoundingBox;
@@ -225,7 +225,7 @@ export interface SurfaceDriver {
    *
    * This is what makes a handoff auditable rather than a gap in the log. In a
    * regulated setting "the automation stopped, something happened, the
-   * automation resumed" is not an acceptable trail — the actions a person took
+   * automation resumed" is not an acceptable trail, the actions a person took
    * on a member's account have to be attributable too.
    */
   captureHumanActions(onAction: (action: HumanAction) => void): Promise<() => Promise<void>>;
@@ -233,8 +233,8 @@ export interface SurfaceDriver {
   /**
    * Input performed *as the human*, not as the automation. These deliberately
    * assert the opposite lease state to every other action on this interface:
-   * they are refused unless a human holds control. Same session, same page —
-   * which is the requirement — but never both parties driving at once.
+   * they are refused unless a human holds control. Same session, same page -
+   * which is the requirement, but never both parties driving at once.
    */
   humanClickAt(x: number, y: number): Promise<void>;
   humanType(text: string): Promise<void>;

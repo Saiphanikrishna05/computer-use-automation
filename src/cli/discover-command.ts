@@ -1,5 +1,5 @@
 /**
- * `discover` — the one path in the system that costs money and is not
+ * `discover`, the one path in the system that costs money and is not
  * deterministic, run once per capability.
  */
 
@@ -33,7 +33,7 @@ export async function runDiscoverCommand(opts: DiscoverCommandOptions): Promise<
       '\nANTHROPIC_API_KEY is not set.\n\n' +
         'Discovery is the one path that needs a model. Copy .env.example to .env and add your key:\n' +
         '  cp .env.example .env && $EDITOR .env\n\n' +
-        'Replay never needs it — `npm run replay` works with no key at all.\n\n',
+        'Replay never needs it, `npm run replay` works with no key at all.\n\n',
     );
     return 1;
   }

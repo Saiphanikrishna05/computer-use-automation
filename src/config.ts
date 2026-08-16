@@ -4,7 +4,7 @@
  * The credential section is the part worth reading. Operator credentials are
  * *not* in the artifact, not in the catalog's published tool schema, and not
  * supplied by the calling agent. They are resolved here, at execution time,
- * from the environment — which stands in for the secrets manager a real
+ * from the environment, which stands in for the secrets manager a real
  * deployment would use.
  *
  * That boundary is the point: an AI agent should be able to invoke

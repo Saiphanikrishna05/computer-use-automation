@@ -3,8 +3,8 @@
  *
  * This is the mechanism that catches the model declaring outcomes it never
  * observed, so it has to be verifiable without needing a lucky model run. The
- * driver is stubbed to a two-state surface — the screen the flow ended on, and
- * the screen it started from — because those are the only two states the
+ * driver is stubbed to a two-state surface, the screen the flow ended on, and
+ * the screen it started from, because those are the only two states the
  * validator inspects.
  *
  * The three fixtures below are the actual conditions the first real discovery
@@ -116,7 +116,7 @@ describe('validateAgainstEntryState', () => {
   });
 
   it('removes an outcome whose condition holds on the success screen', async () => {
-    // NO_SAVINGS_ACCOUNT keyed on "Savings" — which appears in the accounts
+    // NO_SAVINGS_ACCOUNT keyed on "Savings", which appears in the accounts
     // table of every member who has one, so it would fire on every success.
     const result = await validateAgainstEntryState(
       artifactWith([{ code: 'NO_SAVINGS_ACCOUNT', text: 'Savings' }]),
@@ -131,7 +131,7 @@ describe('validateAgainstEntryState', () => {
 
   it('keeps an outcome that holds in neither state, and flags it as unverified', async () => {
     // "No member record found" is genuinely absent from both screens. We have
-    // no evidence it is right — only that it is not provably wrong — so it
+    // no evidence it is right, only that it is not provably wrong, so it
     // survives with a warning rather than silently becoming fact.
     const result = await validateAgainstEntryState(
       artifactWith([{ code: 'MEMBER_NOT_FOUND', text: 'No member record found' }]),

@@ -89,7 +89,7 @@ export function saveOverlay(overlay: TenantOverlay): string {
  * capability.
  *
  * `<tenant>.<capability>.json` wins over the tenant-wide `<tenant>.json`.
- * Step overrides are keyed by step id, and step ids belong to a *recording* —
+ * Step overrides are keyed by step id, and step ids belong to a *recording* -
  * so an overlay that patches specific steps is really scoped to one
  * capability, and pretending otherwise is what let a set of overrides sit in
  * the wrong file doing nothing.
@@ -127,8 +127,8 @@ export function listOverlays(): TenantOverlay[] {
  * Rewrites every `framePath` in the artifact through the tenant's alias map.
  *
  * This is done as a deep structural walk rather than at each known call site
- * because frame paths appear in five places — step targets, output extraction
- * targets, checkpoint conditions, outcome conditions and recovery targets —
+ * because frame paths appear in five places, step targets, output extraction
+ * targets, checkpoint conditions, outcome conditions and recovery targets -
  * and a per-site rewrite would silently miss whichever one gets added next.
  */
 function rewriteFramePaths<T>(value: T, aliases: Record<string, string>): T {
@@ -193,7 +193,7 @@ export function applyOverlay(
     // Overrides are keyed by step id, which couples an overlay to a particular
     // recording: re-record a capability and the generated ids change, orphaning
     // every override written against the old ones. That happened here. Nothing
-    // failed — the overlay carried this tenant's reworded button and its
+    // failed, the overlay carried this tenant's reworded button and its
     // relabelled field, neither was applied, and two locators quietly resolved
     // three tiers lower than intended. The run still passed, only because both
     // tenants happen to share a form field name.

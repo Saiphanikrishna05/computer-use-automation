@@ -1,5 +1,5 @@
 /**
- * "Meridian Core — Servicing Console": a stand-in for the class of application
+ * "Meridian Core, Servicing Console": a stand-in for the class of application
  * this system exists to automate.
  *
  * It is deliberately hostile in the ways real back-office banking software is
@@ -9,7 +9,7 @@
  *   - table-based layout with <font> tags and bgcolor attributes;
  *   - element ids regenerated on every render, so id selectors are worthless;
  *   - no test ids, no semantic class names, no ARIA;
- *   - form fields whose only label is the adjacent table cell — no <label for>;
+ *   - form fields whose only label is the adjacent table cell, no <label for>;
  *   - the same label text ("Member ID") appearing in two different panels, so
  *     a name-only match is ambiguous and container context is required;
  *   - per-tenant differences in frame names and button wording.
@@ -62,7 +62,7 @@ export function createApp(tenant: TenantConfig) {
    * to enterprise software between releases. A button is reworded, a table's
    * columns are re-ordered, a new column appears, the styling is refreshed.
    *
-   * Nothing about the *flow* changes — which is exactly the case a recorded
+   * Nothing about the *flow* changes, which is exactly the case a recorded
    * capability is supposed to survive, and the case that separates a locator
    * ladder from a stored selector.
    */
@@ -273,7 +273,7 @@ export function createApp(tenant: TenantConfig) {
   });
 
   // -------------------------------------------------------------------------
-  // Sub-account opening — the irreversible flow
+  // Sub-account opening, the irreversible flow
   // -------------------------------------------------------------------------
 
   app.post('/console/content/sub_account', async (req, res) => {

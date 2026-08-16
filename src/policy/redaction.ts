@@ -7,7 +7,7 @@
  *   The typed return value handed back to the caller is not.
  *
  * That split is deliberate. A capability whose whole job is to return a
- * savings balance cannot redact the balance out of its own return value — but
+ * savings balance cannot redact the balance out of its own return value, but
  * it must never write that balance into a log line, a screenshot on disk, an
  * artifact, or a prompt. So redaction is applied at every egress boundary
  * (evidence, artifact, LLM) and nowhere else.
@@ -33,7 +33,7 @@ const keepLast = (n: number) => (match: string) => {
 };
 
 /**
- * Ordered — earlier rules win, so the specific patterns (SSN, card) run before
+ * Ordered, earlier rules win, so the specific patterns (SSN, card) run before
  * the catch-all long-digit-run rule that would otherwise swallow them and lose
  * the type information in the placeholder.
  */
@@ -81,7 +81,7 @@ export const DEFAULT_RULES: RedactionRule[] = [
 
 export interface RedactorOptions {
   rules?: RedactionRule[];
-  /** Literal strings to scrub wherever they appear — credentials supplied at
+  /** Literal strings to scrub wherever they appear, credentials supplied at
    *  runtime, which no pattern would recognise. */
   literals?: string[];
 }
@@ -141,7 +141,7 @@ export class Redactor {
     return this.value(input, 'none') as T;
   }
 
-  /** True when redaction would change the input — used to decide whether a
+  /** True when redaction would change the input, used to decide whether a
    *  screenshot region needs masking. */
   wouldRedact(input: string): boolean {
     return this.text(input) !== input;

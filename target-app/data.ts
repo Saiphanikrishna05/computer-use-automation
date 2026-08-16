@@ -23,7 +23,7 @@ export interface Member {
   /** Loading the detail view raises an unexpected system notice. */
   raisesNotice?: boolean;
   /**
-   * Free-text the institution's own staff can edit — and therefore a field an
+   * Free-text the institution's own staff can edit, and therefore a field an
    * attacker can reach without ever touching our infrastructure. This is the
    * realistic prompt-injection surface in a servicing console: not a crafted
    * page, but a memo box on a real member record.

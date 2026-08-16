@@ -2,16 +2,16 @@
   "capabilityId": "lookup_member_savings_balance",
   "capabilityVersion": 1,
   "tenantId": "cascade-cu",
-  "startedAt": "2026-08-16T01:49:23.733Z",
-  "finishedAt": "2026-08-16T01:49:26.408Z",
-  "durationMs": 2675,
+  "startedAt": "2026-08-16T05:33:34.527Z",
+  "finishedAt": "2026-08-16T05:33:37.200Z",
+  "durationMs": 2673,
   "steps": [
     {
       "stepId": "type_1",
       "intent": "Enter the operator ID in the Operator Sign-On panel",
       "action": "type",
       "status": "ok",
-      "elapsedMs": 184,
+      "elapsedMs": 181,
       "recoveries": [],
       "resolution": {
         "targetDescription": "textbox labelled \"User ID\" in the Operator Sign-On panel",
@@ -26,7 +26,7 @@
         "winningTier": 2,
         "winningKind": "label",
         "degraded": false,
-        "elapsedMs": 29
+        "elapsedMs": 28
       }
     },
     {
@@ -34,7 +34,7 @@
       "intent": "Enter the operator password in the Operator Sign-On panel",
       "action": "type",
       "status": "ok",
-      "elapsedMs": 244,
+      "elapsedMs": 252,
       "recoveries": [],
       "resolution": {
         "targetDescription": "textbox labelled \"Password\" in the Operator Sign-On panel",
@@ -49,7 +49,7 @@
         "winningTier": 2,
         "winningKind": "label",
         "degraded": false,
-        "elapsedMs": 10
+        "elapsedMs": 15
       }
     },
     {
@@ -57,7 +57,7 @@
       "intent": "Submit the operator sign-on form to access the servicing console",
       "action": "click",
       "status": "recovered",
-      "elapsedMs": 283,
+      "elapsedMs": 279,
       "recoveries": [
         {
           "code": "ACKNOWLEDGE_SYSTEM_NOTICE",
@@ -78,7 +78,7 @@
         "winningTier": 1,
         "winningKind": "role_name",
         "degraded": false,
-        "elapsedMs": 9
+        "elapsedMs": 14
       }
     },
     {
@@ -86,7 +86,7 @@
       "intent": "Type the member number into the Member ID field of the Member Search panel",
       "action": "type",
       "status": "ok",
-      "elapsedMs": 117,
+      "elapsedMs": 122,
       "recoveries": [],
       "resolution": {
         "targetDescription": "Member Number field in the Member Search panel",
@@ -101,7 +101,7 @@
         "winningTier": 2,
         "winningKind": "label",
         "degraded": false,
-        "elapsedMs": 11
+        "elapsedMs": 16
       }
     },
     {
@@ -109,7 +109,7 @@
       "intent": "Run the member search for the entered member ID",
       "action": "click",
       "status": "ok",
-      "elapsedMs": 278,
+      "elapsedMs": 250,
       "recoveries": [],
       "resolution": {
         "targetDescription": "Find Member button in the Member Search panel",
@@ -124,16 +124,16 @@
         "winningTier": 1,
         "winningKind": "role_name",
         "degraded": false,
-        "elapsedMs": 7
+        "elapsedMs": 6
       }
     }
   ],
   "degradedResolutions": 0,
   "evidence": {
-    "runId": "replay-20260816T014923-01",
-    "bundlePath": "runs/replay-20260816T014923-01",
+    "runId": "replay-20260816T053334-01",
+    "bundlePath": "runs/replay-20260816T053334-01",
     "screenshots": [
-      "runs/replay-20260816T014923-01/screenshots/027-replay-success.png"
+      "runs/replay-20260816T053334-01/screenshots/027-replay-success.png"
     ],
     "domSnapshots": []
   },

@@ -36,7 +36,7 @@ curl -s -o /dev/null "$TARGET/" 2>/dev/null || {
 
 clear
 rule
-bold "  Computer-use automation — guided demo"
+bold "  Computer-use automation, guided demo"
 rule
 dim "  An LLM works out how to do something inside a UI with no API."
 dim "  The run becomes a typed capability. That capability then replays"
@@ -53,7 +53,7 @@ dim "  Sign on with                 teller01 / demo-password"
 echo
 dim "  Then View Source. It is a real <frameset>. Table-based layout, <font>"
 dim "  tags, no test ids, no ARIA, and every element id is regenerated on each"
-dim "  render — so id selectors are worthless. The field labels are just the"
+dim "  render, so id selectors are worthless. The field labels are just the"
 dim "  adjacent table cell, with no markup association at all."
 echo
 dim "  This is the shape of the software the brief is about."
@@ -61,7 +61,7 @@ pause
 
 # ---------------------------------------------------------------------------
 if [ "$SKIP_LLM" != "1" ] && grep -q "ANTHROPIC_API_KEY=sk-ant-a" .env 2>/dev/null; then
-  bold "2 · Discovery — an LLM drives it for the first time"
+  bold "2 · Discovery, an LLM drives it for the first time"
   rule
   dim "  A browser opens. Watch it sign on, search, and read the balance."
   dim "  Note the model is never shown a selector; it points at elements it can"
@@ -93,7 +93,7 @@ for o in a['outputs']:
 fi
 
 # ---------------------------------------------------------------------------
-bold "4 · Deterministic replay — no model in the loop"
+bold "4 · Deterministic replay, no model in the loop"
 rule
 dim "  Same flow, no API key involved. Watch how much faster it is."
 pause
@@ -104,7 +104,7 @@ bold "   ...and it generalises to a different member"
 rule
 npx tsx src/cli/index.ts replay $CAP -i memberId=100004 --headless --no-operator 2>/dev/null | grep -E "^ +(memberName|savingsBalance)|^success"
 dim "  Same artifact, different record. The locators are durable, not"
-dim "  value-derived — that took two bugs to get right (REPORT §6)."
+dim "  value-derived; that took two bugs to get right (REPORT §6)."
 pause
 
 # ---------------------------------------------------------------------------
@@ -145,7 +145,7 @@ rule
 dim "  open_sub_account ends in a step the artifact declares irreversible."
 dim "  Policy refuses to perform it and escalates. This script plays the"
 dim "  operator: it takes the same live session, submits by hand, and hands"
-dim "  control back marked 'I did this myself' — so it is not submitted twice."
+dim "  control back marked 'I did this myself', so it is not submitted twice."
 pause
 ./scripts/demo-escalation.sh 2>&1 | grep -E "control_transfer|human_action|^success" | cut -c1-96
 dim "  Every operator action is in the evidence bundle. A handoff is not"
@@ -156,7 +156,7 @@ pause
 bold "9 · A second institution running the same vendor product"
 rule
 dim "  Different frame names, different button wording, an extra login notice."
-dim "  Same base artifact plus a small overlay — not a re-recording."
+dim "  Same base artifact plus a small overlay, not a re-recording."
 echo
 npx tsx src/cli/index.ts replay $CAP -i memberId=100001 --tenant cascade-cu --headless --no-operator 2>/dev/null \
   | grep -E "^success"
@@ -166,7 +166,7 @@ pause
 
 # ---------------------------------------------------------------------------
 if [ "$SKIP_LLM" != "1" ] && grep -q "ANTHROPIC_API_KEY=sk-ant-a" .env 2>/dev/null; then
-  bold "10 · The loop closed — an AI agent invoking the capability"
+  bold "10 · The loop closed, an AI agent invoking the capability"
   rule
   dim "  The agent gets the catalog as tools. It decides what to do; this"
   dim "  system does how. Note how the not-found case comes back."

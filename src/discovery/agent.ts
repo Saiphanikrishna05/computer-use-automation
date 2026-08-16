@@ -4,7 +4,7 @@
  * The design decision that matters most here is that **the model points, it
  * does not author locators.** Its tools take a `ref` from the last observation.
  * We synthesize the durable descriptor from what perception measured about
- * that element (see `perception/candidates.ts`), and then — critically — we
+ * that element (see `perception/candidates.ts`), and then, critically, we
  * act *through that descriptor*, not through the raw reference.
  *
  * That last part is what makes the emitted artifact trustworthy. Every step it
@@ -251,11 +251,11 @@ async function performAction(
   const ref = String(input.ref ?? '');
   const node = ctx.nodesByRef.get(ref);
   if (!node) {
-    return `ERROR: no element with ref "${ref}" in the last observation. The page may have changed — call observe again.`;
+    return `ERROR: no element with ref "${ref}" in the last observation. The page may have changed, call observe again.`;
   }
 
   // The descriptor is built first and then *used* to perform the action. If it
-  // cannot resolve, the action does not happen and nothing is recorded — which
+  // cannot resolve, the action does not happen and nothing is recorded, which
   // is exactly the guarantee we want, because a step whose locator only worked
   // via a raw index would fail the first time it was replayed.
   const descriptor = descriptorFor(node, snapshot.viewport);
@@ -266,7 +266,7 @@ async function performAction(
 
   if (!resolved.ok) {
     return (
-      `ERROR: could not act on ${describeNode(node)} — the durable locator built from it ` +
+      `ERROR: could not act on ${describeNode(node)}, the durable locator built from it ` +
       `${resolved.reason === 'ambiguous' ? 'matched several elements' : 'matched nothing'}. ` +
       `Pick a different element, or one with a clearer label.`
     );
@@ -325,8 +325,8 @@ async function performAction(
  * A compact text rendering of the element model.
  *
  * Text rather than a screenshot as the default: it is roughly two orders of
- * magnitude cheaper per turn, it is what the resolution engine actually
- * operates on, and it carries the signals a screenshot cannot — the panel a
+ * magnitude cheaper per turn, and it is what the resolution engine actually
+ * operates on, and it carries the signals a screenshot cannot, the panel a
  * control belongs to, the row and column a cell sits in, whether a label is a
  * real association or an inference. Screenshots are available on request for
  * the cases where layout genuinely matters.

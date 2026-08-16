@@ -9,7 +9,7 @@
  * artifact has to describe controls in terms that a *desktop* accessibility
  * API can also answer. Role, accessible name, the label a human would read as
  * belonging to a control, the enclosing panel, the row and column a cell sits
- * in — Windows UIA and macOS AX expose all of those. `td:nth-child(3)` is not
+ * in, Windows UIA and macOS AX expose all of those. `td:nth-child(3)` is not
  * a question you can ask an AX tree. Owning the model is what keeps the
  * artifact schema portable across surfaces instead of quietly becoming a
  * container for CSS.
@@ -121,7 +121,7 @@ export function collectUiNodes(): RawSnapshot {
   /**
    * Accessible name, following the spec's precedence closely enough to match
    * what a screen reader would announce. Deliberately does *not* fall through
-   * to adjacent-cell text — that is a weaker, positional signal and is kept
+   * to adjacent-cell text; that is a weaker, positional signal and is kept
    * separate as `nearestLabel` so the artifact can record which one it used.
    */
   const accessibleName = (el: Element): string => {
@@ -249,8 +249,8 @@ export function collectUiNodes(): RawSnapshot {
     //
     // Matching cell count skips the colspan'd title bar ("Accounts") that a
     // legacy panel table puts in row 0. But cell count alone is not enough:
-    // a *label/value grid* — "Member ID | 100001 | Status | Active" — is not a
-    // table at all, it is a form rendered with <td>. Its first row has the
+    // a *label/value grid*, "Member ID | 100001 | Status | Active", is not a
+    // table at all; it is a form rendered with <td>. Its first row has the
     // same arity as every other, so it gets mistaken for headings and every
     // cell below inherits a column header of "100001".
     //
@@ -290,7 +290,7 @@ export function collectUiNodes(): RawSnapshot {
 
   /**
    * The enclosing panel. In this markup a panel is a table whose first row is
-   * a styled header — which is how a legacy console draws a titled section.
+   * a styled header, which is how a legacy console draws a titled section.
    * This is what tells "Member ID in the search panel" apart from "Member ID
    * in the recent-activity panel".
    */
@@ -475,7 +475,7 @@ export function resolveCandidateInPage(request: ResolveRequest): number[] {
       case 'label': {
         // A column qualifier changes what is being asked for. Without one the
         // question is "the *control* labelled X", so only interactive nodes
-        // can answer — otherwise the <td> holding the label text competes with
+        // can answer, otherwise the <td> holding the label text competes with
         // the field it labels and every lookup is ambiguous. With one, the
         // question is "the *cell* at row X, column Y", which only cells can
         // answer. Keeping these apart is what makes the candidate unambiguous
@@ -531,7 +531,7 @@ export function resolveCandidateInPage(request: ResolveRequest): number[] {
     }
   });
 
-  // Anchors never widen a match set, only narrow it — and only when they
+  // Anchors never widen a match set, only narrow it, and only when they
   // actually help. Narrowing to zero would turn a usable ambiguous result into
   // a failure, so a fruitless anchor is discarded rather than applied.
   if (anchor && matches.length > 1) {

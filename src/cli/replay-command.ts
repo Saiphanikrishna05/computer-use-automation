@@ -1,5 +1,5 @@
 /**
- * `replay` — the production execution path, driven from a terminal.
+ * `replay`, the production execution path, driven from a terminal.
  *
  * This is the command an AI agent's tool call ultimately reduces to. It reads
  * an artifact, binds typed inputs, drives the surface with no model in the
@@ -47,7 +47,7 @@ export async function runReplayCommand(options: ReplayCommandOptions): Promise<R
   const redactor = new Redactor();
   const credentials = resolveCredentials(tenant.id);
   // The password is registered as a literal so it is scrubbed everywhere, even
-  // from places no pattern would recognise it — an error message, a DOM dump.
+  // from places no pattern would recognise it, an error message, a DOM dump.
   redactor.addLiteral(credentials.operatorPassword);
 
   const logger = new RunLogger({ runId, redactor, echo: !options.json });

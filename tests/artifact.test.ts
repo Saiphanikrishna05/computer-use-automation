@@ -43,7 +43,7 @@ describe('artifact schema', () => {
 describe('tenant overlay', () => {
   it('refuses to run when an override matches no step, instead of silently doing nothing', () => {
     // The bug this pins. Overrides are keyed by step id, and step ids belong to
-    // a recording — so re-recording a capability orphans every override written
+    // a recording, so re-recording a capability orphans every override written
     // against the old ids. It happened: this tenant's reworded button and
     // relabelled field went un-applied, two locators quietly resolved three
     // tiers lower, and the run still passed because both tenants happen to
@@ -132,7 +132,7 @@ describe('agent-facing tool definition', () => {
 
   it('never exposes injected credentials to the calling agent', () => {
     // The agent should not be able to supply, see, or leak operator
-    // credentials — so they are not in the schema at all.
+    // credentials, so they are not in the schema at all.
     expect(Object.keys(tool.input_schema.properties)).toEqual(['memberId']);
     expect(tool.input_schema.required).toEqual(['memberId']);
     expect(JSON.stringify(tool)).not.toContain('operatorPassword');

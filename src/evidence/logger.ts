@@ -1,7 +1,7 @@
 /**
  * Evidence.
  *
- * Every run — discovery or replay — writes one self-contained bundle:
+ * Every run, discovery or replay, writes one self-contained bundle:
  *
  *   runs/<runId>/
  *     log.jsonl        structured, append-only, one event per line
@@ -12,7 +12,7 @@
  *     transcript.json  (discovery only) the redacted model transcript
  *
  * JSONL rather than a nested JSON document because a run that crashes halfway
- * still leaves a readable, parseable log — which is exactly the run you most
+ * still leaves a readable, parseable log, which is exactly the run you most
  * want to read.
  *
  * Every value that lands here has passed through the redactor first. There is
@@ -106,7 +106,7 @@ export class RunLogger {
     }
   }
 
-  /** Screenshots arrive already masked by the driver — this only files them. */
+  /** Screenshots arrive already masked by the driver; this only files them. */
   screenshot(label: string, png: Buffer): string {
     const name = `${String(this.seq + 1).padStart(3, '0')}-${slug(label)}.png`;
     const path = join(this.dir, 'screenshots', name);
@@ -126,7 +126,7 @@ export class RunLogger {
   /**
    * Writes a file into the bundle verbatim.
    *
-   * The one intentional non-redacted path, used for the emitted artifact —
+   * The one intentional non-redacted path, used for the emitted artifact -
    * which contains descriptors, never values, and is validated against the
    * schema before it gets here. Callers redact anything else themselves.
    */

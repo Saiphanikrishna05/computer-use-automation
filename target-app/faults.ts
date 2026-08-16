@@ -2,7 +2,7 @@
  * Fault injection.
  *
  * The brief is explicit that the interesting failures in a stable enterprise UI
- * are not layout drift — they are the runtime conditions that legitimately
+ * are not layout drift; they are the runtime conditions that legitimately
  * happen: validation errors, "record not found", permission denials, unexpected
  * dialogs, session expiry, transient slowness, outright app errors.
  *

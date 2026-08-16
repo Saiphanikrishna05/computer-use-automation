@@ -44,7 +44,7 @@ export interface PolicyConfig {
   /** Ceiling on what any single action may do. */
   maxActionClass: ActionClass;
   /**
-   * When false (the default), an irreversible step does not fail the run — it
+   * When false (the default), an irreversible step does not fail the run; it
    * raises an intervention and asks a human. Blocking outright would make the
    * capability useless; performing it silently would make it dangerous.
    */

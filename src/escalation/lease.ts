@@ -8,7 +8,7 @@
  * over the *same live session*, the two can race. The automation's pending
  * `waitForSelector` fires while the human is mid-form; a retry loop clicks the
  * button the human just clicked. Treating "paused" as an absence of activity
- * is not enough — control has to be a single, explicit, checked value.
+ * is not enough, control has to be a single, explicit, checked value.
  *
  *   AUTOMATION ──requestHandoff──▶ HANDOFF_REQUESTED ──grant──▶ HUMAN
  *        ▲                                                        │
