@@ -18,7 +18,8 @@
     "typecheck": "tsc --noEmit",
     "stability": "tsx src/cli/index.ts stability",
     "demo:gif": "tsx scripts/make-gif.ts",
-    "console": "tsx src/cli/index.ts console"
+    "console": "tsx src/cli/index.ts console",
+    "docs:images": "bash scripts/make-docs-images.sh"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.68.0",
