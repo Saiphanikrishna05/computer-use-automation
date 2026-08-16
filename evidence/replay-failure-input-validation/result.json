@@ -2,14 +2,14 @@
   "capabilityId": "lookup_member_savings_balance",
   "capabilityVersion": 1,
   "tenantId": "northpoint-fcu",
-  "startedAt": "2026-08-16T01:44:12.074Z",
-  "finishedAt": "2026-08-16T01:44:12.075Z",
+  "startedAt": "2026-08-16T01:49:22.546Z",
+  "finishedAt": "2026-08-16T01:49:22.547Z",
   "durationMs": 1,
   "steps": [],
   "degradedResolutions": 0,
   "evidence": {
-    "runId": "replay-20260816T014411-01",
-    "bundlePath": "runs/replay-20260816T014411-01",
+    "runId": "replay-20260816T014922-01",
+    "bundlePath": "runs/replay-20260816T014922-01",
     "screenshots": [],
     "domSnapshots": []
   },

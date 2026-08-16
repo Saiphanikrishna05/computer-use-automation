@@ -19,7 +19,7 @@
  *     then cleaned up, which is not the same guarantee.
  */
 
-import type { Browser, BrowserContext, Dialog, ElementHandle, Frame, Page } from 'playwright';
+import type { Browser, BrowserContext, Dialog, ElementHandle, Frame, Locator, Page } from 'playwright';
 import { chromium } from 'playwright';
 import {
   CANDIDATE_TIER,
@@ -603,11 +603,29 @@ export class PlaywrightWebSurface implements SurfaceDriver {
    * removed immediately afterwards; it exists for the duration of one
    * screenshot and is never present while an action runs.
    */
-  private async markSensitive(): Promise<Frame[]> {
+  /**
+   * Marks the regions a screenshot must cover, and — just as importantly —
+   * reports the frames it could not inspect.
+   *
+   * Redaction has to fail *closed*. If a frame cannot be collected, or marking
+   * throws because the page navigated mid-call, we do not know what is on that
+   * frame; the safe reading is "possibly a tax ID", not "nothing to mask". The
+   * caller covers those frames whole rather than shipping a screenshot that
+   * silently proves nothing.
+   *
+   * This is not hypothetical. Frames captured while the engine was navigating
+   * came out unmasked, and the only reason it was caught is that a person
+   * looked at the image.
+   */
+  private async markSensitive(): Promise<{ touched: Frame[]; unverified: Frame[] }> {
     const touched: Frame[] = [];
+    const unverified: Frame[] = [];
     for (const frame of this.allFrames()) {
       const raw = await this.collect(frame);
-      if (!raw) continue;
+      if (!raw) {
+        unverified.push(frame);
+        continue;
+      }
 
       const sensitive = raw.nodes
         .filter(
@@ -647,10 +665,10 @@ export class PlaywrightWebSurface implements SurfaceDriver {
           },
           { indices: sensitive, attr: MASK_ATTRIBUTE },
         )
-        .catch(() => undefined);
-      touched.push(frame);
+        .then(() => touched.push(frame))
+        .catch(() => unverified.push(frame));
     }
-    return touched;
+    return { touched, unverified };
   }
 
   private async unmarkSensitive(frames: Frame[]): Promise<void> {
@@ -667,8 +685,27 @@ export class PlaywrightWebSurface implements SurfaceDriver {
     const shouldMask = options.maskSensitive ?? true;
     let marked: Frame[] = [];
     try {
-      if (shouldMask) marked = await this.markSensitive();
-      const masks = marked.map((f) => f.locator(`[${MASK_ATTRIBUTE}]`));
+      const masks: Locator[] = [];
+
+      if (shouldMask) {
+        const { touched, unverified } = await this.markSensitive();
+        marked = touched;
+        masks.push(...touched.map((f) => f.locator(`[${MASK_ATTRIBUTE}]`)));
+
+        // A frame we could not inspect is covered entirely. An obviously
+        // redacted screenshot is a worse diagnostic and a correct one; an
+        // apparently clean screenshot that was never actually checked is the
+        // failure mode this whole layer exists to prevent.
+        for (const frame of unverified) masks.push(frame.locator('body'));
+        if (unverified.length > 0) {
+          this.emit(
+            'redaction_incomplete',
+            `${unverified.length} frame(s) could not be inspected before capture and were masked whole`,
+            { frames: unverified.map((f) => f.name() || f.url()) },
+          );
+        }
+      }
+
       return await this.page.screenshot({
         fullPage: options.fullPage ?? false,
         ...(masks.length > 0 ? { mask: masks, maskColor: '#111827' } : {}),

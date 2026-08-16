@@ -2,16 +2,16 @@
   "capabilityId": "open_sub_account",
   "capabilityVersion": 1,
   "tenantId": "northpoint-fcu",
-  "startedAt": "2026-08-16T01:44:17.194Z",
-  "finishedAt": "2026-08-16T01:44:28.881Z",
-  "durationMs": 11687,
+  "startedAt": "2026-08-16T01:49:27.592Z",
+  "finishedAt": "2026-08-16T01:49:39.287Z",
+  "durationMs": 11695,
   "steps": [
     {
       "stepId": "enter_operator_id",
       "intent": "Type the operator user ID into the sign-on form",
       "action": "type",
       "status": "ok",
-      "elapsedMs": 1091,
+      "elapsedMs": 1092,
       "recoveries": [],
       "resolution": {
         "targetDescription": "User ID field on the sign-on screen",
@@ -26,7 +26,7 @@
         "winningTier": 2,
         "winningKind": "label",
         "degraded": false,
-        "elapsedMs": 17
+        "elapsedMs": 18
       }
     },
     {
@@ -34,7 +34,7 @@
       "intent": "Type the operator password into the sign-on form",
       "action": "type",
       "status": "ok",
-      "elapsedMs": 1166,
+      "elapsedMs": 1160,
       "recoveries": [],
       "resolution": {
         "targetDescription": "Password field on the sign-on screen",
@@ -49,7 +49,7 @@
         "winningTier": 2,
         "winningKind": "label",
         "degraded": false,
-        "elapsedMs": 9
+        "elapsedMs": 18
       }
     },
     {
@@ -57,7 +57,7 @@
       "intent": "Submit the sign-on form",
       "action": "click",
       "status": "ok",
-      "elapsedMs": 280,
+      "elapsedMs": 269,
       "recoveries": [],
       "resolution": {
         "targetDescription": "Sign On button",
@@ -72,7 +72,7 @@
         "winningTier": 1,
         "winningKind": "role_name",
         "degraded": false,
-        "elapsedMs": 14
+        "elapsedMs": 9
       }
     },
     {
@@ -80,7 +80,7 @@
       "intent": "Wait for the member search screen",
       "action": "wait_for",
       "status": "ok",
-      "elapsedMs": 3,
+      "elapsedMs": 4,
       "recoveries": []
     },
     {
@@ -88,7 +88,7 @@
       "intent": "Type the member number into the Member Search panel",
       "action": "type",
       "status": "ok",
-      "elapsedMs": 118,
+      "elapsedMs": 117,
       "recoveries": [],
       "resolution": {
         "targetDescription": "Member ID field in the Member Search panel",
@@ -103,7 +103,7 @@
         "winningTier": 2,
         "winningKind": "label",
         "degraded": false,
-        "elapsedMs": 12
+        "elapsedMs": 11
       }
     },
     {
@@ -111,7 +111,7 @@
       "intent": "Run the member search",
       "action": "click",
       "status": "ok",
-      "elapsedMs": 255,
+      "elapsedMs": 254,
       "recoveries": [],
       "resolution": {
         "targetDescription": "Search button in the Member Search panel",
@@ -134,7 +134,7 @@
       "intent": "Open the new sub-account request form for this member",
       "action": "click",
       "status": "ok",
-      "elapsedMs": 265,
+      "elapsedMs": 269,
       "recoveries": [],
       "resolution": {
         "targetDescription": "Open Sub-Account button on the member detail screen",
@@ -149,7 +149,7 @@
         "winningTier": 1,
         "winningKind": "role_name",
         "degraded": false,
-        "elapsedMs": 18
+        "elapsedMs": 16
       }
     },
     {
@@ -172,7 +172,7 @@
         "winningTier": 2,
         "winningKind": "label",
         "degraded": false,
-        "elapsedMs": 9
+        "elapsedMs": 10
       }
     },
     {
@@ -203,25 +203,25 @@
       "intent": "Submit the sub-account request to the host. This opens a live account and cannot be undone.",
       "action": "click",
       "status": "ok",
-      "elapsedMs": 6,
+      "elapsedMs": 7,
       "recoveries": [
         {
           "code": "HUMAN_CHANGE",
           "attempt": 1,
           "succeeded": true,
-          "note": "supervisor-04 at 2026-08-16T01:44:28.596Z: input \"initialDeposit\""
+          "note": "supervisor-04 at 2026-08-16T01:49:38.982Z: input \"initialDeposit\""
         },
         {
           "code": "HUMAN_CLICK",
           "attempt": 1,
           "succeeded": true,
-          "note": "supervisor-04 at 2026-08-16T01:44:28.598Z: input \"submit\""
+          "note": "supervisor-04 at 2026-08-16T01:49:38.983Z: input \"submit\""
         },
         {
           "code": "HUMAN_SUBMIT",
           "attempt": 1,
           "succeeded": true,
-          "note": "supervisor-04 at 2026-08-16T01:44:28.598Z: form \"\""
+          "note": "supervisor-04 at 2026-08-16T01:49:38.984Z: form \"\""
         }
       ],
       "resolution": {
@@ -244,16 +244,16 @@
   ],
   "degradedResolutions": 0,
   "evidence": {
-    "runId": "replay-20260816T014417-01",
-    "bundlePath": "runs/replay-20260816T014417-01",
+    "runId": "replay-20260816T014927-01",
+    "bundlePath": "runs/replay-20260816T014927-01",
     "screenshots": [
-      "runs/replay-20260816T014417-01/screenshots/036-escalation-submit-request.png",
-      "runs/replay-20260816T014417-01/screenshots/053-replay-success.png"
+      "runs/replay-20260816T014927-01/screenshots/036-escalation-submit-request.png",
+      "runs/replay-20260816T014927-01/screenshots/053-replay-success.png"
     ],
     "domSnapshots": []
   },
   "status": "success",
   "outputs": {
-    "reference": "SA-58BF70"
+    "reference": "SA-96B0DE"
   }
 }

@@ -137,9 +137,11 @@ approved artifact plus a human.
 
 **Redaction applies at every egress**: logs, artifacts, screenshots masked at
 capture, and the model's prompts. Masking is scoped to the deepest matching
-element, which is not a detail — an element's text contains its descendants', so
-masking every match blacked out the whole screen and turned the evidence into an
-absence of evidence. The most instructive bug was here — redaction
+element — an element's text contains its descendants', so masking every match
+blacked out the whole screen and turned the evidence into an absence of it — and
+it fails *closed*: a frame that cannot be inspected before capture is covered
+whole and logged, because "we could not check" and "there was nothing to hide"
+must not produce the same image. The most instructive bug was here — redaction
 missed a node's `nearestLabel`, and in an accounts table the cell beside a
 balance is the *account number*. The fix went past the leak: locator synthesis
 now rejects any redacted string, because a locator built from record data both
