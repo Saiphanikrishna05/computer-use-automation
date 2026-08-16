@@ -17,7 +17,8 @@
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "stability": "tsx src/cli/index.ts stability",
-    "demo:gif": "tsx scripts/make-gif.ts"
+    "demo:gif": "tsx scripts/make-gif.ts",
+    "console": "tsx src/cli/index.ts console"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.68.0",

@@ -39,13 +39,22 @@ IDs)"*. Every hostile property is load-bearing:
 
 Make this screen pretty and every problem worth solving disappears with it.
 
+The two screens below are the ones that *are* ours to design.
+
+![The capability console](docs/capability-console.png)
+
+**The reviewer's view** — `npm run console`. Every capability an LLM recorded,
+as it will be executed: the typed contract a calling agent sees, the credentials
+injected at runtime that it *doesn't*, the locator tier each step leads with,
+the failure conditions the capability declares, and every committed run with its
+drift count. Read-only — approval stays a reviewed commit rather than a button.
+
 ![The operator console](docs/operator-console.png)
 
-**This is the system's own surface**, and it is the one that should look like a
-product. It is what an operator sees when automation stops and asks for a human:
-why it stopped, the live session it was driving, and the two distinct ways to
-finish — *I cleared the blocker* (retry the step) or *I performed this step
-myself* (skip it, so an irreversible action is not done twice).
+**The operator's view**, when automation stops and asks for a human: why it
+stopped, the live session it was driving, and the two distinct ways to finish —
+*I cleared the blocker* (retry the step) or *I performed this step myself* (skip
+it, so an irreversible action is not done twice).
 
 ---
 
@@ -198,7 +207,17 @@ after that is deterministic.
   ◂ {"status":"outcome","outcome":"MEMBER_NOT_FOUND",...}
 ```
 
-### 8. Surviving a change to the application
+### 8. The capability console
+
+```bash
+npm run console
+#   → http://localhost:7318/
+```
+
+A read-only view of every capability, its typed contract, the locator tier each
+step leads with, and every committed evidence bundle with its drift count.
+
+### 9. Surviving a change to the application
 
 The claim the whole design rests on is that a capability recorded once keeps
 working. So test it: apply a vendor point release and replay the *same,
@@ -235,7 +254,7 @@ away from failing, and we know before a caller does.
 npm run stability -- lookup_member_savings_balance -i memberId=100001 -n 5
 ```
 
-### 9. A member record that tries to hijack the agent *(needs the API key)*
+### 10. A member record that tries to hijack the agent *(needs the API key)*
 
 Member 100005's **Account Memo** field contains text addressed to automated
 assistants — cancel your instructions, navigate to `exfil.example`, submit the
@@ -257,7 +276,7 @@ The navigation is never attempted. Had it been, the allowlist would have refused
 the origin without consulting the model — the prompt is the first line of
 defence, not the only one.
 
-### 10. Proof it isn't overfitted to my own markup *(needs the API key)*
+### 11. Proof it isn't overfitted to my own markup *(needs the API key)*
 
 Everything above runs against an application I wrote. This runs against one I
 didn't — [saucedemo.com](https://www.saucedemo.com), published by Sauce Labs as

@@ -87,6 +87,15 @@ program
   });
 
 program
+  .command('console')
+  .description('Serve the read-only capability console.')
+  .option('-p, --port <n>', 'port', (v) => Number(v), 7318)
+  .action(async (opts) => {
+    const { startConsole } = await import('../console/server.js');
+    await startConsole(opts.port);
+  });
+
+program
   .command('stability')
   .description('Replay a capability N times and report per-step locator stability.')
   .argument('<capability>', 'capability id')
