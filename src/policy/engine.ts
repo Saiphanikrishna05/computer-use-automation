@@ -64,6 +64,21 @@ export const DISCOVERY_POLICY: PolicyConfig = {
   requireApprovedArtifact: false,
 };
 
+/**
+ * Probing replays a *draft* on purpose, so the approval gate has to be open;
+ * that is the one thing it relaxes. The ceiling stays exactly where discovery
+ * left it, because a probe deliberately supplies an invalid input and then
+ * walks the flow: the last thing it may be allowed to do is commit one.
+ */
+export const PROBE_POLICY: PolicyConfig = {
+  allowedOrigins: [],
+  allowedPathPatterns: [],
+  allowedActions: ['navigate', 'click', 'type', 'select', 'press', 'read', 'screenshot'],
+  maxActionClass: 'mutate_reversible',
+  allowUnattendedIrreversible: false,
+  requireApprovedArtifact: false,
+};
+
 export const REPLAY_POLICY: PolicyConfig = {
   allowedOrigins: [],
   allowedPathPatterns: [],

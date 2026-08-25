@@ -135,9 +135,13 @@ export async function validateAgainstEntryState(
   }
 
   if (keptOutcomes.length > 0) {
+    // Phrased so it stays true after the fact. This pass can only ever say that
+    // the *recording run* did not observe these; probing runs next and may
+    // upgrade some of them to observations, and this line should not read as a
+    // contradiction in an artifact where that happened.
     warnings.push(
-      `${keptOutcomes.length} declared outcome(s) were hypothesised from a single successful run and have not ` +
-        'been observed. Confirm the exact on-screen wording of each before approving: ' +
+      `${keptOutcomes.length} declared outcome(s) were hypothesised by the run that recorded them, which ` +
+        'never took these paths: ' +
         keptOutcomes.map((o) => `${o.code} ("${textOf(o.when)}")`).join(', '),
     );
   }

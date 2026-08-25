@@ -1,0 +1,102 @@
+<!-- ===== frame: (main) · http://localhost:4173/console ===== -->
+<html><head>
+<title>Northpoint FCU — Servicing Console</title>
+</head>
+<frameset cols="190,*" frameborder="1" border="2" framespacing="0">
+  <frame name="navFrame" src="/console/nav" scrolling="no" marginwidth="0" marginheight="0">
+  <frame name="contentFrame" src="/console/content?view=search" marginwidth="0" marginheight="0">
+</frameset>
+
+</html>
+
+<!-- ===== frame: navFrame · http://localhost:4173/console/nav ===== -->
+<html><head><title>Menu</title></head>
+<body bgcolor="#c8cdd4" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<table width="100%" border="0" cellpadding="5" cellspacing="0">
+  <tbody><tr bgcolor="#1c3f60"><td><font face="Verdana, Arial" size="1" color="#ffffff"><b>SERVICING</b></font></td></tr>
+  <tr><td><font face="Verdana, Arial" size="1"><a href="/console/content?view=search" target="contentFrame">Member Search</a></font></td></tr>
+  <tr><td><font face="Verdana, Arial" size="1"><a href="/console/content?view=search" target="contentFrame">Account Inquiry</a></font></td></tr>
+  <tr><td><font face="Verdana, Arial" size="1"><a href="/console/content?view=search" target="contentFrame">Transaction History</a></font></td></tr>
+  <tr bgcolor="#1c3f60"><td><font face="Verdana, Arial" size="1" color="#ffffff"><b>ADMINISTRATION</b></font></td></tr>
+  <tr><td><font face="Verdana, Arial" size="1"><a href="/logout" target="_top">Sign Off</a></font></td></tr>
+</tbody></table>
+
+
+</body></html>
+
+<!-- ===== frame: contentFrame · http://localhost:4173/console/content?view=search ===== -->
+<html><head>
+<title>Northpoint FCU — Servicing Console</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+<body bgcolor="#d4d0c8" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tbody><tr>
+    <td bgcolor="#1c3f60" height="26">&nbsp;<font face="Verdana, Arial" size="2" color="#ffffff"><b>Northpoint FCU</b></font><font face="Verdana, Arial" size="1" color="#c8d4e0">&nbsp;&nbsp;·&nbsp;&nbsp;Meridian Core 1.4.2</font></td>
+  </tr>
+  <tr><td bgcolor="#7f8b96" height="1"></td></tr>
+</tbody></table>
+<table width="100%" border="0" cellpadding="8" cellspacing="0"><tbody><tr><td>
+
+
+<table border="1" cellpadding="0" cellspacing="0" bgcolor="#eceae4">
+  <tbody><tr><td>
+    <table border="0" cellpadding="6" cellspacing="0" width="430">
+      <tbody><tr bgcolor="#1c3f60">
+        <td colspan="2"><font face="Verdana, Arial" size="2" color="#ffffff"><b>Member Search</b></font></td>
+      </tr>
+      
+      <form method="post" action="/console/content/search"></form>
+      <tr>
+        <td width="130"><font face="Verdana, Arial" size="1">Member ID</font></td>
+        <td><input type="text" name="memberId" id="ctl_fda17e_m" size="16" maxlength="6" value="" style=""></td>
+      </tr>
+      <tr>
+        <td><font face="Verdana, Arial" size="1">Surname</font></td>
+        <td><input type="text" name="surname" id="ctl_fda17e_n" size="24" style=""></td>
+      </tr>
+      <tr>
+        <td></td>
+        <!-- Post-upgrade the action was reworded to "Search Member". An exact
+             role+name match no longer holds; the ladder has to earn its keep. -->
+        <td><input type="submit" name="go" id="ctl_fda17e_g" value="Search" style="">&nbsp;<input type="reset" name="clr" id="ctl_fda17e_c" value="Clear" style=""></td>
+      </tr>
+      
+    </tbody></table>
+  </td></tr>
+</tbody></table>
+
+<br>
+
+<!--
+  Second panel repeating the same field label. This is not decoration: it makes
+  a name-only match ambiguous, so anything driving this screen has to carry
+  container context rather than the label alone.
+-->
+<table border="1" cellpadding="0" cellspacing="0" bgcolor="#eceae4">
+  <tbody><tr><td>
+    <table border="0" cellpadding="6" cellspacing="0" width="430">
+      <tbody><tr bgcolor="#7f8b96">
+        <td colspan="2"><font face="Verdana, Arial" size="2" color="#ffffff"><b>Recent Terminal Activity</b></font></td>
+      </tr>
+      <tr>
+        <td width="130"><font face="Verdana, Arial" size="1">Member ID</font></td>
+        <td><input type="text" name="recentMemberId" id="ctl_fda17e_h" size="16" value="" readonly="" style=""></td>
+      </tr>
+      <tr>
+        <td><font face="Verdana, Arial" size="1">Last Inquiry</font></td>
+        <td><font face="Verdana, Arial" size="1">No activity this session</font></td>
+      </tr>
+    </tbody></table>
+  </td></tr>
+</tbody></table>
+
+</td></tr></tbody></table>
+<table width="100%" border="0" cellpadding="4" cellspacing="0">
+  <tbody><tr><td bgcolor="#7f8b96" height="1"></td></tr>
+  <tr><td><font face="Verdana, Arial" size="1" color="#4a4a4a">Meridian Core Servicing Console · session terminal T-0114 · unauthorised access is prohibited</font></td></tr>
+</tbody></table>
+
+
+
+</body></html>

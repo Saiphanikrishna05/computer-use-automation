@@ -1,0 +1,260 @@
+[
+  {
+    "turn": 1,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "text",
+        "text": "I'll start by observing the current screen."
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01MqXVDhS2hqG3KjU6zk6L1P",
+        "name": "observe",
+        "input": {},
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 2,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_01BK2BUJhDBo4YX4C3m7F77P",
+        "name": "type",
+        "input": {
+          "ref": "main#5",
+          "text": "teller01",
+          "intent": "Enter the operator ID in the Operator Sign-On panel"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01XYxhgoW8CTpFmP34rKyCVD",
+        "name": "type",
+        "input": {
+          "ref": "main#7",
+          "text": "[redacted:literal]",
+          "intent": "Enter the operator password in the Operator Sign-On panel"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 3,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_018s3w5ymGkB3g6ffqGucVui",
+        "name": "click",
+        "input": {
+          "ref": "main#8",
+          "intent": "Submit the operator sign-on form to access the servicing console"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 4,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_01WBdEwuBbrMK7sFejo8AHfq",
+        "name": "observe",
+        "input": {},
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 5,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_014wdQ17aSyp9YynHmzWC3Z3",
+        "name": "type",
+        "input": {
+          "ref": "contentFrame#5",
+          "text": "100001",
+          "intent": "Type the member number into the Member ID field of the Member Search panel"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 6,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_01EmyKny5ddfNhsoZzed3mzJ",
+        "name": "click",
+        "input": {
+          "ref": "contentFrame#8",
+          "intent": "Run the member search for the entered member ID"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 7,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_014cqS9NZjqXwsPdNN6zdWJ9",
+        "name": "observe",
+        "input": {},
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 8,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "text",
+        "text": "The member detail loaded. Let me extract the savings balance and member name."
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01QEHSJrBpADEj9CHJRjqsCV",
+        "name": "extract_value",
+        "input": {
+          "ref": "contentFrame#29",
+          "name": "savingsBalance",
+          "type": "money",
+          "description": "Current balance of the member's Savings account from the Accounts table",
+          "sensitivity": "financial"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01JGr6XzfyL2JaUEVm4fArBG",
+        "name": "extract_value",
+        "input": {
+          "ref": "contentFrame#10",
+          "name": "memberName",
+          "type": "string",
+          "description": "Full name of the member on the Member Profile panel",
+          "sensitivity": "pii"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 9,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "thinking",
+        "thinking": "",
+        "signature": "CAISpwIKjgEIERgCKkCNwMuV3BbFvPZvLGMVXSbf4goO7otwE01pU1Y9vCdOnDTzFM2gS2NL+HHFpMGKMLXwcnMsVgXNWUpK8OHtnMivMg1jbGF1ZGUtb3B1cy01OAFCCHRoaW5raW5nWiQyZDczZDMwZi03MzE2LTRkOWMtOGZmNS01ZWIzZTNiMTNkOGWoAaP0s9QGEgxFbdDLPiV4CO6RlWoaDEfFKnbcy4gfXF5iziIwNclaorFX3QF8YsFzzGBzsSvsQcpQKED87JNXrlk6Ccx/3U9ctpAWKj2xWo+A4N4ZKkaTxtYBIHlayIem3qjO5N+fW8In4u+URuVg4+RQiGpPSkbsIzSUKhNlA4ws1OpHbiWowAEo806q81V7vOx5gpnEcI6kf+cqGAE="
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01NcxLiHLUTvPYvjWQt7Jhwd",
+        "name": "extract_value",
+        "input": {
+          "ref": "contentFrame#8",
+          "name": "memberStatus",
+          "type": "string",
+          "description": "Membership status shown on the Member Profile panel (e.g. Active)",
+          "sensitivity": "none"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 10,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_01VFZd5ziBMuV8UJBRpDhjTa",
+        "name": "finish",
+        "input": {
+          "capabilityId": "lookup_member_savings_balance",
+          "title": "Look up a member's savings balance",
+          "description": "Signs on to the Meridian Core Servicing Console, searches the Member Search panel by Member ID, and reads the member's Savings account current balance from the Member Detail screen. Returns savingsBalance (money), memberName (PII) and memberStatus. Read-only: no records are created, modified or submitted.",
+          "parameters": [
+            {
+              "name": "memberId",
+              "type": "string",
+              "description": "The credit union member number to look up (6 digits).",
+              "pattern": "^\\d{6}$",
+              "value": "100001"
+            }
+          ],
+          "checkpointDescription": "The Member Detail screen is displayed for the requested member, with an Accounts table containing a Savings row showing a Current Balance.",
+          "checkpointText": "Member Detail",
+          "expectedOutcomes": [
+            {
+              "code": "MEMBER_NOT_FOUND",
+              "description": "No member exists with the supplied member ID, so the search returns no member detail.",
+              "textWhenPresent": "No member found",
+              "probeParameter": "memberId",
+              "probeValue": "999999",
+              "probeRationale": "A member ID far outside the demo data range should return no matching record."
+            },
+            {
+              "code": "INVALID_MEMBER_ID",
+              "description": "The supplied member ID is not in a valid format and the search panel rejects it before querying.",
+              "textWhenPresent": "Invalid member ID",
+              "probeParameter": "memberId",
+              "probeValue": "ABC",
+              "probeRationale": "Non-numeric input should trigger a field validation message rather than a search."
+            },
+            {
+              "code": "MEMBER_RESTRICTED",
+              "description": "The member record exists but the signed-on operator is not entitled to view its account balances.",
+              "textWhenPresent": "Not authorized to view this member",
+              "probeParameter": "memberId",
+              "probeValue": "100002",
+              "probeRationale": "Adjacent member records in the demo set may carry a restricted-access flag."
+            }
+          ]
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  }
+]

@@ -10,6 +10,7 @@
   "scripts": {
     "app": "tsx target-app/server.ts",
     "discover": "tsx src/cli/index.ts discover",
+    "probe": "tsx src/cli/index.ts probe",
     "replay": "tsx src/cli/index.ts replay",
     "catalog": "tsx src/cli/index.ts catalog",
     "agent-demo": "tsx src/cli/index.ts agent-demo",

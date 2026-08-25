@@ -14,7 +14,7 @@ import { toolDefinitionFor, catalogToolDefinitions } from '../catalog/tools.js';
 export async function runCatalogCommand(
   action: string,
   capability: string | undefined,
-  opts: { by: string; note: string },
+  opts: { by: string; note: string; force?: boolean },
 ): Promise<number> {
   switch (action) {
     case 'list': {
@@ -33,7 +33,21 @@ export async function runCatalogCommand(
           `    inputs: ${a.inputs.filter((i) => !i.injected).map((i) => i.name).join(', ') || '(none)'}` +
             ` → outputs: ${a.outputs.map((o) => o.name).join(', ') || '(none)'}\n`,
         );
-        process.stdout.write(`    ${a.steps.length} steps · ${a.outcomes.length} declared outcomes · ${a.recovery.length} recovery rules\n\n`);
+        // How many of the declared outcomes are actually backed by an
+        // observation, rather than by the recording model's word. A reviewer
+        // scanning the catalog should be able to see that without opening the
+        // artifact.
+        const byState = (state: string) => a.outcomes.filter((o) => o.evidence.state === state).length;
+        const evidence = a.outcomes.length === 0
+          ? ''
+          : ` (${[
+              byState('observed') > 0 ? `${byState('observed')} observed` : '',
+              byState('refuted') > 0 ? `${byState('refuted')} REFUTED` : '',
+              byState('hypothesised') > 0 ? `${byState('hypothesised')} unverified` : '',
+            ].filter(Boolean).join(', ')})`;
+        process.stdout.write(
+          `    ${a.steps.length} steps · ${a.outcomes.length} declared outcomes${evidence} · ${a.recovery.length} recovery rules\n\n`,
+        );
       }
       return 0;
     }
@@ -59,6 +73,33 @@ export async function runCatalogCommand(
         return 1;
       }
       const artifact = loadArtifact(capability);
+
+      // A refuted outcome is one the system went and tested, and which did not
+      // do what it claimed. Approving over that is exactly the "plausible list
+      // waved through by a skimming reviewer" this whole pass exists to
+      // prevent, so it takes an explicit override and is recorded as one.
+      const refuted = artifact.outcomes.filter((o) => o.evidence.state === 'refuted');
+      if (refuted.length > 0 && !opts.force) {
+        process.stderr.write(
+          `\nRefusing to approve ${artifact.id}: ${refuted.length} declared outcome(s) were probed and did ` +
+            `not fire.\n\n` +
+            refuted
+              .map((o) => `  ✗ ${o.code}\n    ${o.evidence.note ?? 'no detail recorded'}\n`)
+              .join('') +
+            `\nFix the condition wording and re-record, or approve deliberately with --force.\n\n`,
+        );
+        return 1;
+      }
+
+      const hypothesised = artifact.outcomes.filter((o) => o.evidence.state === 'hypothesised');
+      if (hypothesised.length > 0) {
+        process.stderr.write(
+          `\nNote: ${hypothesised.length} outcome(s) remain unverified hypotheses ` +
+            `(${hypothesised.map((o) => o.code).join(', ')}).\n` +
+            `They were never observed. Approving accepts them on the model's word.\n\n`,
+        );
+      }
+
       const approved = {
         ...artifact,
         approval: {
@@ -71,7 +112,14 @@ export async function runCatalogCommand(
           ...artifact.provenance,
           humanEdits: [
             ...artifact.provenance.humanEdits,
-            { at: new Date().toISOString(), by: opts.by, note: `approved for unattended replay: ${opts.note}` },
+            {
+              at: new Date().toISOString(),
+              by: opts.by,
+              note:
+                `approved for unattended replay: ${opts.note}` +
+                (refuted.length > 0 ? ` [--force over ${refuted.length} refuted outcome(s)]` : '') +
+                (hypothesised.length > 0 ? ` [${hypothesised.length} outcome(s) unverified]` : ''),
+            },
           ],
         },
       };

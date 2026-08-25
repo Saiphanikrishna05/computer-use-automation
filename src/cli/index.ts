@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 /**
- * One CLI, four verbs, mirroring the system's four jobs:
+ * One CLI, five verbs, mirroring the system's jobs:
  *
  *   discover    an LLM works out how to do something, once
+ *   probe       the outcomes it declared are provoked and checked, no model
  *   replay      that recording runs deterministically, forever after
  *   catalog     what capabilities exist, and are they approved to run
  *   agent-demo  an AI agent picks a capability and invokes it by name
@@ -68,10 +69,37 @@ program
   .option('--max-steps <n>', 'stop after this many model turns', (v) => Number(v))
   .option('--vendor <name>', 'vendor the capability is recorded against')
   .option('--product <name>', 'product the capability is recorded against')
+  .option('--no-probe', 'skip provoking declared outcomes; leaves them unverified hypotheses')
+  .option('--max-probes <n>', 'ceiling on probe runs this discovery may spend', (v) => Number(v))
   .action(async (opts) => {
     const { runDiscoverCommand } = await import('./discover-command.js');
     const code = await runDiscoverCommand(opts);
     process.exit(code);
+  });
+
+program
+  .command('probe')
+  .description('Provoke a capability\'s declared outcomes and check whether they actually fire. No model involved.')
+  .argument('<capability>', 'capability id, e.g. lookup_member_savings_balance')
+  .option('-v, --capability-version <n>', 'pin a specific artifact version', (v) => Number(v))
+  .option('-t, --tenant <id>', `tenant to run against (${Object.keys(TENANT_RUNTIMES).join(', ')})`, DEFAULT_TENANT)
+  .option('-i, --input <key=value>', 'baseline input override (repeatable)', collectInputs, {})
+  .option('--headless', 'run without a visible browser window')
+  .option('--max-probes <n>', 'ceiling on probe runs', (v) => Number(v))
+  .option('--dry-run', 'report findings without writing them back to the artifact')
+  .action(async (capability: string, opts) => {
+    const { runProbeCommand } = await import('./probe-command.js');
+    process.exit(
+      await runProbeCommand({
+        capability,
+        version: opts.capabilityVersion,
+        tenant: opts.tenant,
+        inputs: opts.input,
+        headless: opts.headless,
+        maxProbes: opts.maxProbes,
+        dryRun: opts.dryRun,
+      }),
+    );
   });
 
 program
@@ -81,6 +109,7 @@ program
   .argument('[capability]', 'capability id, for show/approve/schema')
   .option('--by <name>', 'approver name', 'operator')
   .option('--note <text>', 'approval note', 'reviewed and approved for unattended replay')
+  .option('--force', 'approve despite outcomes that were probed and did not fire')
   .action(async (action: string, capability: string | undefined, opts) => {
     const { runCatalogCommand } = await import('./catalog-command.js');
     process.exit(await runCatalogCommand(action, capability, opts));
