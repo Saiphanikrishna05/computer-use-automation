@@ -16,6 +16,7 @@
     "replay-recording": "tsx scripts/replay-recording.ts",
     "replay": "tsx src/cli/index.ts replay",
     "catalog": "tsx src/cli/index.ts catalog",
+    "audit": "tsx src/cli/index.ts audit",
     "agent-demo": "tsx src/cli/index.ts agent-demo",
     "test": "vitest run",
     "test:watch": "vitest",
