@@ -30,6 +30,7 @@ import { PolicyViolation } from '../policy/engine.js';
 import { descriptorFor, describeNode } from '../perception/candidates.js';
 import { StepRecorder, type FinishDeclaration } from './recorder.js';
 import { DISCOVERY_TOOLS, SYSTEM_PROMPT } from './prompt.js';
+import { CostMeter, formatTokens, formatUsd } from './cost.js';
 import type { CapabilityArtifact, ActionClass } from '../artifact/schema.js';
 
 export interface DiscoveryOptions {
@@ -46,11 +47,29 @@ export interface DiscoveryOptions {
   credentials: { operatorId: string; operatorPassword: string };
 }
 
-export type DiscoveryResult =
+/**
+ * What the run consumed. Present on every terminal status, including the
+ * unsuccessful ones: a discovery that gave up after eight turns still spent
+ * those eight turns, and hiding that would make the economics look better than
+ * they are.
+ */
+export interface DiscoveryCost {
+  turns: number;
+  totalTokens: number;
+  inputTokens: number;
+  outputTokens: number;
+  cacheReadTokens: number;
+  cacheWriteTokens: number;
+  costUsd: number;
+  cacheSavingUsd: number;
+}
+
+export type DiscoveryResult = { cost: DiscoveryCost } & (
   | { status: 'succeeded'; artifact: CapabilityArtifact; turns: number; summary: string }
   | { status: 'gave_up'; reason: string; turns: number }
   | { status: 'exhausted'; turns: number }
-  | { status: 'refused'; category: string | null };
+  | { status: 'refused'; category: string | null }
+);
 
 export async function runDiscovery(options: DiscoveryOptions): Promise<DiscoveryResult> {
   const client = new Anthropic({ apiKey: options.apiKey });
@@ -81,6 +100,32 @@ export async function runDiscovery(options: DiscoveryOptions): Promise<Discovery
   ];
 
   const transcript: Array<{ turn: number; role: string; content: unknown }> = [];
+  const meter = new CostMeter();
+
+  /** Every exit from this function goes through here, so no path can return a
+   *  result that forgot to say what it spent. */
+  const withCost = <T extends object>(result: T): T & { cost: DiscoveryCost } => {
+    const t = meter.snapshot;
+    logger.event('note', `discovery cost: ${formatTokens(meter.totalTokens)} tokens over ${t.turns} turn(s), ${formatUsd(meter.costUsd())}`, {
+      ...t,
+      totalTokens: meter.totalTokens,
+      costUsd: meter.costUsd(),
+      cacheSavingUsd: meter.cacheSavingUsd(),
+    });
+    return {
+      ...result,
+      cost: {
+        turns: t.turns,
+        totalTokens: meter.totalTokens,
+        inputTokens: t.inputTokens,
+        outputTokens: t.outputTokens,
+        cacheReadTokens: t.cacheReadTokens,
+        cacheWriteTokens: t.cacheWriteTokens,
+        costUsd: meter.costUsd(),
+        cacheSavingUsd: meter.cacheSavingUsd(),
+      },
+    };
+  };
 
   for (let turn = 1; turn <= options.maxTurns; turn += 1) {
     logger.event('model_request', `turn ${turn}`, { turn, messageCount: messages.length });
@@ -108,6 +153,9 @@ export async function runDiscovery(options: DiscoveryOptions): Promise<Discovery
     } as unknown as Anthropic.MessageCreateParamsNonStreaming;
 
     const response = await client.messages.create(request);
+    // Recorded before any early return below, so a refused or malformed turn
+    // still counts towards what the run spent.
+    meter.record(response.usage as never);
 
     // Safety classifiers can decline a request: HTTP 200, `stop_reason:
     // "refusal"`, empty content. Checked before reading content, because code
@@ -115,7 +163,7 @@ export async function runDiscovery(options: DiscoveryOptions): Promise<Discovery
     if (response.stop_reason === 'refusal') {
       const category = (response as { stop_details?: { category?: string | null } }).stop_details?.category ?? null;
       logger.event('error', `model refused (${category ?? 'unspecified'})`);
-      return { status: 'refused', category };
+      return withCost({ status: 'refused' as const, category });
     }
 
     messages.push({ role: 'assistant', content: response.content });
@@ -152,17 +200,17 @@ export async function runDiscovery(options: DiscoveryOptions): Promise<Discovery
         const declaration = input as unknown as FinishDeclaration;
         const artifact = recorder.build(declaration);
         logger.writeJson('transcript.json', transcript);
-        return {
-          status: 'succeeded',
+        return withCost({
+          status: 'succeeded' as const,
           artifact,
           turns: turn,
           summary: String(input.description ?? ''),
-        };
+        });
       }
 
       if (use.name === 'give_up') {
         logger.writeJson('transcript.json', transcript);
-        return { status: 'gave_up', reason: String(input.reason ?? 'unspecified'), turns: turn };
+        return withCost({ status: 'gave_up' as const, reason: String(input.reason ?? 'unspecified'), turns: turn });
       }
 
       // --- observation ----------------------------------------------------
@@ -209,7 +257,7 @@ export async function runDiscovery(options: DiscoveryOptions): Promise<Discovery
   }
 
   logger.writeJson('transcript.json', transcript);
-  return { status: 'exhausted', turns: options.maxTurns };
+  return withCost({ status: 'exhausted' as const, turns: options.maxTurns });
 }
 
 // ---------------------------------------------------------------------------

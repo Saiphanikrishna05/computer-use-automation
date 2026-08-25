@@ -191,6 +191,27 @@ npm run replay -- lookup_member_savings_balance -i memberId=100001
     memberStatus          "Active"
 ```
 
+**1,453 ms median over ten runs, and zero tokens.** Not "cheap" — replay makes no
+API call at all, which is why every command in this section runs with `.env`
+empty. Discovery measures what it spent, so the comparison is a measurement
+rather than a claim:
+
+```bash
+npx tsx src/cli/index.ts catalog economics --from evidence/discovery-cost-measured
+```
+
+```
+  recorded once    $0.55     60,336 tokens · 9 model turns
+  prompt caching   saved $0.46 of that (34,272 tokens served from cache)
+  every replay     $0         0 tokens · no model in the path
+
+  At 1,000,000 invocations of one capability
+    model in the loop every time   $552,693.00
+    recorded once, replayed        $0.55
+```
+
+Break-even is the second invocation.
+
 ### 5. Error handling and business outcomes
 
 ```bash

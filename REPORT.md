@@ -75,6 +75,22 @@ committing the transaction with a deliberately invalid input.
 
 ## 3. Determinism & error handling
 
+Determinism here is also the economic argument, so discovery now measures
+itself. A real recording of the lookup flow cost **$0.55, 60,336 tokens over 9
+model turns**, of which prompt-caching the fixed system-and-tools prefix saved
+$0.46 — nearly half the bill, and the reason that prefix is marked cacheable.
+Replay of the same capability runs in a **1,453 ms median over ten runs and
+spends zero tokens**, which is not a rounding claim: replay makes no API call at
+all, which is why it runs with the key unset, and I check that rather than
+assert it. Break-even is the second invocation; at a million invocations the
+same work costs $0.55 rather than $552,693 at the recording run's per-run rate.
+Those figures come from `catalog economics`, computed from what the run
+measured, and the counts are reported next to the rate so a reader who prices
+differently keeps the arithmetic. The committed capabilities predate the
+measurement and are deliberately *not* backfilled: re-recording one to obtain a
+number would orphan the tenant overrides keyed to its step ids, which is a bug
+this system already has (§7) rather than a hypothetical.
+
 Nothing is recorded by index or handle; resolution requires a *unique* match, and
 ambiguity is reported rather than resolved by taking `[0]`; artifacts are
 templates, not programs, because once a capability can compute, "is this safe to

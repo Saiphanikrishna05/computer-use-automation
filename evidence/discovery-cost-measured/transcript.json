@@ -1,0 +1,227 @@
+[
+  {
+    "turn": 1,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "text",
+        "text": "I'll start by observing the current screen."
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01WWFkjb6Ximfg1dbyV2FfXo",
+        "name": "observe",
+        "input": {},
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 2,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_01NnLoh9xtuvwyS9Q3iFmfa9",
+        "name": "type",
+        "input": {
+          "ref": "main#5",
+          "text": "teller01",
+          "intent": "Enter the operator ID in the Operator Sign-On panel"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_019ZJuA3FeQ9iNSDPsSrWEdy",
+        "name": "type",
+        "input": {
+          "ref": "main#7",
+          "text": "[redacted:literal]",
+          "intent": "Enter the operator password in the Operator Sign-On panel"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 3,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_01EJ1btmfrFRK1iniqA975WU",
+        "name": "click",
+        "input": {
+          "ref": "main#8",
+          "intent": "Submit the operator sign-on form to access the servicing console"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 4,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_01EqLHw6xNha7u2x48w6AYoX",
+        "name": "observe",
+        "input": {},
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 5,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_018tRg37XhNzLQcm81msZUhY",
+        "name": "type",
+        "input": {
+          "ref": "contentFrame#5",
+          "text": "100004",
+          "intent": "Type the member number into the Member ID field of the Member Search panel"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 6,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_01C4vBdJojZpXBFnqg9YMUgq",
+        "name": "click",
+        "input": {
+          "ref": "contentFrame#8",
+          "intent": "Run the member search for the entered member ID"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 7,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_01PawxrHRRmJT1qVdNy3cigo",
+        "name": "observe",
+        "input": {},
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 8,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "thinking",
+        "thinking": "",
+        "signature": "CAISmQIKjgEIERgCKkBtd5TtSrQB7hEvsv7VoGkBoBp3mU+igD3L/XdkdCwSt7ST/3baTyNdj8M+ovdbOm6NISAruXe1kX9A2MfRwRXrMg1jbGF1ZGUtb3B1cy01OAFCCHRoaW5raW5nWiQyZDczZDMwZi03MzE2LTRkOWMtOGZmNS01ZWIzZTNiMTNkOGWoAfKMtNQGEgx2+dQtIJtSCd+dQkkaDChgK1NDQZflcKszsyIwyXCWadLjkHjMsnTjJD16KQUdnTZPT8weNyxolBcwOEb/GgiSCqGggxC8AsXdFchzKjhpXpZ7QuFzwGeppH+qensFogCJ8xJk2fJj/oTifLc004JtdXcxZjl1QH6FkaMN6Slk/XMUFti4dhgB"
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01R3aoqyTdoYaDdEGcqKpPEZ",
+        "name": "extract_value",
+        "input": {
+          "ref": "contentFrame#29",
+          "name": "savingsBalance",
+          "type": "money",
+          "description": "Current balance of the member's Savings account from the Accounts table",
+          "sensitivity": "financial"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01AAzfehCF67sLaeBEaZRAiE",
+        "name": "extract_value",
+        "input": {
+          "ref": "contentFrame#10",
+          "name": "memberName",
+          "type": "string",
+          "description": "Member's full name shown on the Member Profile panel",
+          "sensitivity": "pii"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 9,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_015LhAF8du37NKgc8a9desS3",
+        "name": "finish",
+        "input": {
+          "capabilityId": "lookup_member_savings_balance",
+          "title": "Look up a member's savings balance",
+          "description": "Signs on to the Meridian Core Servicing Console, searches the Member Search panel by Member ID, and reads the member's name and the Current Balance of their Savings account from the Member Detail screen. Read-only: no records are created or modified.",
+          "parameters": [
+            {
+              "name": "memberId",
+              "type": "string",
+              "description": "The member number to look up in the Member Search panel",
+              "value": "100004",
+              "pattern": "^\\d{6}$"
+            }
+          ],
+          "checkpointDescription": "The Member Detail screen is displayed with a Member Profile panel showing the requested member ID, and the Accounts table lists a Savings row with a Current Balance.",
+          "checkpointText": "Member Profile",
+          "expectedOutcomes": [
+            {
+              "code": "MEMBER_NOT_FOUND",
+              "description": "No member exists with the supplied member ID, so the search returns no detail record.",
+              "textWhenPresent": "No member found",
+              "probeParameter": "memberId",
+              "probeValue": "999999",
+              "probeRationale": "A member ID outside the demo data range should return no match."
+            },
+            {
+              "code": "INVALID_MEMBER_ID",
+              "description": "The supplied member ID is not in the expected numeric format and the search form rejects it.",
+              "textWhenPresent": "Invalid member ID",
+              "probeParameter": "memberId",
+              "probeValue": "ABC",
+              "probeRationale": "Non-numeric input should fail field validation on the Member Search panel."
+            }
+          ]
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  }
+]
