@@ -1,0 +1,71 @@
+
+Replaying lookup_member_savings_balance v1 50 times against northpoint-fcu…
+
+  run  1  ·  success            1545ms  0 degraded
+  run  2  ·  success            1401ms  0 degraded
+  run  3  ·  success            1398ms  0 degraded
+  run  4  ·  success            1430ms  0 degraded
+  run  5  ·  success            1399ms  0 degraded
+  run  6  ·  success            1366ms  0 degraded
+  run  7  ·  success            1395ms  0 degraded
+  run  8  ·  success            1384ms  0 degraded
+  run  9  ·  success            1395ms  0 degraded
+  run 10  ·  success            1409ms  0 degraded
+  run 11  ·  success            1377ms  0 degraded
+  run 12  ·  success            1380ms  0 degraded
+  run 13  ·  success            1401ms  0 degraded
+  run 14  ·  success            1403ms  0 degraded
+  run 15  ·  success            1395ms  0 degraded
+  run 16  ·  success            1397ms  0 degraded
+  run 17  ·  success            1380ms  0 degraded
+  run 18  ·  success            1379ms  0 degraded
+  run 19  ·  success            1373ms  0 degraded
+  run 20  ·  success            1402ms  0 degraded
+  run 21  ·  success            1396ms  0 degraded
+  run 22  ·  success            1388ms  0 degraded
+  run 23  ·  success            1389ms  0 degraded
+  run 24  ·  success            1415ms  0 degraded
+  run 25  ·  success            1383ms  0 degraded
+  run 26  ·  success            1399ms  0 degraded
+  run 27  ·  success            1409ms  0 degraded
+  run 28  ·  success            1412ms  0 degraded
+  run 29  ·  success            1404ms  0 degraded
+  run 30  ·  success            1397ms  0 degraded
+  run 31  ·  success            1390ms  0 degraded
+  run 32  ·  success            1395ms  0 degraded
+  run 33  ·  success            1395ms  0 degraded
+  run 34  ·  success            1398ms  0 degraded
+  run 35  ·  success            1410ms  0 degraded
+  run 36  ·  success            1389ms  0 degraded
+  run 37  ·  success            1395ms  0 degraded
+  run 38  ·  success            1376ms  0 degraded
+  run 39  ·  success            1369ms  0 degraded
+  run 40  ·  success            1397ms  0 degraded
+  run 41  ·  success            1366ms  0 degraded
+  run 42  ·  success            1395ms  0 degraded
+  run 43  ·  success            1390ms  0 degraded
+  run 44  ·  success            1381ms  0 degraded
+  run 45  ·  success            1386ms  0 degraded
+  run 46  ·  success            1393ms  0 degraded
+  run 47  ·  success            1398ms  0 degraded
+  run 48  ·  success            1399ms  0 degraded
+  run 49  ·  success            1393ms  0 degraded
+  run 50  ·  success            1379ms  0 degraded
+
+────────────────────────────────────────────────────────────────────────
+  Stability report
+────────────────────────────────────────────────────────────────────────
+  runs                50
+  success             50   business outcome 0   failure 0
+  duration            median 1395ms   min 1366ms   max 1545ms
+
+  per-step locator stability:
+    type_1           tier 2×50
+    type_2           tier 2×50
+    click_3          tier 1×50
+    type_4           tier 2×50
+    click_5          tier 1×50
+
+  STABLE, every run passed at the recorded locator tier.
+────────────────────────────────────────────────────────────────────────
+

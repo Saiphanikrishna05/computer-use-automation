@@ -476,8 +476,8 @@
       },
       "evidence": {
         "state": "observed",
-        "probedAt": "2026-08-25T02:23:30.471Z",
-        "runId": "probe-20260825T022330-01",
+        "probedAt": "2026-08-25T08:11:32.179Z",
+        "runId": "probe-20260825T081132-01",
         "note": "Provoked with memberId=\"999999\"; condition (page contains \"No member record found\") held on the resulting screen."
       }
     },
@@ -531,8 +531,8 @@
       },
       "evidence": {
         "state": "observed",
-        "probedAt": "2026-08-25T02:23:32.442Z",
-        "runId": "probe-20260825T022330-01",
+        "probedAt": "2026-08-25T08:11:33.731Z",
+        "runId": "probe-20260825T081132-01",
         "note": "Provoked with memberId=\"100002\"; condition (page contains \"Entitlement check failed\") held on the resulting screen."
       }
     }
@@ -601,7 +601,7 @@
       "rejected": []
     },
     "probing": {
-      "probedAt": "2026-08-25T02:23:33.934Z",
+      "probedAt": "2026-08-25T08:11:35.231Z",
       "runs": 2,
       "observed": [
         "MEMBER_NOT_FOUND",

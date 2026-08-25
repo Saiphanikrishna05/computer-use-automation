@@ -152,6 +152,7 @@ program
   .option('-i, --input <key=value>', 'capability input (repeatable)', collectInputs, {})
   .option('-t, --tenant <id>', 'tenant to run against', DEFAULT_TENANT)
   .option('-n, --runs <n>', 'how many times to replay', (v) => Number(v), 5)
+  .option('--headless', 'run without a visible browser window')
   .action(async (capability: string, opts) => {
     const { runStabilityCommand } = await import('./stability-command.js');
     process.exit(
@@ -160,7 +161,7 @@ program
         inputs: opts.input,
         tenant: opts.tenant,
         runs: opts.runs,
-        headless: true,
+        headless: opts.headless ?? true,
       }),
     );
   });

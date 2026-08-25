@@ -1,0 +1,20 @@
+  ✓ nothing wrong                                  success
+  ✓ member does not exist                          business_outcome MEMBER_NOT_FOUND
+  ✓ operator not entitled to the record            business_outcome PERMISSION_DENIED
+  ✓ member id fails the declared input contract    failure INPUT_VALIDATION_FAILED
+  ✓ native dialog blocks the page mid-run          success via ACCEPT_SYSTEM_DIALOG
+  ✓ application returns its error page             failure APP_ERROR
+  ✓ session drops mid-run                          failure SESSION_EXPIRED
+
+  7/7 conditions classified as declared
+
+
+| Condition provoked | Classified as | As declared | Why that is the right call |
+|---|---|---|---|
+| nothing wrong | `success` | ✓ | The baseline. Without it a table of failures proves only that everything fails. |
+| member does not exist | `business_outcome MEMBER_NOT_FOUND` | ✓ | A real answer the caller needs to act on, not a fault. This is the distinction the brief calls the commonest mistake. |
+| operator not entitled to the record | `business_outcome PERMISSION_DENIED` | ✓ | The application worked correctly and said no. Reporting it as a failure would send an operator to debug a system that is fine. |
+| member id fails the declared input contract | `failure INPUT_VALIDATION_FAILED` | ✓ | Caught against the artifact contract before the application is touched at all, so a malformed call costs nothing and reaches nothing. |
+| native dialog blocks the page mid-run | `success via ACCEPT_SYSTEM_DIALOG` | ✓ | Declared recovery, bounded. The run should complete and the recovery should be visible in the step reports rather than silently absorbed. |
+| application returns its error page | `failure APP_ERROR` | ✓ | Nothing the automation can fix. It stops, and carries the step, the expectation, what it saw, a screenshot and a DOM snapshot. |
+| session drops mid-run | `failure SESSION_EXPIRED` | ✓ | Recoverable in principle, fatal once the declared re-auth budget is spent. Reported as the specific cause rather than a generic timeout. |

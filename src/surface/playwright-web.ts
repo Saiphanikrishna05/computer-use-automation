@@ -86,6 +86,9 @@ export class PlaywrightWebSurface implements SurfaceDriver {
       this.dialogHandle = dialog;
       this.dialog = { kind: dialog.type() as PendingDialog['kind'], message: dialog.message() };
       this.emit('note', `native dialog raised: ${dialog.message()}`);
+      // Wake anything still waiting on the action this dialog just blocked.
+      // See `raceDialog`.
+      for (const wake of this.dialogWaiters.splice(0)) wake();
     });
 
     // In a frameset app the interesting navigations are *frame* navigations -
@@ -101,6 +104,7 @@ export class PlaywrightWebSurface implements SurfaceDriver {
   private policy: PolicyEngine;
   private dialog: PendingDialog | undefined;
   private dialogHandle: Dialog | undefined;
+  private dialogWaiters: Array<() => void> = [];
   private navCount = 0;
   private lastNavigationAt = 0;
 
@@ -500,7 +504,7 @@ export class PlaywrightWebSurface implements SurfaceDriver {
     this.guard('click');
     this.enforce('click', actionClass);
     const before = this.navCount;
-    await PlaywrightWebSurface.unwrap(element).handle.click({ timeout: 10_000 });
+    await this.raceDialog(PlaywrightWebSurface.unwrap(element).handle.click({ timeout: 10_000 }));
     await this.settleAfterAction(before);
   }
 
@@ -508,22 +512,25 @@ export class PlaywrightWebSurface implements SurfaceDriver {
     this.guard('type');
     this.enforce('type', options.actionClass ?? 'mutate_reversible');
     const el = PlaywrightWebSurface.unwrap(element).handle;
-    if (options.clearFirst ?? true) await el.fill('');
-    await el.type(text, { delay: 12 });
+    // An onchange handler can raise a dialog just as a click can, so both the
+    // clear and the typing go through the same escape.
+    if (options.clearFirst ?? true) await this.raceDialog(el.fill(''));
+    await this.raceDialog(el.type(text, { delay: 12 }));
   }
 
   async selectOption(element: SurfaceElement, value: string, actionClass: ActionClass = 'mutate_reversible'): Promise<void> {
     this.guard('select');
     this.enforce('select', actionClass);
-    await PlaywrightWebSurface.unwrap(element).handle.selectOption(value);
+    await this.raceDialog(PlaywrightWebSurface.unwrap(element).handle.selectOption(value));
   }
 
   async press(key: string, element?: SurfaceElement, actionClass: ActionClass = 'mutate_reversible'): Promise<void> {
     this.guard(`press ${key}`);
     this.enforce('press', actionClass);
     const before = this.navCount;
-    if (element) await PlaywrightWebSurface.unwrap(element).handle.press(key);
-    else await this.page.keyboard.press(key);
+    await this.raceDialog(
+      element ? PlaywrightWebSurface.unwrap(element).handle.press(key) : this.page.keyboard.press(key),
+    );
     await this.settleAfterAction(before);
   }
 
@@ -556,6 +563,21 @@ export class PlaywrightWebSurface implements SurfaceDriver {
    * the patient lookup; observations get the impatient one.
    */
   async visibleText(framePath?: FrameStep[]): Promise<string> {
+    // A modal blocks the renderer, so `frame.evaluate` cannot return while one
+    // is open, and it does not honour its own timeout in that state either.
+    //
+    // This mattered more than it looks. The executor checks declared outcomes
+    // immediately after every action and *before* recovery, which is the right
+    // order for business logic: a submit that returns "no such member" must be
+    // read as an answer rather than as a broken step. But every one of those
+    // checks is a page read, so an unexpected confirm() left the run reading a
+    // page it could not see, once per declared outcome, before it ever reached
+    // the recovery rule written to dismiss it.
+    //
+    // There is nothing to see behind a modal, so say so and let the caller act.
+    // `dialog_present` reads local state and is unaffected, which is what
+    // allows the recovery rule to fire and clear the way.
+    if (this.dialog) return '';
     if (framePath && framePath.length > 0) {
       const frame = await this.findFrame(framePath, 250).catch(() => undefined);
       if (!frame) return '';
@@ -743,7 +765,13 @@ export class PlaywrightWebSurface implements SurfaceDriver {
     // and burning the timeout hides the condition that actually needs handling.
     if (this.dialog) return;
 
-    await this.page.waitForLoadState('domcontentloaded', { timeout: timeoutMs }).catch(() => undefined);
+    // Raced, not merely bracketed by dialog checks. A dialog raised *during*
+    // this wait blocks the renderer, and `waitForLoadState` does not honour its
+    // own timeout in that state, so guarding either side of it still hangs.
+    // This is what made an unexpected confirm() a silent indefinite stall
+    // rather than a handled recovery.
+    await this.raceDialog(this.page.waitForLoadState('domcontentloaded', { timeout: timeoutMs }));
+    if (this.dialog) return;
 
     const quietMs = 200;
     const deadline = Date.now() + timeoutMs;
@@ -753,6 +781,35 @@ export class PlaywrightWebSurface implements SurfaceDriver {
       if (sinceLastNav >= quietMs || Date.now() >= deadline) break;
       await new Promise((r) => setTimeout(r, Math.min(50, quietMs - sinceLastNav)));
     }
+  }
+
+  /**
+   * Performs an action, and stops waiting on it the instant a dialog appears.
+   *
+   * This closes a deadlock that the demo fixture's timing had been hiding, and
+   * that no unit test could have caught, because it lives entirely in the real
+   * driver:
+   *
+   *   the click submits the search
+   *   the page it loads raises a confirm()
+   *   Playwright will not settle an action whose page is blocked behind a modal
+   *   the code that would answer the modal is the recovery rule, which runs
+   *     only once the action returns
+   *
+   * So the action waits for the dialog and the dialog waits for the action. The
+   * run hangs indefinitely rather than failing, which is the worst available
+   * outcome: an unattended capability that neither completes nor reports.
+   *
+   * Whoever wins this race, a raised dialog is now the most important fact
+   * about the surface, and the executor is the right place to decide what to do
+   * about it. The underlying action is left to settle or reject on its own; its
+   * rejection is swallowed deliberately, because "the click did not complete"
+   * is already explained by the dialog sitting on top of the page.
+   */
+  private async raceDialog(action: Promise<unknown>): Promise<void> {
+    const settled = action.catch(() => undefined);
+    if (this.dialog) return void (await settled.catch(() => undefined));
+    await Promise.race([settled, new Promise<void>((wake) => this.dialogWaiters.push(wake))]);
   }
 
   /**

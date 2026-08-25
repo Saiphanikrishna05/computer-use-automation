@@ -1,0 +1,51 @@
+[
+  {
+    "condition": "nothing wrong",
+    "expected": "success",
+    "actual": "success",
+    "ok": true,
+    "because": "The baseline. Without it a table of failures proves only that everything fails."
+  },
+  {
+    "condition": "member does not exist",
+    "expected": "business_outcome MEMBER_NOT_FOUND",
+    "actual": "business_outcome MEMBER_NOT_FOUND",
+    "ok": true,
+    "because": "A real answer the caller needs to act on, not a fault. This is the distinction the brief calls the commonest mistake."
+  },
+  {
+    "condition": "operator not entitled to the record",
+    "expected": "business_outcome PERMISSION_DENIED",
+    "actual": "business_outcome PERMISSION_DENIED",
+    "ok": true,
+    "because": "The application worked correctly and said no. Reporting it as a failure would send an operator to debug a system that is fine."
+  },
+  {
+    "condition": "member id fails the declared input contract",
+    "expected": "failure INPUT_VALIDATION_FAILED",
+    "actual": "failure INPUT_VALIDATION_FAILED",
+    "ok": true,
+    "because": "Caught against the artifact contract before the application is touched at all, so a malformed call costs nothing and reaches nothing."
+  },
+  {
+    "condition": "native dialog blocks the page mid-run",
+    "expected": "success via ACCEPT_SYSTEM_DIALOG",
+    "actual": "success via ACCEPT_SYSTEM_DIALOG",
+    "ok": true,
+    "because": "Declared recovery, bounded. The run should complete and the recovery should be visible in the step reports rather than silently absorbed."
+  },
+  {
+    "condition": "application returns its error page",
+    "expected": "failure APP_ERROR",
+    "actual": "failure APP_ERROR",
+    "ok": true,
+    "because": "Nothing the automation can fix. It stops, and carries the step, the expectation, what it saw, a screenshot and a DOM snapshot."
+  },
+  {
+    "condition": "session drops mid-run",
+    "expected": "failure SESSION_EXPIRED",
+    "actual": "failure SESSION_EXPIRED",
+    "ok": true,
+    "because": "Recoverable in principle, fatal once the declared re-auth budget is spent. Reported as the specific cause rather than a generic timeout."
+  }
+]

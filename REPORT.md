@@ -112,6 +112,32 @@ budgeted per rule per *run*; refreshing that budget each step turns a broken
 capability into an infinite loop. Every path is in `evidence/`, carrying step,
 expected, observed, screenshot and DOM snapshot.
 
+That ordering is also where the worst bug in this system lived, and it took a
+harness to find. `scripts/fault-taxonomy.ts` provokes every condition the
+application can produce and checks each against an expectation written down
+beforehand, including the specific failure code. It came back 6/7. The failing
+row was the unexpected dialog, and the diagnosis was worse than the symptom:
+**an unanswered modal blocks the renderer, and every declared-outcome check is a
+page read.** So the run read a page it could not see, once per outcome, before
+ever reaching the recovery rule written to dismiss it, and it *hung* rather than
+failed, indefinitely, unattended. The existing code guarded either side of each
+wait, which does nothing when the wait itself is what blocks. Page reads now
+return empty while a dialog is pending, so `dialog_present` — which reads local
+state — fires, clears it, and the run completes in 1.5 s.
+
+Two things had hidden this. The fixture raised its dialog 350 ms after load, and
+replay had got fast enough to finish first, so the condition stopped occurring;
+and `evidence/replay-recovery-unexpected-dialog/` had quietly become an ordinary
+successful run that still claimed to demonstrate recovery. A fixture that no
+longer reproduces what it exists for is worse than none, because everything
+downstream keeps asserting that it does. Both are fixed, and three tests now pin
+the executor's behaviour when the page is unreadable — including that a blank
+read must not be mistaken for a business outcome.
+
+**Reliability** is measured, not claimed: 50 consecutive replays, 50 successes,
+median 1395 ms (min 1366, max 1545), every step resolving at the same locator
+tier all 50 times, in `evidence/reliability/`.
+
 **Drift** is not layout change but *tier degradation*, and it is tested rather
 than asserted (`./scripts/demo-drift.sh`): apply a vendor point release that
 rewords a button, re-orders the accounts columns and inserts a column, then replay the
