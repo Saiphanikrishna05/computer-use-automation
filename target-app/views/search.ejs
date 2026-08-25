@@ -18,11 +18,36 @@
         <td><font face="Verdana, Arial" size="1">Surname</font></td>
         <td><input type="text" name="surname" id="ctl_<%= rid %>_n" size="24"></td>
       </tr>
+      <% if (rewritten) { %>
+      <!-- A major version does not only reword things, it moves them. These
+           extra criteria push the action button far enough down the form that
+           the recorded coordinates land on empty space. With the label changed,
+           the form field renamed *and* the position moved, no recorded locator
+           survives at any tier. That is the case a declared recovery rule
+           cannot express, because there is no condition to key on when the
+           failure is the absence of the thing itself. -->
+      <tr>
+        <td><font face="Verdana, Arial" size="1">Tax ID</font></td>
+        <td><input type="text" name="taxId" id="ctl_<%= rid %>_t" size="16"></td>
+      </tr>
+      <tr>
+        <td><font face="Verdana, Arial" size="1">Date of Birth</font></td>
+        <td><input type="text" name="dob" id="ctl_<%= rid %>_d" size="12"></td>
+      </tr>
+      <tr>
+        <td><font face="Verdana, Arial" size="1">Branch</font></td>
+        <td><input type="text" name="branch" id="ctl_<%= rid %>_b" size="12"></td>
+      </tr>
+      <tr>
+        <td><font face="Verdana, Arial" size="1">Account Number</font></td>
+        <td><input type="text" name="acct" id="ctl_<%= rid %>_a" size="20"></td>
+      </tr>
+      <% } %>
       <tr>
         <td></td>
         <!-- Post-upgrade the action was reworded to "Search Member". An exact
              role+name match no longer holds; the ladder has to earn its keep. -->
-        <td><input type="submit" name="go" id="ctl_<%= rid %>_g" value="<%= drifted ? 'Search Member' : tenant.labels.searchButton %>">&nbsp;<input type="reset" name="clr" id="ctl_<%= rid %>_c" value="Clear"></td>
+        <td><input type="submit" name="<%= rewritten ? 'submitInquiry' : 'go' %>" id="ctl_<%= rid %>_g" value="<%= rewritten ? 'Run Member Inquiry' : (drifted ? 'Search Member' : tenant.labels.searchButton) %>">&nbsp;<input type="reset" name="clr" id="ctl_<%= rid %>_c" value="Clear"></td>
       </tr>
       </form>
     </table>

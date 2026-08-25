@@ -99,6 +99,20 @@ interface ReplayBase {
    * is the early warning that the UI has moved.
    */
   degradedResolutions: number;
+  /**
+   * Every time a model was consulted mid-run to locate a control the artifact
+   * could no longer find. Present only when it happened, and present whatever
+   * the run's final status was: a run that used a model and reported plain
+   * success would be indistinguishable from one that did not, which is the one
+   * thing this feature must never be.
+   */
+  assisted?: Array<{
+    stepId: string;
+    wanted: string;
+    outcome: 'resolved' | 'not_present' | 'unavailable' | 'refused';
+    because?: string;
+    chose?: string;
+  }>;
 }
 
 export type ReplayResult =

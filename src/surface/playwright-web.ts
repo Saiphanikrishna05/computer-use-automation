@@ -406,6 +406,13 @@ export class PlaywrightWebSurface implements SurfaceDriver {
     );
     const bestRecordedTier = ordered.length > 0 ? CANDIDATE_TIER[ordered[0]!.kind] : null;
 
+    // What kind of control the descriptor's richer candidates say this is.
+    // Passed down so the coordinates tier can refuse a point that now lands on
+    // something else entirely; see the note in the resolver.
+    const expectRole = ordered.find(
+      (candidate): candidate is Extract<LocatorCandidate, { kind: 'role_name' }> => candidate.kind === 'role_name',
+    )?.role;
+
     for (const candidate of ordered) {
       const tier = CANDIDATE_TIER[candidate.kind];
       let indices: number[] = [];
@@ -413,6 +420,7 @@ export class PlaywrightWebSurface implements SurfaceDriver {
         await this.ensureEvalShim(frame);
         indices = await frame.evaluate(resolveCandidateInPage, {
           candidate: candidate as unknown as Record<string, unknown>,
+          ...(expectRole ? { expectRole } : {}),
           anchor: target.anchor,
         });
       } catch (error) {
