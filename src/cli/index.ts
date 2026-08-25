@@ -38,6 +38,7 @@ program
   .option('--fault-scope <scope>', 'which request the fault attaches to (any, search, member_detail, sub_account)', 'any')
   .option('--no-operator', 'fail instead of escalating to a human')
   .option('--base-url <url>', 'override the base URL and the allowlist (e.g. a staging deployment)')
+  .option('--assist', 'allow one model call to locate a control the artifact can no longer find')
   .option('--json', 'print the raw result object')
   .action(async (capability: string, opts) => {
     const result = await runReplayCommand({
@@ -51,6 +52,7 @@ program
       operator: opts.operator,
       json: opts.json,
       baseUrl: opts.baseUrl,
+      assist: opts.assist,
     });
     printResult(result, Boolean(opts.json));
     // Exit codes let a caller branch without parsing stdout: 0 succeeded,
@@ -126,7 +128,7 @@ program
 program
   .command('catalog')
   .description('List, inspect, price and approve saved capabilities.')
-  .argument('[action]', 'list | show | approve | schema | economics', 'list')
+  .argument('[action]', 'list | show | approve | schema | economics | history', 'list')
   .argument('[capability]', 'capability id, for show/approve/schema/economics')
   .option('--by <name>', 'approver name', 'operator')
   .option('--note <text>', 'approval note', 'reviewed and approved for unattended replay')

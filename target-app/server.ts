@@ -67,6 +67,11 @@ export function createApp(tenant: TenantConfig) {
    * ladder from a stored selector.
    */
   let drifted = false;
+  // A heavier change than `drifted`: the vendor renames the control *and* its
+  // form field, so no recorded locator survives at any tier. `drifted` models a
+  // point release, this models a major version, and the difference matters:
+  // one degrades a capability, the other stops it dead.
+  let rewritten = false;
 
   app.set('view engine', 'ejs');
   app.set('views', join(here, 'views'));
@@ -77,6 +82,7 @@ export function createApp(tenant: TenantConfig) {
   app.use((req: Request, res: Response, next: NextFunction) => {
     res.locals.tenant = tenant;
     res.locals.drifted = drifted;
+    res.locals.rewritten = rewritten;
     res.locals.rid = rid();
     res.locals.formatMoney = formatMoney;
     next();
@@ -149,14 +155,16 @@ export function createApp(tenant: TenantConfig) {
     faults.reset();
     sessions.clear();
     drifted = false;
+    rewritten = false;
     res.json({ ok: true });
   });
 
-  app.get('/_admin/drift', (_req, res) => res.json({ drifted }));
+  app.get('/_admin/drift', (_req, res) => res.json({ drifted, rewritten }));
 
   app.post('/_admin/drift', (req, res) => {
     drifted = req.body?.enabled !== false;
-    res.json({ drifted });
+    rewritten = req.body?.rewritten === true;
+    res.json({ drifted, rewritten });
   });
 
   // -------------------------------------------------------------------------

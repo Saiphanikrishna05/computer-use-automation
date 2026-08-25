@@ -361,7 +361,11 @@ export function collectUiNodes(): RawSnapshot {
     }
 
     const rect = el.getBoundingClientRect();
-    const peerKey = `${role} ${name}`;
+    // Unit separator, not NUL: both are safe delimiters here, but a NUL
+    // makes the whole file read as binary, so grep silently skips it and
+    // anyone searching this repository finds nothing in the one file where
+    // the locator logic lives.
+    const peerKey = `${role}\u001f${name}`;
     const ordinal = peerCounts.get(peerKey) ?? 0;
     peerCounts.set(peerKey, ordinal + 1);
 
@@ -425,6 +429,9 @@ export function collectUiNodes(): RawSnapshot {
 
 export interface ResolveRequest {
   candidate: Record<string, unknown>;
+  /** Role the descriptor's other candidates say this control is, used to stop
+   *  the coordinates tier matching whatever happens to occupy the point. */
+  expectRole?: string;
   anchor?: { containerRole?: string; containerName?: string; nearestLabel?: string };
 }
 
@@ -462,6 +469,7 @@ export function resolveCandidateInPage(request: ResolveRequest): number[] {
     ['textbox', 'combobox', 'checkbox', 'radio', 'button', 'link'].includes(node.role);
 
   const c = request.candidate as Record<string, any>;
+  const expectRole = request.expectRole;
   const anchor = request.anchor;
 
   let matches = snapshot.nodes.filter((node) => {
@@ -516,6 +524,17 @@ export function resolveCandidateInPage(request: ResolveRequest): number[] {
 
       case 'coordinates': {
         if (!node.box) return false;
+        // A point on a screen always hits *something*, so without this the
+        // last-resort tier can never fail. It would then convert "the control
+        // is gone" into "the flow mysteriously did not work": the click lands
+        // on whatever moved into that spot, the step reports success, and the
+        // run dies later at the checkpoint with a diagnostic pointing at the
+        // wrong place entirely.
+        //
+        // `expectRole` comes from the descriptor's own richer candidates, so
+        // this asks the modest question the recording can already answer: the
+        // thing at these coordinates, is it even the same kind of control?
+        if (expectRole && node.role !== expectRole) return false;
         const targetX = Number(c.xFraction) * snapshot.viewport.width;
         const targetY = Number(c.yFraction) * snapshot.viewport.height;
         return (

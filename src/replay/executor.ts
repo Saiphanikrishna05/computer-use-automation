@@ -28,12 +28,14 @@ import type {
   OutputSpec,
   RecoveryRule,
   Step,
+  TargetDescriptor,
 } from '../artifact/schema.js';
 import type { SurfaceDriver, SurfaceElement } from '../surface/types.js';
 import { PolicyEngine, PolicyViolation } from '../policy/engine.js';
 import type { RunLogger } from '../evidence/logger.js';
 import { evaluateCondition, describeCondition } from './conditions.js';
 import { bindInputs, coerceOutput, interpolate, InputValidationError } from './values.js';
+import { assistedReresolve, type AssistedAttempt } from './assisted.js';
 import type {
   FailureCode,
   RecoveryReport,
@@ -91,6 +93,14 @@ export interface ReplayOptions {
   bindings?: Record<string, string>;
   tenantId?: string;
   escalation?: EscalationHandler;
+  /**
+   * Allow one model call to locate a control the artifact can no longer find.
+   *
+   * Off unless asked for, so the default replay path stays provably model-free
+   * and can still be run with no API key at all. See `replay/assisted.ts` for
+   * why every constraint on it exists.
+   */
+  assist?: boolean;
 }
 
 export class ReplayEngine {
@@ -107,8 +117,18 @@ export class ReplayEngine {
    * would make the commonest recovery of all invisible in the result.
    */
   private pendingRecoveries: RecoveryReport[] = [];
+  /** Every time a model was consulted mid-run, for the result and the audit
+   *  trail. A run that used one and reported plain success would be the worst
+   *  possible version of this feature. */
+  private assistedAttempts: AssistedAttempt[] = [];
 
   constructor(private readonly options: ReplayOptions) {}
+
+  /** What a model was asked mid-run, for callers that write the repair
+   *  proposal. Exposed rather than reached into. */
+  get assisted(): readonly AssistedAttempt[] {
+    return this.assistedAttempts;
+  }
 
   async run(): Promise<ReplayResult> {
     const startedAt = new Date().toISOString();
@@ -319,6 +339,41 @@ export class ReplayEngine {
     return false;
   }
 
+  /**
+   * One model call, once per run, and only when the caller asked for it.
+   *
+   * Budgeted per run rather than per step for the same reason declared
+   * recovery is: a capability needing this twice is not recovering, it is
+   * broken, and the useful outcome is a failure a person looks at rather than
+   * a run that limps to the end through a sequence of guesses.
+   *
+   * Ambiguity is deliberately excluded. `TARGET_AMBIGUOUS` means several
+   * elements matched and the artifact does not say which — that is an
+   * under-specified recording, and asking a model to break the tie would paper
+   * over the actual defect with a coin toss on a live account.
+   */
+  private async tryAssist(
+    step: Step,
+    target: TargetDescriptor,
+    reason: 'not_found' | 'ambiguous',
+  ): Promise<SurfaceElement | undefined> {
+    if (!this.options.assist) return undefined;
+    if (reason === 'ambiguous') return undefined;
+    if (this.assistedAttempts.length > 0) {
+      this.options.logger.event('note', `assisted re-resolution already used this run; ${step.id} fails`);
+      return undefined;
+    }
+
+    const { attempt, element } = await assistedReresolve({
+      step,
+      target,
+      driver: this.options.driver,
+      logger: this.options.logger,
+    });
+    this.assistedAttempts.push(attempt);
+    return element;
+  }
+
   private async applyRecovery(rule: RecoveryRule): Promise<void> {
     const { driver } = this.options;
     for (const action of rule.then) {
@@ -405,8 +460,17 @@ export class ReplayEngine {
         });
 
         if (!resolved.ok) {
-          await this.captureFailureEvidence(`unresolved-${step.id}`);
-          return finishFailed({
+          // The one failure a declared recovery rule cannot express: there is
+          // no condition to key on, because the failure *is* the absence of
+          // the thing the rule would look for.
+          const assisted = await this.tryAssist(step, action.target, resolved.reason);
+          if (assisted) {
+            element = assisted;
+            report.note = 'target re-resolved with model assistance; see the repair proposal in the bundle';
+            report.status = report.status === 'failed' ? report.status : 'recovered';
+          } else {
+            await this.captureFailureEvidence(`unresolved-${step.id}`);
+            return finishFailed({
             code: resolved.reason === 'ambiguous' ? 'TARGET_AMBIGUOUS' : 'TARGET_NOT_FOUND',
             stepId: step.id,
             expected: `to locate ${action.target.description}`,
@@ -415,9 +479,11 @@ export class ReplayEngine {
                 ? 'several elements matched and the artifact records no ordinal to choose between them'
                 : 'no element matched any recorded locator candidate',
             resolution: resolved.report,
-          });
+            });
+          }
+        } else {
+          element = resolved.element;
         }
-        element = resolved.element;
       }
 
       switch (action.kind) {
@@ -700,6 +766,7 @@ export class ReplayEngine {
       durationMs: Date.now() - t0,
       steps: this.steps,
       degradedResolutions: this.degradedResolutions,
+      ...(this.assistedAttempts.length > 0 ? { assisted: this.assistedAttempts } : {}),
       evidence: {
         runId: logger.runId,
         bundlePath: logger.dir,

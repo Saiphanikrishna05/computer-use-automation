@@ -28,6 +28,7 @@ import {
   withProbingProvenance,
   renderProbeSummary,
 } from '../discovery/probe.js';
+import { appendAudit } from '../artifact/audit-log.js';
 import { DEFAULT_TENANT, TENANT_RUNTIMES, headless, resolveCredentials } from '../config.js';
 
 export interface ProbeCommandOptions {
@@ -106,6 +107,16 @@ export async function runProbeCommand(opts: ProbeCommandOptions): Promise<number
         ? saveArtifact(updated)
         : '(unchanged: nothing was probed)';
     logger.writeJson('probed-artifact.json', updated, { redact: false });
+    if (probed.learnedSomething && !opts.dryRun) {
+      appendAudit({
+        action: 'probed',
+        capabilityId: updated.id,
+        capabilityVersion: updated.version,
+        actor: 'probe',
+        summary: summaryLine(probed.reports),
+        runId,
+      });
+    }
     logger.event('run_finished', `probe finished: ${summaryLine(probed.reports)}`);
 
     process.stdout.write(

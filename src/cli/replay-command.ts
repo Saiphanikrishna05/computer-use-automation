@@ -31,6 +31,9 @@ export interface ReplayCommandOptions {
   /** Overrides the tenant's base URL and the allowlist, for capabilities
    *  recorded against an application that is not a configured tenant. */
   baseUrl?: string;
+  /** Permit one model call to locate a control the artifact can no longer
+   *  find. Off by default; see replay/assisted.ts. */
+  assist?: boolean;
 }
 
 export async function runReplayCommand(options: ReplayCommandOptions): Promise<ReplayResult> {
@@ -98,11 +101,24 @@ export async function runReplayCommand(options: ReplayCommandOptions): Promise<R
       logger,
       tenantId: tenant.id,
       bindings: { baseUrl: tenant.baseUrl, ...specialized.bindings },
+      ...(options.assist ? { assist: true } : {}),
       ...(options.operator === false ? {} : { escalation: new ConsoleEscalationHandler(lease, logger, driver) }),
     });
 
     const result = await engine.run();
     logger.writeJson('result.json', result);
+
+    // The repair proposal lands beside the evidence, never on the artifact.
+    // Finishing today's run and changing what runs tomorrow are separate acts,
+    // and only the first is safe to do without a person.
+    if (result.assisted && result.assisted.length > 0) {
+      const { repairProposal } = await import('../replay/assisted.js');
+      logger.writeText(
+        'repair-proposal.md',
+        repairProposal(result.capabilityId, result.capabilityVersion, [...engine.assisted]),
+      );
+      logger.event('note', 'a repair proposal was written to the bundle; the capability on disk is unchanged');
+    }
     return result;
   } finally {
     await driver.close();

@@ -1,0 +1,208 @@
+{
+  "capabilityId": "lookup_member_savings_balance",
+  "capabilityVersion": 1,
+  "tenantId": "northpoint-fcu",
+  "startedAt": "2026-08-25T09:55:35.089Z",
+  "finishedAt": "2026-08-25T09:55:40.968Z",
+  "durationMs": 5879,
+  "steps": [
+    {
+      "stepId": "type_1",
+      "intent": "Enter the operator ID in the Operator Sign-On panel",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 172,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"User ID\" in the Operator Sign-On panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 17
+      }
+    },
+    {
+      "stepId": "type_2",
+      "intent": "Enter the operator password in the Operator Sign-On panel",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 239,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"Password\" in the Operator Sign-On panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 6
+      }
+    },
+    {
+      "stepId": "click_3",
+      "intent": "Submit the operator sign-on form to access the servicing console",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 282,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "button \"Sign On\" in the Operator Sign-On panel",
+        "attempts": [
+          {
+            "kind": "role_name",
+            "tier": 1,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 1,
+        "winningKind": "role_name",
+        "degraded": false,
+        "elapsedMs": 6
+      }
+    },
+    {
+      "stepId": "type_4",
+      "intent": "Type the member number into the Member ID field of the Member Search panel",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 121,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"Member ID\" in the Member Search panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 11
+      }
+    },
+    {
+      "stepId": "click_5",
+      "intent": "Run the member search for the entered member ID",
+      "action": "click",
+      "status": "recovered",
+      "elapsedMs": 4693,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "button \"Search\" in the Member Search panel",
+        "attempts": [
+          {
+            "kind": "role_name",
+            "tier": 1,
+            "matchCount": 0,
+            "chosen": false
+          },
+          {
+            "kind": "structural",
+            "tier": 5,
+            "matchCount": 0,
+            "chosen": false
+          },
+          {
+            "kind": "coordinates",
+            "tier": 6,
+            "matchCount": 0,
+            "chosen": false
+          }
+        ],
+        "winningTier": null,
+        "winningKind": null,
+        "degraded": false,
+        "elapsedMs": 10
+      },
+      "note": "target re-resolved with model assistance; see the repair proposal in the bundle"
+    }
+  ],
+  "degradedResolutions": 0,
+  "assisted": [
+    {
+      "stepId": "click_5",
+      "wanted": "button \"Search\" in the Member Search panel",
+      "outcome": "resolved",
+      "because": "It is the submit control in the Member Search panel that executes the search for the entered Member ID, just renamed from \"Search\" to \"Run Member Inquiry\" (the only other button there, \"Clear\", resets the form).",
+      "chose": "button \"Run Member Inquiry\" in the Member Search panel",
+      "proposal": {
+        "description": "button \"Run Member Inquiry\" in the Member Search panel",
+        "framePath": [
+          {
+            "ordinal": 1,
+            "name": "contentFrame",
+            "urlPattern": "/console/content"
+          }
+        ],
+        "candidates": [
+          {
+            "kind": "role_name",
+            "role": "button",
+            "name": "Run Member Inquiry",
+            "exact": true
+          },
+          {
+            "kind": "structural",
+            "css": "input[name=\"submitInquiry\"]",
+            "ordinal": 0
+          },
+          {
+            "kind": "coordinates",
+            "xFraction": 0.176861572265625,
+            "yFraction": 0.31055555555555553
+          }
+        ],
+        "anchor": {
+          "containerRole": "panel",
+          "containerName": "Member Search"
+        },
+        "evidence": {
+          "role": "button",
+          "accessibleName": "Run Member Inquiry",
+          "tag": "input",
+          "boundingBox": {
+            "x": 158,
+            "y": 269,
+            "width": 136.765625,
+            "height": 21
+          },
+          "viewport": {
+            "width": 1280,
+            "height": 900
+          }
+        }
+      }
+    }
+  ],
+  "evidence": {
+    "runId": "replay-20260825T095534-01",
+    "bundlePath": "runs/replay-20260825T095534-01",
+    "screenshots": [
+      "runs/replay-20260825T095534-01/screenshots/027-replay-success.png"
+    ],
+    "domSnapshots": []
+  },
+  "status": "success",
+  "outputs": {
+    "savingsBalance": 4182.55,
+    "memberName": "Dolores Ashcroft"
+  }
+}

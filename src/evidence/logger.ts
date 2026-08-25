@@ -36,6 +36,10 @@ export type EvidenceEventType =
   | 'tool_call'
   | 'business_outcome'
   | 'recovery_attempt'
+  // Its own type rather than a note, because "was a model consulted during
+  // this run" is a question an auditor asks and must be answerable by
+  // filtering the log rather than by reading it.
+  | 'assisted_attempt'
   | 'escalation_raised'
   | 'control_transfer'
   | 'human_action'
@@ -139,6 +143,11 @@ export class RunLogger {
   writeJson(name: string, value: unknown, { redact = true }: { redact?: boolean } = {}): string {
     const payload = redact ? this.redactor.deep(value) : value;
     return this.writeFile(name, `${JSON.stringify(payload, null, 2)}\n`);
+  }
+
+  /** Redacted by default, like everything else that lands on disk. */
+  writeText(name: string, text: string, { redact = true }: { redact?: boolean } = {}): string {
+    return this.writeFile(name, redact ? this.redactor.text(text) : text);
   }
 }
 
