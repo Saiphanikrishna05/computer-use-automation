@@ -17,6 +17,7 @@
     "replay": "tsx src/cli/index.ts replay",
     "catalog": "tsx src/cli/index.ts catalog",
     "audit": "tsx src/cli/index.ts audit",
+    "fleet": "tsx src/cli/index.ts fleet",
     "agent-demo": "tsx src/cli/index.ts agent-demo",
     "test": "vitest run",
     "test:watch": "vitest",

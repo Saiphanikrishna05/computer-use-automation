@@ -139,6 +139,15 @@ program
   });
 
 program
+  .command('fleet')
+  .description('What needs attention across every capability and every institution, worst first.')
+  .option('--json', 'emit the findings as JSON')
+  .action(async (opts) => {
+    const { runFleetCommand } = await import('./fleet-command.js');
+    process.exit(await runFleetCommand({ json: opts.json }));
+  });
+
+program
   .command('audit')
   .description('Generate the audit pack for a capability: what it does, what backs it, and what it cannot vouch for.')
   .argument('[capability]', 'capability id; omit for every capability in the catalog')

@@ -153,6 +153,28 @@ downstream keeps asserting that it does. Both are fixed, and three tests now pin
 the executor's behaviour when the page is unreadable — including that a blank
 read must not be mistaken for a business outcome.
 
+**Two views exist over all of this, because a capability is not the unit anyone
+operates.** `npm run audit` generates the document the person who signs this off
+actually gets: what it does, what it may do, what data it touches, who approved
+it on what basis, what backs each claim, and — the section that makes the rest
+credible — what it still cannot vouch for. Generated, never authored, since a
+hand-written pack is stale the moment the capability changes and that gap is
+where an audit finding lives. `npm run fleet` is the other axis: every
+capability across every institution, ordered by what to fix first. Drift
+outranks failure deliberately. A failing capability is already generating
+support calls and somebody is on it; a drifting one still returns the right
+answer through a weaker locator and is invisible until it is not.
+
+That view immediately earned itself. It flagged that `lookup_member_contact_details`
+had never been replayed at the second institution, so I ran it: **success, correct
+outputs, and two locators resolving at tier 5 instead of tier 2**. Working,
+correct, and three rungs from breaking, at an institution nobody had checked
+(`evidence/replay-contact-details-tenant-b/`). Both views refuse to cry wolf,
+which is the only thing keeping them worth reading: injected-fault runs are
+excluded by reading the armed-fault marker from the log, and a capability
+recorded against a public web shop is not reported as untested at a credit
+union.
+
 **Reliability** is measured, not claimed: 50 consecutive replays, 50 successes,
 median 1395 ms (min 1366, max 1545), every step resolving at the same locator
 tier all 50 times, in `evidence/reliability/`.
