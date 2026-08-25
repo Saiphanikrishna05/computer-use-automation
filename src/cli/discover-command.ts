@@ -4,13 +4,19 @@
  */
 
 import { PlaywrightWebSurface } from '../surface/playwright-web.js';
-import { PolicyEngine, DISCOVERY_POLICY } from '../policy/engine.js';
+import { PolicyEngine, DISCOVERY_POLICY, PROBE_POLICY } from '../policy/engine.js';
 import { Redactor } from '../policy/redaction.js';
 import { RunLogger, newRunId } from '../evidence/logger.js';
 import { runDiscovery } from '../discovery/agent.js';
 import { StepRecorder } from '../discovery/recorder.js';
 import { saveArtifact } from '../artifact/store.js';
 import { validateAgainstEntryState } from '../discovery/validate.js';
+import {
+  probeOutcomes,
+  baselineInputsFor,
+  withProbingProvenance,
+  renderProbeSummary,
+} from '../discovery/probe.js';
 import { DEFAULT_TENANT, TENANT_RUNTIMES, headless, modelConfig, resolveCredentials } from '../config.js';
 
 export interface DiscoverCommandOptions {
@@ -24,6 +30,10 @@ export interface DiscoverCommandOptions {
    *  stand-in console; overridden when exploring a different application. */
   vendor?: string;
   product?: string;
+  /** Probe declared outcomes by replaying with a provoking input. On by
+   *  default; `--no-probe` skips it when the target must not be touched again. */
+  probe?: boolean;
+  maxProbes?: number;
 }
 
 export async function runDiscoverCommand(opts: DiscoverCommandOptions): Promise<number> {
@@ -129,7 +139,36 @@ export async function runDiscoverCommand(opts: DiscoverCommandOptions): Promise<
     // Check what is checkable before a human is asked to review it. See
     // discovery/validate.ts for why this pass exists.
     const validated = await validateAgainstEntryState(draft, driver, { baseUrl }, logger);
-    const artifact = validated.artifact;
+
+    // Validation removes what is provably wrong; probing goes and looks at what
+    // is merely unproven. In that order deliberately, so no probe run is spent
+    // on a condition already known to be broken.
+    const probePolicy = new PolicyEngine({ ...PROBE_POLICY, allowedOrigins: [entryOrigin] });
+    const probed = opts.probe === false
+      ? undefined
+      : await probeOutcomes({
+          artifact: validated.artifact,
+          // A fresh surface per probe. Discovery's session is signed on and
+          // several screens deep; a probe starting from there would skip the
+          // sign-on steps it is supposed to be replaying.
+          newDriver: () =>
+            PlaywrightWebSurface.launch({
+              policy: probePolicy,
+              redactor,
+              headless: headless(opts.headless),
+              onEvent: (type, message, data) => {
+                if (type === 'policy_decision' && message.includes('allow')) return;
+                logger.event(type as never, message, data);
+              },
+            }),
+          baselineInputs: baselineInputsFor(validated.artifact, credentials),
+          bindings: { baseUrl },
+          policy: probePolicy,
+          logger,
+          ...(opts.maxProbes ? { maxProbes: opts.maxProbes } : {}),
+        });
+
+    const artifact = probed ? withProbingProvenance(probed) : validated.artifact;
     const path = saveArtifact(artifact);
     // The artifact is written into the evidence bundle too, so the bundle is a
     // complete, self-contained record of what this run produced.
@@ -144,7 +183,7 @@ export async function runDiscoverCommand(opts: DiscoverCommandOptions): Promise<
         `  steps        ${artifact.steps.length}\n` +
         `  inputs       ${artifact.inputs.filter((i) => !i.injected).map((i) => i.name).join(', ') || '(none)'}\n` +
         `  outputs      ${artifact.outputs.map((o) => `${o.name}:${o.type}`).join(', ') || '(none)'}\n` +
-        `  outcomes     ${artifact.outcomes.map((o) => o.code).join(', ') || '(none)'}\n` +
+        `  outcomes     ${artifact.outcomes.map((o) => `${o.code} [${o.evidence.state}]`).join(', ') || '(none)'}\n` +
         `  max risk     ${artifact.maxRisk}\n` +
         `  approval     ${artifact.approval.state}\n\n` +
         (validated.rejected.length > 0
@@ -153,13 +192,16 @@ export async function runDiscoverCommand(opts: DiscoverCommandOptions): Promise<
             validated.rejected.map((r) => `    · ${r.code}: ${r.reason}\n`).join('') +
             `\n`
           : '') +
+        (probed ? renderProbeSummary(probed) : '  probing     skipped (--no-probe)\n\n') +
         `  artifact     ${path}\n` +
         `  evidence     ${logger.dir}\n` +
         `${'─'.repeat(72)}\n\n` +
         `This capability is a DRAFT and will not replay unattended.\n` +
         `A single successful run cannot observe the paths it did not take, so its declared\n` +
-        `outcomes are the model's hypotheses. Review them, then approve:\n\n` +
+        `outcomes start as the model's hypotheses; probing is what turns some of them into\n` +
+        `observations. Review what remains, then approve:\n\n` +
         validated.warnings.map((w) => `  ! ${w}\n\n`).join('') +
+        (probed?.warnings ?? []).map((w) => `  ! ${w}\n\n`).join('') +
         `  npx tsx src/cli/index.ts catalog approve ${artifact.id}\n\n`,
     );
     return 0;
@@ -167,3 +209,4 @@ export async function runDiscoverCommand(opts: DiscoverCommandOptions): Promise<
     await driver.close();
   }
 }
+

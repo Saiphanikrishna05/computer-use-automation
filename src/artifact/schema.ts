@@ -342,6 +342,53 @@ export type Step = z.infer<typeof StepSchema>;
 // ---------------------------------------------------------------------------
 
 /**
+ * How to deliberately provoke an outcome, so it can be observed instead of
+ * guessed.
+ *
+ * Deliberately just "set one input to this value". Anything richer, a branch, a
+ * fixture, a second flow, would be a second capability wearing a probe's
+ * clothes, and the point of a probe is that it walks the *same* recorded steps
+ * a caller will walk. If an outcome cannot be reached by varying one input,
+ * this system cannot honestly claim to have observed it, and says so.
+ */
+export const OutcomeProbeSchema = z.object({
+  /** Name of a declared, non-injected input. */
+  parameter: z.string(),
+  /** Value to supply instead of the one discovery used. */
+  value: z.string(),
+  /** Why this value should provoke the outcome, in the declarer's own words. */
+  rationale: z.string().default(''),
+});
+export type OutcomeProbe = z.infer<typeof OutcomeProbeSchema>;
+
+/**
+ * What we actually know about a declared outcome, as opposed to what was
+ * asserted about it.
+ *
+ *   hypothesised  declared from a run that never took this path. A guess, and
+ *                 the state every outcome starts in.
+ *   observed      a probe drove the recorded steps with a provoking input and
+ *                 this condition held on the screen that produced. Evidence.
+ *   refuted       a probe ran and this condition did *not* hold. The wording is
+ *                 probably wrong; a human needs to look before approval.
+ *
+ * `refuted` is a weaker claim than "wrong", and it is kept in the artifact
+ * rather than deleted, because the distinction between "we tried and it did not
+ * fire" and "we never tried" is exactly the information a reviewer needs and
+ * exactly the information a deletion destroys.
+ */
+export const OutcomeEvidenceSchema = z.object({
+  state: z.enum(['hypothesised', 'observed', 'refuted']).default('hypothesised'),
+  probedAt: z.string().optional(),
+  /** Evidence bundle of the probe run, relative to the repo root. */
+  runId: z.string().optional(),
+  /** What the probe run actually produced, when it did not produce this. */
+  observedInstead: z.string().optional(),
+  note: z.string().optional(),
+});
+export type OutcomeEvidence = z.infer<typeof OutcomeEvidenceSchema>;
+
+/**
  * A legitimate, expected, non-error result the caller needs to know about.
  * Checked before every step and after the run; the first match ends the run
  * with `status: "business_outcome"`.
@@ -352,6 +399,14 @@ export const BusinessOutcomeSchema = z.object({
   when: ConditionSchema,
   /** Data worth returning alongside the outcome, e.g. the validation message. */
   extract: z.array(OutputSpecSchema).default([]),
+  /** How to provoke this outcome on demand. Absent means it cannot be probed,
+   *  which is itself worth a reviewer knowing. */
+  probe: OutcomeProbeSchema.optional(),
+  /**
+   * Defaulted, so every artifact recorded before probing existed parses
+   * unchanged and reads as what it is: a set of untested hypotheses.
+   */
+  evidence: OutcomeEvidenceSchema.default({ state: 'hypothesised' }),
 });
 export type BusinessOutcome = z.infer<typeof BusinessOutcomeSchema>;
 
@@ -430,6 +485,26 @@ export const ProvenanceSchema = z.object({
       warnings: z.array(z.string()).default([]),
       /** Conditions removed because they already held before the flow ran. */
       rejected: z.array(z.object({ code: z.string(), reason: z.string() })).default([]),
+    })
+    .optional(),
+  /**
+   * Result of the probing pass, which goes further than validation: rather than
+   * checking declarations against screens we happen to have, it provokes the
+   * state each outcome describes and looks at what the application does.
+   *
+   * Absent means probing never ran, which is not the same as it finding
+   * nothing, and a reviewer should be able to tell those apart from the
+   * artifact alone.
+   */
+  probing: z
+    .object({
+      probedAt: z.string(),
+      /** Probe runs actually spent. Zero with a reason is a real result. */
+      runs: z.number().int().nonnegative().default(0),
+      observed: z.array(z.string()).default([]),
+      refuted: z.array(z.string()).default([]),
+      unprobed: z.array(z.string()).default([]),
+      warnings: z.array(z.string()).default([]),
     })
     .optional(),
 });

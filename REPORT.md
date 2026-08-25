@@ -50,6 +50,29 @@ since such a condition is broken by construction; ones that merely never matched
 are kept and flagged. That run is kept as evidence and its conditions are test
 fixtures.
 
+**Outcome evidence** closes the gap validation cannot. Validation only asks
+whether a declaration is provably wrong against the two screens a successful run
+leaves behind; anything else survives as an unfalsified guess. So each outcome
+now also carries how to *provoke* it, and probing goes and does so: it replays
+the recorded steps with that input, from a cold browser, and marks the outcome
+`observed` or `refuted` by what the application actually did. A probe is
+ordinary replay rather than a bespoke driving path, which is what makes it
+evidence, since the condition is confirmed by the same engine, in the same
+precedence order, that will evaluate it in production. Run against this flow it
+refuted all three declared outcomes: two on wording (`"No member found"` against
+a console that says `"No member record found"`) and one as unreachable, because
+`memberId`'s own `^\d{6}$` contract rejects the probe value before the
+application ever sees it. That first refutation is the one worth noting: this
+capability's own `humanEdits` already records me correcting `"No member found"`
+to the real wording by hand, weeks earlier. Probing found the identical bug on a
+fresh recording, unprompted, in about two seconds. Each refutation carries the text that was on screen,
+so the correction is handed to the reviewer rather than left for them to hunt
+for; applied, the survivors probe clean. `catalog approve` then refuses any
+capability carrying a refuted outcome without `--force`, which is what makes
+this a gate rather than a report. Capabilities whose `maxRisk` is
+`mutate_irreversible` are never probed: provoking an outcome there would mean
+committing the transaction with a deliberately invalid input.
+
 ## 3. Determinism & error handling
 
 Nothing is recorded by index or handle; resolution requires a *unique* match, and
@@ -176,11 +199,27 @@ capability per file, and an override matching no step aborts the run rather than
 doing nothing, because a capability running without its tenant's corrections is
 the failure this system exists to prevent.
 
-**Next**, in order. **Outcome probing during discovery:** after success, re-run
-the parameterized step with a bad input and *observe* the not-found screen
-instead of hypothesizing it, which would have caught all four wrong outcomes in
-§2 without a human and is the highest-value item by some distance; then wiring
-stability scoring into `catalog approve`; a real approval workflow with an
-authenticated reviewer and an append-only audit; and a UIA driver against one
-genuine Windows application, to find out which parts of `UiNode` I got wrong. I
-expect the answer is "the label heuristics".
+**Outcome probing** was the top item on this list and is now built (§2). Two
+things about it were only obvious once it ran. The first: the probe originally
+reused discovery's browser, so every probe began already signed on, the recorded
+sign-on steps resolved against nothing, and three outcomes came back refuted
+with confident, entirely wrong explanations. A probe is a claim about what
+replay will do, and it can only support that claim by starting where replay
+starts, so it now takes a driver *factory* and opens a cold surface per run.
+That is the kind of error that passes every unit test and is caught only by
+running the thing. The second: `INVALID_MEMBER_ID` was refuted not on wording
+but because the capability's own input pattern rejected the probe value before
+the application saw it. Reporting that as a wording problem would have sent a
+reviewer to fix the one thing that was correct, so it is classified and worded
+separately. What probing still cannot do is invent a probe value; an outcome
+nobody can say how to provoke stays a flagged hypothesis, which is honest but
+not satisfying.
+
+**Next**, in order. Wiring stability scoring into `catalog approve`; a real
+approval workflow with an authenticated reviewer and an append-only audit;
+re-probing on a schedule, so an outcome observed in March is not still trusted
+in September after the vendor reworded the banner, which is the same drift
+argument the locator ladder already makes and the natural extension of the
+`observed` state; and a UIA driver against one genuine Windows application, to
+find out which parts of `UiNode` I got wrong. I expect the answer is "the label
+heuristics".

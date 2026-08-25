@@ -1,9 +1,9 @@
 {
   "schemaVersion": "1.0.0",
-  "id": "lookup_member_savings_balance",
+  "id": "lookup_savings_probed",
   "version": 1,
   "title": "Look up a member's savings balance",
-  "description": "Signs on to the Northpoint FCU Meridian Core Servicing Console, searches the Member Search panel by Member ID, and returns the member's name and the Current Balance of their Savings account from the Accounts table on the Member Detail screen. Read-only: it performs no transactions and changes no data.",
+  "description": "Signs on to the Meridian Core Servicing Console, searches the Member Search panel by Member ID, and reads the member's Savings account current balance from the Member Detail screen. Returns savingsBalance (money), memberName (PII) and memberStatus. Read-only: no records are created, modified or submitted.",
   "target": {
     "surface": "web",
     "app": {
@@ -14,11 +14,9 @@
     "entryUrlTemplate": "{{baseUrl}}/"
   },
   "approval": {
-    "state": "approved",
-    "approvedBy": "sai",
-    "approvedAt": "2026-08-15T01:10:32.068815Z",
-    "note": "Outcomes confirmed against the live console."
+    "state": "draft"
   },
+  "maxRisk": "mutate_reversible",
   "inputs": [
     {
       "name": "operatorId",
@@ -39,12 +37,12 @@
     {
       "name": "memberId",
       "type": "string",
-      "description": "The member number to look up, as entered in the Member ID field of the Member Search panel.",
+      "description": "The credit union member number to look up (6 digits).",
       "required": true,
       "sensitivity": "none",
+      "injected": false,
       "pattern": "^\\d{6}$",
-      "example": "100001",
-      "injected": false
+      "example": "100001"
     }
   ],
   "outputs": [
@@ -59,9 +57,9 @@
           "description": "cell \"$4,182.55\" in the Accounts panel",
           "framePath": [
             {
+              "ordinal": 1,
               "name": "contentFrame",
-              "urlPattern": "/console/content/search",
-              "ordinal": 1
+              "urlPattern": "/console/content/search"
             }
           ],
           "candidates": [
@@ -118,9 +116,9 @@
           "description": "cell \"Dolores Ashcroft\" in the Member Profile panel",
           "framePath": [
             {
+              "ordinal": 1,
               "name": "contentFrame",
-              "urlPattern": "/console/content/search",
-              "ordinal": 1
+              "urlPattern": "/console/content/search"
             }
           ],
           "candidates": [
@@ -134,8 +132,7 @@
               "kind": "label",
               "text": "Name",
               "positional": true,
-              "expect": "cell",
-              "column": "100001"
+              "expect": "cell"
             },
             {
               "kind": "coordinates",
@@ -171,12 +168,79 @@
           "collapse_whitespace"
         ]
       }
+    },
+    {
+      "name": "memberStatus",
+      "type": "string",
+      "description": "Membership status shown on the Member Profile panel (e.g. Active)",
+      "required": true,
+      "sensitivity": "none",
+      "extract": {
+        "target": {
+          "description": "cell \"Active\" in the Member Profile panel",
+          "framePath": [
+            {
+              "ordinal": 1,
+              "name": "contentFrame",
+              "urlPattern": "/console/content/search"
+            }
+          ],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Status",
+              "positional": true,
+              "expect": "cell"
+            },
+            {
+              "kind": "label",
+              "text": "Member ID",
+              "positional": true,
+              "expect": "cell"
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.43984375,
+              "yFraction": 0.12
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "Member Profile",
+            "nearestLabel": "Status"
+          },
+          "ordinal": 2,
+          "evidence": {
+            "role": "cell",
+            "accessibleName": "Active",
+            "tag": "td",
+            "textSnippet": "Active",
+            "boundingBox": {
+              "x": 480,
+              "y": 97,
+              "width": 166,
+              "height": 22
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "source": "text",
+        "transforms": [
+          "collapse_whitespace"
+        ]
+      }
     }
   ],
   "steps": [
     {
       "id": "type_1",
       "intent": "Enter the operator ID in the Operator Sign-On panel",
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": [],
       "action": {
         "kind": "type",
         "target": {
@@ -222,14 +286,14 @@
         "valueTemplate": "{{operatorId}}",
         "clearFirst": true,
         "secret": true
-      },
-      "risk": "mutate_reversible",
-      "timeoutMs": 15000,
-      "postconditions": []
+      }
     },
     {
       "id": "type_2",
       "intent": "Enter the operator password in the Operator Sign-On panel",
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": [],
       "action": {
         "kind": "type",
         "target": {
@@ -276,14 +340,14 @@
         "valueTemplate": "{{operatorPassword}}",
         "clearFirst": true,
         "secret": true
-      },
-      "risk": "mutate_reversible",
-      "timeoutMs": 15000,
-      "postconditions": []
+      }
     },
     {
       "id": "click_3",
       "intent": "Submit the operator sign-on form to access the servicing console",
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": [],
       "action": {
         "kind": "click",
         "target": {
@@ -327,23 +391,23 @@
             }
           }
         }
-      },
-      "risk": "mutate_reversible",
-      "timeoutMs": 15000,
-      "postconditions": []
+      }
     },
     {
       "id": "type_4",
       "intent": "Type the member number into the Member ID field of the Member Search panel",
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": [],
       "action": {
         "kind": "type",
         "target": {
           "description": "textbox labelled \"Member ID\" in the Member Search panel",
           "framePath": [
             {
+              "ordinal": 1,
               "name": "contentFrame",
-              "urlPattern": "/console/content",
-              "ordinal": 1
+              "urlPattern": "/console/content"
             }
           ],
           "candidates": [
@@ -386,23 +450,23 @@
         "valueTemplate": "{{memberId}}",
         "clearFirst": true,
         "secret": false
-      },
-      "risk": "mutate_reversible",
-      "timeoutMs": 15000,
-      "postconditions": []
+      }
     },
     {
       "id": "click_5",
       "intent": "Run the member search for the entered member ID",
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": [],
       "action": {
         "kind": "click",
         "target": {
           "description": "button \"Search\" in the Member Search panel",
           "framePath": [
             {
+              "ordinal": 1,
               "name": "contentFrame",
-              "urlPattern": "/console/content",
-              "ordinal": 1
+              "urlPattern": "/console/content"
             }
           ],
           "candidates": [
@@ -443,17 +507,14 @@
             }
           }
         }
-      },
-      "risk": "mutate_reversible",
-      "timeoutMs": 15000,
-      "postconditions": []
+      }
     }
   ],
   "checkpoint": {
-    "description": "The Member Detail screen is shown with the Member Profile panel for the requested member and an Accounts table containing a Savings row with a Current Balance.",
+    "description": "The Member Detail screen is displayed for the requested member, with an Accounts table containing a Savings row showing a Current Balance.",
     "condition": {
       "kind": "text_present",
-      "text": "Member Profile",
+      "text": "Member Detail",
       "framePath": [],
       "caseSensitive": false
     }
@@ -461,10 +522,10 @@
   "outcomes": [
     {
       "code": "MEMBER_NOT_FOUND",
-      "description": "No member exists with the supplied member ID, so the Member Detail screen is not reached.",
+      "description": "No member exists with the supplied member ID, so the search returns no member detail.",
       "when": {
         "kind": "text_present",
-        "text": "No member record found",
+        "text": "No member found",
         "framePath": [],
         "caseSensitive": false
       },
@@ -472,54 +533,45 @@
       "probe": {
         "parameter": "memberId",
         "value": "999999",
-        "rationale": "No member is enrolled under this ID in the demo data set."
+        "rationale": "A member ID far outside the demo data range should return no matching record."
       },
       "evidence": {
-        "state": "observed",
-        "probedAt": "2026-08-25T02:23:30.471Z",
-        "runId": "probe-20260825T022330-01",
-        "note": "Provoked with memberId=\"999999\"; condition (page contains \"No member record found\") held on the resulting screen."
+        "state": "refuted",
+        "probedAt": "2026-08-25T02:13:01.858Z",
+        "runId": "discovery-20260825T021227-01",
+        "observedInstead": "failure TARGET_NOT_FOUND",
+        "note": "Replaying with memberId=\"999999\" ended in failure TARGET_NOT_FOUND, and no declared condition matched the screen it ended on. The wording in (page contains \"No member found\") is probably not what this application shows. Screen read: \"SERVICING Member Search Account Inquiry Transaction History ADMINISTRATION Sign Off Northpoint FCU · Meridian Core 1.4.2 Member Search Member ID Surname Recent Terminal Activity Member ID Last Inquiry No activity this session Meridian Core Servicing Console · session terminal T-0114 · unauthorised a\""
       }
     },
     {
-      "code": "SIGN_ON_FAILED",
-      "description": "The operator credentials were rejected and the console could not be reached.",
+      "code": "INVALID_MEMBER_ID",
+      "description": "The supplied member ID is not in a valid format and the search panel rejects it before querying.",
       "when": {
         "kind": "text_present",
-        "text": "Invalid credentials",
+        "text": "Invalid member ID",
         "framePath": [],
         "caseSensitive": false
       },
       "extract": [],
       "probe": {
-        "parameter": "operatorPassword",
-        "value": "not-the-password",
-        "rationale": "Signing on with a wrong password should be rejected by the console."
+        "parameter": "memberId",
+        "value": "ABC",
+        "rationale": "Non-numeric input should trigger a field validation message rather than a search."
       },
       "evidence": {
-        "state": "hypothesised"
+        "state": "refuted",
+        "probedAt": "2026-08-25T02:13:02.138Z",
+        "runId": "discovery-20260825T021227-01",
+        "observedInstead": "failure INPUT_VALIDATION_FAILED",
+        "note": "Replaying with memberId=\"ABC\" ended in failure INPUT_VALIDATION_FAILED, and no declared condition matched the screen it ended on. The wording in (page contains \"Invalid member ID\") is probably not what this application shows. Screen read: \"SERVICING Member Search Account Inquiry Transaction History ADMINISTRATION Sign Off Northpoint FCU · Meridian Core 1.4.2 Member Search Member ID Surname Recent Terminal Activity Member ID Last Inquiry No activity this session Meridian Core Servicing Console · session terminal T-0114 · unauthorised a\""
       }
     },
     {
-      "code": "NO_SAVINGS_ACCOUNT",
-      "description": "The member exists but has no Savings account row in the Accounts table, so no savings balance can be returned.",
+      "code": "MEMBER_RESTRICTED",
+      "description": "The member record exists but the signed-on operator is not entitled to view its account balances.",
       "when": {
         "kind": "text_present",
-        "text": "No accounts on file",
-        "framePath": [],
-        "caseSensitive": false
-      },
-      "extract": [],
-      "evidence": {
-        "state": "hypothesised"
-      }
-    },
-    {
-      "code": "PERMISSION_DENIED",
-      "description": "The signed-on operator is not entitled to view this member record.",
-      "when": {
-        "kind": "text_present",
-        "text": "Entitlement check failed",
+        "text": "Not authorized to view this member",
         "framePath": [],
         "caseSensitive": false
       },
@@ -527,13 +579,14 @@
       "probe": {
         "parameter": "memberId",
         "value": "100002",
-        "rationale": "Member 100002 carries a restricted-access flag on their record."
+        "rationale": "Adjacent member records in the demo set may carry a restricted-access flag."
       },
       "evidence": {
-        "state": "observed",
-        "probedAt": "2026-08-25T02:23:32.442Z",
-        "runId": "probe-20260825T022330-01",
-        "note": "Provoked with memberId=\"100002\"; condition (page contains \"Entitlement check failed\") held on the resulting screen."
+        "state": "refuted",
+        "probedAt": "2026-08-25T02:13:02.139Z",
+        "runId": "discovery-20260825T021227-01",
+        "observedInstead": "failure TARGET_NOT_FOUND",
+        "note": "Replaying with memberId=\"100002\" ended in failure TARGET_NOT_FOUND, and no declared condition matched the screen it ended on. The wording in (page contains \"Not authorized to view this member\") is probably not what this application shows. Screen read: \"SERVICING Member Search Account Inquiry Transaction History ADMINISTRATION Sign Off Northpoint FCU · Meridian Core 1.4.2 Member Search Member ID Surname Recent Terminal Activity Member ID Last Inquiry No activity this session Meridian Core Servicing Console · session terminal T-0114 · unauthorised a\""
       }
     }
   ],
@@ -552,68 +605,35 @@
       "maxAttempts": 3
     }
   ],
-  "failures": [
-    {
-      "code": "APP_ERROR",
-      "description": "The servicing application returned its unhandled-exception screen",
-      "when": {
-        "kind": "text_present",
-        "text": "An unexpected error has occurred",
-        "framePath": [],
-        "caseSensitive": false
-      }
-    },
-    {
-      "code": "SESSION_EXPIRED",
-      "description": "The host closed the terminal session",
-      "when": {
-        "kind": "text_present",
-        "text": "Your session has expired",
-        "framePath": [],
-        "caseSensitive": false
-      }
-    }
-  ],
-  "maxRisk": "mutate_reversible",
+  "failures": [],
   "provenance": {
-    "discoveredAt": "2026-08-15T01:10:31.354Z",
-    "runId": "discovery-20260815T011002-01",
+    "discoveredAt": "2026-08-25T02:13:01.539Z",
+    "runId": "discovery-20260825T021227-01",
     "goal": "Look up member 100001 and read their current savings balance",
     "model": "claude-opus-5",
-    "evidencePath": "runs/discovery-20260815T011002-01",
-    "humanEdits": [
-      {
-        "at": "2026-08-15T01:10:32.068815Z",
-        "by": "sai",
-        "note": "Draft review before approval. MEMBER_NOT_FOUND: detection text corrected from \"No member found\" to the exact on-screen wording. | PERMISSION_DENIED: added — the run never met a restricted member, the gap a single happy-path run always leaves. | Declared APP_ERROR and SESSION_EXPIRED hard-failure rules; a successful run cannot observe either. | Removed the \"memberId\" output: it echoes the caller-supplied input."
-      },
-      {
-        "at": "2026-08-25T02:30:00.000Z",
-        "by": "reviewer",
-        "note": "Added probe declarations so the declared outcomes can be verified by provoking them rather than trusted on the model’s word."
-      }
-    ],
+    "evidencePath": "runs/discovery-20260825T021227-01",
+    "humanEdits": [],
     "validation": {
-      "checkedAt": "2026-08-15T01:10:31.664Z",
+      "checkedAt": "2026-08-25T02:13:01.858Z",
       "warnings": [
-        "3 declared outcome(s) were hypothesised from a single successful run and have not been observed. Confirm the exact on-screen wording of each before approving: MEMBER_NOT_FOUND (\"No member found\"), SIGN_ON_FAILED (\"Invalid credentials\"), NO_SAVINGS_ACCOUNT (\"No accounts on file\")"
+        "3 declared outcome(s) were hypothesised by the run that recorded them, which never took these paths: MEMBER_NOT_FOUND (\"No member found\"), INVALID_MEMBER_ID (\"Invalid member ID\"), MEMBER_RESTRICTED (\"Not authorized to view this member\")"
       ],
       "rejected": []
     },
     "probing": {
-      "probedAt": "2026-08-25T02:23:33.934Z",
-      "runs": 2,
-      "observed": [
+      "probedAt": "2026-08-25T02:13:02.419Z",
+      "runs": 3,
+      "observed": [],
+      "refuted": [
         "MEMBER_NOT_FOUND",
-        "PERMISSION_DENIED"
+        "INVALID_MEMBER_ID",
+        "MEMBER_RESTRICTED"
       ],
-      "refuted": [],
-      "unprobed": [
-        "SIGN_ON_FAILED",
-        "NO_SAVINGS_ACCOUNT"
-      ],
+      "unprobed": [],
       "warnings": [
-        "SIGN_ON_FAILED: Probe would vary the injected credential \"operatorPassword\". Credentials are supplied by the runtime and are never varied to provoke an outcome. Nothing was run."
+        "MEMBER_NOT_FOUND was probed and did not fire: Replaying with memberId=\"999999\" ended in failure TARGET_NOT_FOUND, and no declared condition matched the screen it ended on. The wording in (page contains \"No member found\") is probably not what this application shows. Screen read: \"SERVICING Member Search Account Inquiry Transaction History ADMINISTRATION Sign Off Northpoint FCU · Meridian Core 1.4.2 Member Search Member ID Surname Recent Terminal Activity Member ID Last Inquiry No activity this session Meridian Core Servicing Console · session terminal T-0114 · unauthorised a\" Confirm the real on-screen wording before approving.",
+        "INVALID_MEMBER_ID was probed and did not fire: Replaying with memberId=\"ABC\" ended in failure INPUT_VALIDATION_FAILED, and no declared condition matched the screen it ended on. The wording in (page contains \"Invalid member ID\") is probably not what this application shows. Screen read: \"SERVICING Member Search Account Inquiry Transaction History ADMINISTRATION Sign Off Northpoint FCU · Meridian Core 1.4.2 Member Search Member ID Surname Recent Terminal Activity Member ID Last Inquiry No activity this session Meridian Core Servicing Console · session terminal T-0114 · unauthorised a\" Confirm the real on-screen wording before approving.",
+        "MEMBER_RESTRICTED was probed and did not fire: Replaying with memberId=\"100002\" ended in failure TARGET_NOT_FOUND, and no declared condition matched the screen it ended on. The wording in (page contains \"Not authorized to view this member\") is probably not what this application shows. Screen read: \"SERVICING Member Search Account Inquiry Transaction History ADMINISTRATION Sign Off Northpoint FCU · Meridian Core 1.4.2 Member Search Member ID Surname Recent Terminal Activity Member ID Last Inquiry No activity this session Meridian Core Servicing Console · session terminal T-0114 · unauthorised a\" Confirm the real on-screen wording before approving."
       ]
     }
   }

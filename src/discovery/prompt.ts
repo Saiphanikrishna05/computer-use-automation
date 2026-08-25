@@ -54,6 +54,8 @@ When the goal is met, call \`finish\`. You are declaring a contract that other s
 
   Where you actually saw wording that would identify a failure, a validation message, a banner, quote it exactly. Exact observed text beats a plausible guess every time.
 
+  **Say how to provoke each one.** For every outcome, give \`probeParameter\` and \`probeValue\`: one parameter you declared, and a value that should drive the flow into that state. A member id that does not exist, an account number belonging to a restricted record. The system will then re-run the steps you just recorded with that value and check whether your condition actually fires, turning your hypothesis into an observation or catching it as wrong. Omit the probe only when no single input could reach the state; that outcome then stays unverified, which is worse but honest.
+
 If you cannot achieve the goal, call \`give_up\` with a specific reason. A clear account of where you got stuck is far more useful than a run that flails until it times out.`;
 
 const intentProperty = {
@@ -233,6 +235,22 @@ export const DISCOVERY_TOOLS: Anthropic.Tool[] = [
               code: { type: 'string', description: 'SCREAMING_SNAKE_CASE, e.g. MEMBER_NOT_FOUND.' },
               description: { type: 'string' },
               textWhenPresent: { type: 'string', description: 'Text that would appear on screen for this outcome.' },
+              probeParameter: {
+                type: 'string',
+                description:
+                  'Name of one parameter you declared above which, given the right value, drives the flow ' +
+                  'into this outcome. Omit only if no single input can reach this state.',
+              },
+              probeValue: {
+                type: 'string',
+                description:
+                  'The value to supply for that parameter to provoke this outcome, e.g. a member id that ' +
+                  'does not exist. The system will re-run your recorded steps with it and check.',
+              },
+              probeRationale: {
+                type: 'string',
+                description: 'Why that value should produce this outcome. One clause.',
+              },
             },
             required: ['code', 'description', 'textWhenPresent'],
             additionalProperties: false,

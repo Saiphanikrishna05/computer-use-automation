@@ -72,7 +72,17 @@ export interface FinishDeclaration {
   checkpointDescription: string;
   checkpointText: string;
   checkpointFramePath?: { name?: string }[];
-  expectedOutcomes: Array<{ code: string; description: string; textWhenPresent: string }>;
+  expectedOutcomes: Array<{
+    code: string;
+    description: string;
+    textWhenPresent: string;
+    /** How to provoke this outcome, so probing can observe it rather than
+     *  trusting the declaration. Optional: not every state is reachable by
+     *  varying one input. */
+    probeParameter?: string;
+    probeValue?: string;
+    probeRationale?: string;
+  }>;
 }
 
 export interface RecorderOptions {
@@ -206,11 +216,24 @@ export class StepRecorder {
 
     const framePath = (declaration.checkpointFramePath ?? []).map((f) => ({ name: f.name }));
 
+    // Every outcome is emitted as a hypothesis. Probing, which runs after this,
+    // is what may upgrade one to an observation; nothing the model asserted is
+    // treated as evidence on its own.
     const outcomes: BusinessOutcome[] = declaration.expectedOutcomes.map((o) => ({
       code: o.code,
       description: o.description,
       when: { kind: 'text_present' as const, text: o.textWhenPresent, framePath, caseSensitive: false },
       extract: [],
+      ...(o.probeParameter && o.probeValue
+        ? {
+            probe: {
+              parameter: o.probeParameter,
+              value: o.probeValue,
+              rationale: o.probeRationale ?? '',
+            },
+          }
+        : {}),
+      evidence: { state: 'hypothesised' as const },
     }));
 
     // A dialog-acknowledgement rule is added unconditionally because an
