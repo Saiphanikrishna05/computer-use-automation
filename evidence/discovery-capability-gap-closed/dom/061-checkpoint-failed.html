@@ -1,0 +1,77 @@
+<!-- ===== frame: (main) · http://localhost:4173/console ===== -->
+<html><head>
+<title>Northpoint FCU — Servicing Console</title>
+</head>
+<frameset cols="190,*" frameborder="1" border="2" framespacing="0">
+  <frame name="navFrame" src="/console/nav" scrolling="no" marginwidth="0" marginheight="0">
+  <frame name="contentFrame" src="/console/content?view=search" marginwidth="0" marginheight="0">
+</frameset>
+
+</html>
+
+<!-- ===== frame: navFrame · http://localhost:4173/console/nav ===== -->
+<html><head><title>Menu</title></head>
+<body bgcolor="#c8cdd4" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<table width="100%" border="0" cellpadding="5" cellspacing="0">
+  <tbody><tr bgcolor="#1c3f60"><td><font face="Verdana, Arial" size="1" color="#ffffff"><b>SERVICING</b></font></td></tr>
+  <tr><td><font face="Verdana, Arial" size="1"><a href="/console/content?view=search" target="contentFrame">Member Search</a></font></td></tr>
+  <tr><td><font face="Verdana, Arial" size="1"><a href="/console/content?view=search" target="contentFrame">Account Inquiry</a></font></td></tr>
+  <tr><td><font face="Verdana, Arial" size="1"><a href="/console/content?view=search" target="contentFrame">Transaction History</a></font></td></tr>
+  <tr bgcolor="#1c3f60"><td><font face="Verdana, Arial" size="1" color="#ffffff"><b>ADMINISTRATION</b></font></td></tr>
+  <tr><td><font face="Verdana, Arial" size="1"><a href="/logout" target="_top">Sign Off</a></font></td></tr>
+</tbody></table>
+
+
+</body></html>
+
+<!-- ===== frame: contentFrame · http://localhost:4173/console/content/search ===== -->
+<html><head>
+<title>Northpoint FCU — Servicing Console</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+<body bgcolor="#d4d0c8" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tbody><tr>
+    <td bgcolor="#1c3f60" height="26">&nbsp;<font face="Verdana, Arial" size="2" color="#ffffff"><b>Northpoint FCU</b></font><font face="Verdana, Arial" size="1" color="#c8d4e0">&nbsp;&nbsp;·&nbsp;&nbsp;Meridian Core 1.4.2</font></td>
+  </tr>
+  <tr><td bgcolor="#7f8b96" height="1"></td></tr>
+</tbody></table>
+<table width="100%" border="0" cellpadding="8" cellspacing="0"><tbody><tr><td>
+
+
+<table border="1" cellpadding="0" cellspacing="0" bgcolor="#eceae4" width="460">
+  <tbody><tr><td>
+    <table border="0" cellpadding="6" cellspacing="0" width="100%">
+      <tbody><tr bgcolor="#8b6b1a">
+        <td><font face="Verdana, Arial" size="2" color="#ffffff"><b>Inquiry Result</b></font></td>
+      </tr>
+      <tr>
+        <td>
+          <font face="Verdana, Arial" size="1">
+            <b>No member record found for ID 999999.</b><br><br>
+            Verify the member number and re-submit. If the member was recently
+            enrolled, allow one business day for host replication.
+          </font>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <form method="get" action="/console/content">
+            <input type="hidden" name="view" value="search" style="">
+            <input type="submit" name="back" id="ctl_8a534e_r" value="Return to Search" style="">
+          </form>
+        </td>
+      </tr>
+    </tbody></table>
+  </td></tr>
+</tbody></table>
+
+</td></tr></tbody></table>
+<table width="100%" border="0" cellpadding="4" cellspacing="0">
+  <tbody><tr><td bgcolor="#7f8b96" height="1"></td></tr>
+  <tr><td><font face="Verdana, Arial" size="1" color="#4a4a4a">Meridian Core Servicing Console · session terminal T-0114 · unauthorised access is prohibited</font></td></tr>
+</tbody></table>
+
+
+
+</body></html>

@@ -1,0 +1,562 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "lookup_member_contact_details",
+  "version": 1,
+  "title": "Look Up Member Contact Details (E-Mail and Telephone)",
+  "description": "Signs on to the Meridian Core Servicing Console, searches the Member Search panel by Member ID, and reads the member's contact details from the Member Profile panel on the Member Detail screen. Returns memberEmail (e-mail address) and memberPhone (telephone number). Read-only: performs a search and reads fields; changes no data and submits no transactions.",
+  "target": {
+    "surface": "web",
+    "app": {
+      "vendor": "meridian",
+      "product": "servicing-console",
+      "versionRange": "1.x"
+    },
+    "entryUrlTemplate": "{{baseUrl}}/"
+  },
+  "approval": {
+    "state": "draft"
+  },
+  "maxRisk": "mutate_reversible",
+  "inputs": [
+    {
+      "name": "operatorId",
+      "type": "string",
+      "description": "Servicing console operator user ID. Injected by the runtime credential store.",
+      "required": true,
+      "sensitivity": "pii",
+      "injected": true
+    },
+    {
+      "name": "operatorPassword",
+      "type": "string",
+      "description": "Servicing console operator password. Injected by the runtime credential store.",
+      "required": true,
+      "sensitivity": "secret",
+      "injected": true
+    },
+    {
+      "name": "memberId",
+      "type": "string",
+      "description": "The member number to look up, as entered in the Member ID field of the Member Search panel.",
+      "required": true,
+      "sensitivity": "none",
+      "injected": false,
+      "pattern": "^\\d{6}$",
+      "example": "100001"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "memberEmail",
+      "type": "string",
+      "description": "E-Mail address shown on the Member Profile panel",
+      "required": true,
+      "sensitivity": "pii",
+      "extract": {
+        "target": {
+          "description": "cell \"[redacted:email]\" in the Member Profile panel",
+          "framePath": [
+            {
+              "ordinal": 1,
+              "name": "contentFrame",
+              "urlPattern": "/console/content/search"
+            }
+          ],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "E-Mail",
+              "positional": true,
+              "expect": "cell"
+            },
+            {
+              "kind": "label",
+              "text": "E-Mail",
+              "positional": true,
+              "expect": "cell"
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.19140625,
+              "yFraction": 0.19333333333333333
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "Member Profile",
+            "nearestLabel": "E-Mail"
+          },
+          "ordinal": 0,
+          "evidence": {
+            "role": "cell",
+            "tag": "td",
+            "boundingBox": {
+              "x": 140,
+              "y": 163,
+              "width": 210,
+              "height": 22
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "source": "text",
+        "transforms": [
+          "collapse_whitespace"
+        ]
+      }
+    },
+    {
+      "name": "memberPhone",
+      "type": "string",
+      "description": "Telephone number shown on the Member Profile panel",
+      "required": true,
+      "sensitivity": "pii",
+      "extract": {
+        "target": {
+          "description": "cell \"[redacted:phone]\" in the Member Profile panel",
+          "framePath": [
+            {
+              "ordinal": 1,
+              "name": "contentFrame",
+              "urlPattern": "/console/content/search"
+            }
+          ],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Telephone",
+              "positional": true,
+              "expect": "cell"
+            },
+            {
+              "kind": "label",
+              "text": "E-Mail",
+              "positional": true,
+              "expect": "cell"
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.43984375,
+              "yFraction": 0.19333333333333333
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "Member Profile",
+            "nearestLabel": "Telephone"
+          },
+          "ordinal": 2,
+          "evidence": {
+            "role": "cell",
+            "tag": "td",
+            "boundingBox": {
+              "x": 480,
+              "y": 163,
+              "width": 166,
+              "height": 22
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "source": "text",
+        "transforms": [
+          "collapse_whitespace"
+        ]
+      }
+    }
+  ],
+  "steps": [
+    {
+      "id": "type_1",
+      "intent": "Enter the operator ID into the Operator Sign-On panel",
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": [],
+      "action": {
+        "kind": "type",
+        "target": {
+          "description": "textbox labelled \"User ID\" in the Operator Sign-On panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "User ID",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "input[name=\"username\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.178515625,
+              "yFraction": 0.09055555555555556
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "Operator Sign-On"
+          },
+          "evidence": {
+            "role": "textbox",
+            "tag": "input",
+            "boundingBox": {
+              "x": 138,
+              "y": 71,
+              "width": 181,
+              "height": 21
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "{{operatorId}}",
+        "clearFirst": true,
+        "secret": true
+      }
+    },
+    {
+      "id": "type_2",
+      "intent": "Enter the operator password into the Operator Sign-On panel",
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": [],
+      "action": {
+        "kind": "type",
+        "target": {
+          "description": "textbox labelled \"Password\" in the Operator Sign-On panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Password",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "input[name=\"password\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.178515625,
+              "yFraction": 0.1272222222222222
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "Operator Sign-On"
+          },
+          "ordinal": 1,
+          "evidence": {
+            "role": "textbox",
+            "tag": "input",
+            "boundingBox": {
+              "x": 138,
+              "y": 104,
+              "width": 181,
+              "height": 21
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "{{operatorPassword}}",
+        "clearFirst": true,
+        "secret": true
+      }
+    },
+    {
+      "id": "click_3",
+      "intent": "Submit the operator sign-on form to access the servicing console",
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": [],
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "button \"Sign On\" in the Operator Sign-On panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "role_name",
+              "role": "button",
+              "name": "Sign On",
+              "exact": true
+            },
+            {
+              "kind": "structural",
+              "css": "input[name=\"ok\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.132879638671875,
+              "yFraction": 0.1638888888888889
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "Operator Sign-On"
+          },
+          "evidence": {
+            "role": "button",
+            "accessibleName": "Sign On",
+            "tag": "input",
+            "boundingBox": {
+              "x": 138,
+              "y": 137,
+              "width": 64.171875,
+              "height": 21
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "type_4",
+      "intent": "Type the member number into the Member ID field of the Member Search panel",
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": [],
+      "action": {
+        "kind": "type",
+        "target": {
+          "description": "textbox labelled \"Member ID\" in the Member Search panel",
+          "framePath": [
+            {
+              "ordinal": 1,
+              "name": "contentFrame",
+              "urlPattern": "/console/content"
+            }
+          ],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Member ID",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "input[name=\"memberId\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.172265625,
+              "yFraction": 0.09055555555555556
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "Member Search"
+          },
+          "evidence": {
+            "role": "textbox",
+            "tag": "input",
+            "boundingBox": {
+              "x": 158,
+              "y": 71,
+              "width": 125,
+              "height": 21
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "{{memberId}}",
+        "clearFirst": true,
+        "secret": false
+      }
+    },
+    {
+      "id": "click_5",
+      "intent": "Run the member search for the entered member ID",
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": [],
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "button \"Search\" in the Member Search panel",
+          "framePath": [
+            {
+              "ordinal": 1,
+              "name": "contentFrame",
+              "urlPattern": "/console/content"
+            }
+          ],
+          "candidates": [
+            {
+              "kind": "role_name",
+              "role": "button",
+              "name": "Search",
+              "exact": true
+            },
+            {
+              "kind": "structural",
+              "css": "input[name=\"go\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.14619140625,
+              "yFraction": 0.1638888888888889
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "Member Search"
+          },
+          "evidence": {
+            "role": "button",
+            "accessibleName": "Search",
+            "tag": "input",
+            "boundingBox": {
+              "x": 158,
+              "y": 137,
+              "width": 58.25,
+              "height": 21
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        }
+      }
+    }
+  ],
+  "checkpoint": {
+    "description": "The Member Detail screen is displayed with a Member Profile panel showing the requested Member ID, the member's name, and the E-Mail and Telephone rows.",
+    "condition": {
+      "kind": "text_present",
+      "text": "Member Profile",
+      "framePath": [],
+      "caseSensitive": false
+    }
+  },
+  "outcomes": [
+    {
+      "code": "MEMBER_NOT_FOUND",
+      "description": "No member exists with the supplied Member ID, so the console returns to the Member Search panel with a not-found message instead of the Member Detail screen.",
+      "when": {
+        "kind": "text_present",
+        "text": "No member found",
+        "framePath": [],
+        "caseSensitive": false
+      },
+      "extract": [],
+      "probe": {
+        "parameter": "memberId",
+        "value": "999999",
+        "rationale": "A member ID outside the demonstration data set should return no matching member record."
+      },
+      "evidence": {
+        "state": "refuted",
+        "probedAt": "2026-08-25T05:42:09.864Z",
+        "runId": "discovery-20260825T054129-01",
+        "observedInstead": "failure CHECKPOINT_FAILED",
+        "note": "Replaying with memberId=\"999999\" ended in failure CHECKPOINT_FAILED, and no declared condition matched the screen it ended on. The wording in (page contains \"No member found\") is probably not what this application shows. Screen read: \"SERVICING Member Search Account Inquiry Transaction History ADMINISTRATION Sign Off Northpoint FCU · Meridian Core 1.4.2 Inquiry Result No member record found for ID 999999. Verify the member number and re-submit. If the member was recently enrolled, allow one business day for host replication. Meri\""
+      }
+    },
+    {
+      "code": "INVALID_MEMBER_ID",
+      "description": "The supplied Member ID is not a valid member number format, so the search is rejected with a validation message rather than running.",
+      "when": {
+        "kind": "text_present",
+        "text": "Member ID must be numeric",
+        "framePath": [],
+        "caseSensitive": false
+      },
+      "extract": [],
+      "probe": {
+        "parameter": "memberId",
+        "value": "ABCDEF",
+        "rationale": "Alphabetic input in a numeric member number field should trigger field validation."
+      },
+      "evidence": {
+        "state": "refuted",
+        "probedAt": "2026-08-25T05:42:11.315Z",
+        "runId": "discovery-20260825T054129-01",
+        "observedInstead": "failure INPUT_VALIDATION_FAILED",
+        "note": "memberId=\"ABCDEF\" is rejected by this capability's own input contract (Parameter \"memberId\" does not match required pattern ^\\d{6}$), so the application never saw it. INVALID_MEMBER_ID is unreachable through this capability: either the outcome does not belong here, or the parameter is over-constrained."
+      }
+    }
+  ],
+  "recovery": [
+    {
+      "code": "ACCEPT_SYSTEM_DIALOG",
+      "description": "A native dialog is blocking the page. Acknowledging it is required before any further step can run. Review whether acknowledging is safe for this flow before approving.",
+      "when": {
+        "kind": "dialog_present"
+      },
+      "then": [
+        {
+          "kind": "accept_dialog"
+        }
+      ],
+      "maxAttempts": 3
+    }
+  ],
+  "failures": [],
+  "provenance": {
+    "discoveredAt": "2026-08-25T05:42:09.575Z",
+    "runId": "discovery-20260825T054129-01",
+    "goal": "Look up member 100001 and read their contact details: the email address and the phone number on the member record",
+    "model": "claude-opus-5",
+    "evidencePath": "runs/discovery-20260825T054129-01",
+    "humanEdits": [],
+    "cost": {
+      "turns": 10,
+      "totalTokens": 79940,
+      "inputTokens": 34643,
+      "outputTokens": 2457,
+      "cacheReadTokens": 38556,
+      "cacheWriteTokens": 4284,
+      "costUsd": 0.842079,
+      "cacheSavingUsd": 0.520506
+    },
+    "validation": {
+      "checkedAt": "2026-08-25T05:42:09.864Z",
+      "warnings": [
+        "2 declared outcome(s) were hypothesised by the run that recorded them, which never took these paths: MEMBER_NOT_FOUND (\"No member found\"), INVALID_MEMBER_ID (\"Member ID must be numeric\")"
+      ],
+      "rejected": []
+    },
+    "probing": {
+      "probedAt": "2026-08-25T05:42:11.434Z",
+      "runs": 2,
+      "observed": [],
+      "refuted": [
+        "MEMBER_NOT_FOUND",
+        "INVALID_MEMBER_ID"
+      ],
+      "unprobed": [],
+      "warnings": [
+        "MEMBER_NOT_FOUND was probed and did not fire: Replaying with memberId=\"999999\" ended in failure CHECKPOINT_FAILED, and no declared condition matched the screen it ended on. The wording in (page contains \"No member found\") is probably not what this application shows. Screen read: \"SERVICING Member Search Account Inquiry Transaction History ADMINISTRATION Sign Off Northpoint FCU · Meridian Core 1.4.2 Inquiry Result No member record found for ID 999999. Verify the member number and re-submit. If the member was recently enrolled, allow one business day for host replication. Meri\" Confirm the real on-screen wording before approving.",
+        "INVALID_MEMBER_ID was probed and did not fire: memberId=\"ABCDEF\" is rejected by this capability's own input contract (Parameter \"memberId\" does not match required pattern ^\\d{6}$), so the application never saw it. INVALID_MEMBER_ID is unreachable through this capability: either the outcome does not belong here, or the parameter is over-constrained. Confirm the real on-screen wording before approving."
+      ]
+    }
+  }
+}
