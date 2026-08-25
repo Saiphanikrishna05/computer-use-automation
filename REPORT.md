@@ -73,6 +73,25 @@ this a gate rather than a report. Capabilities whose `maxRisk` is
 `mutate_irreversible` are never probed: provoking an outcome there would mean
 committing the transaction with a deliberately invalid input.
 
+**An observation has a shelf life**, which is the same drift argument the
+locator ladder makes, one level up. Probing answers a question about the
+application *on the day it was asked*; a capability verified in March still
+claiming `observed` in September has survived however many vendor releases
+shipped in between, and nothing would say so. So freshness is **derived, never
+stored**: there is no fourth evidence state and no job flipping `observed` to
+`stale`, because that job would be wrong from the moment it stopped running, and
+an artifact disagreeing with the clock is worse than one that never claimed
+freshness. The artifact records *when*; how old that makes it is arithmetic done
+when someone asks, the same reason a record holds a date of birth rather than an
+age. The catalog and the approval gate report it, and `probe --stale-only`
+re-verifies just what has aged out, because re-probing has to be cheap enough to
+run on a schedule or the honest maintenance habit becomes the expensive one.
+Ageing warns rather than blocks: unlike a refutation, a stale observation is not
+known to be wrong, and refusing on it would expire every capability on a date
+nobody chose. The threshold defaults to 90 days and belongs to whoever operates
+the system (`CUA_OBSERVATION_MAX_AGE_DAYS`), since an institution on a quarterly
+vendor cadence wants something different from one taking continuous updates.
+
 ## 3. Determinism & error handling
 
 Determinism here is also the economic argument, so discovery now measures
@@ -111,6 +130,32 @@ ordering prevents. Recovery is last because it alone mutates the surface, and is
 budgeted per rule per *run*; refreshing that budget each step turns a broken
 capability into an infinite loop. Every path is in `evidence/`, carrying step,
 expected, observed, screenshot and DOM snapshot.
+
+That ordering is also where the worst bug in this system lived, and it took a
+harness to find. `scripts/fault-taxonomy.ts` provokes every condition the
+application can produce and checks each against an expectation written down
+beforehand, including the specific failure code. It came back 6/7. The failing
+row was the unexpected dialog, and the diagnosis was worse than the symptom:
+**an unanswered modal blocks the renderer, and every declared-outcome check is a
+page read.** So the run read a page it could not see, once per outcome, before
+ever reaching the recovery rule written to dismiss it, and it *hung* rather than
+failed, indefinitely, unattended. The existing code guarded either side of each
+wait, which does nothing when the wait itself is what blocks. Page reads now
+return empty while a dialog is pending, so `dialog_present` — which reads local
+state — fires, clears it, and the run completes in 1.5 s.
+
+Two things had hidden this. The fixture raised its dialog 350 ms after load, and
+replay had got fast enough to finish first, so the condition stopped occurring;
+and `evidence/replay-recovery-unexpected-dialog/` had quietly become an ordinary
+successful run that still claimed to demonstrate recovery. A fixture that no
+longer reproduces what it exists for is worse than none, because everything
+downstream keeps asserting that it does. Both are fixed, and three tests now pin
+the executor's behaviour when the page is unreadable — including that a blank
+read must not be mistaken for a business outcome.
+
+**Reliability** is measured, not claimed: 50 consecutive replays, 50 successes,
+median 1395 ms (min 1366, max 1545), every step resolving at the same locator
+tier all 50 times, in `evidence/reliability/`.
 
 **Drift** is not layout change but *tier degradation*, and it is tested rather
 than asserted (`./scripts/demo-drift.sh`): apply a vendor point release that
@@ -233,9 +278,8 @@ not satisfying.
 
 **Next**, in order. Wiring stability scoring into `catalog approve`; a real
 approval workflow with an authenticated reviewer and an append-only audit;
-re-probing on a schedule, so an outcome observed in March is not still trusted
-in September after the vendor reworded the banner, which is the same drift
-argument the locator ladder already makes and the natural extension of the
-`observed` state; and a UIA driver against one genuine Windows application, to
-find out which parts of `UiNode` I got wrong. I expect the answer is "the label
-heuristics".
+*running* `probe --stale-only` on a schedule rather than only supporting it, which
+needs somewhere to run it from and somewhere for the result to go, neither of
+which this repository should invent; and a UIA driver against one genuine
+Windows application, to find out which parts of `UiNode` I got wrong. I expect
+the answer is "the label heuristics".

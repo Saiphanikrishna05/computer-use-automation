@@ -260,6 +260,103 @@ describe('ReplayEngine, precedence', () => {
   });
 });
 
+describe('ReplayEngine, a modal blocking the page', () => {
+  /**
+   * A surface behaving the way a real browser does with an unanswered dialog:
+   * the page cannot be read at all until someone answers it.
+   *
+   * This is the shape of a bug that survived to a committed evidence bundle.
+   * The executor checks declared outcomes immediately after each action and
+   * before recovery, which is the correct order for business logic, but every
+   * one of those checks reads the page. With a modal up, each read blocked,
+   * once per declared outcome, and the run never reached the recovery rule
+   * written to dismiss it. It hung rather than failing, which is the worst
+   * available outcome for something running unattended.
+   */
+  function surfaceWithModal() {
+    let dialog: { kind: 'confirm'; message: string } | undefined;
+    let accepted = false;
+    const element = { __brand: 'SurfaceElement' } as SurfaceElement;
+    const base = scriptedSurface(['SEARCH', 'MEMBER PROFILE']).driver;
+
+    const driver: SurfaceDriver = {
+      ...base,
+      async click() {
+        // The click lands, and the page it loads raises a confirm().
+        dialog = { kind: 'confirm', message: 'System notice: continue?' };
+      },
+      pendingDialog: () => dialog,
+      async acceptDialog() {
+        dialog = undefined;
+        accepted = true;
+      },
+      async visibleText() {
+        // The property under test: nothing is readable behind a modal.
+        if (dialog) return '';
+        return accepted ? 'MEMBER PROFILE' : 'SEARCH';
+      },
+      async resolve() {
+        return {
+          ok: true as const,
+          element,
+          report: { targetDescription: '', attempts: [], winningTier: 1, winningKind: 'role_name', degraded: false, elapsedMs: 0 },
+        };
+      },
+    };
+    return { driver, wasAccepted: () => accepted };
+  }
+
+  const withDialogRecovery = () =>
+    artifact({
+      steps: [{ id: 'search', intent: 'run the search', action: { kind: 'click', target: target('Search') } }],
+      outcomes: [
+        // Declared outcomes are checked before recovery, and each one reads the
+        // page. Several, because one would not reproduce the pile-up.
+        { code: 'MEMBER_NOT_FOUND', description: 'no such member', when: textPresent('NO MEMBER RECORD FOUND') },
+        { code: 'PERMISSION_DENIED', description: 'not entitled', when: textPresent('ENTITLEMENT CHECK FAILED') },
+      ],
+      recovery: [
+        {
+          code: 'ACCEPT_SYSTEM_DIALOG',
+          description: 'a native dialog is blocking the page',
+          when: { kind: 'dialog_present' },
+          then: [{ kind: 'accept_dialog' }],
+          maxAttempts: 3,
+        },
+      ],
+    });
+
+  it('clears the dialog and completes, rather than reading a page it cannot see', async () => {
+    const { driver, wasAccepted } = surfaceWithModal();
+    const result = await engineFor(withDialogRecovery(), driver).run();
+
+    expect(wasAccepted()).toBe(true);
+    expect(result.status).toBe('success');
+  });
+
+  it('records the recovery on the step, so it is visible rather than absorbed', async () => {
+    // A run that silently survives a blocking modal looks identical to one that
+    // never met a modal at all, which is how a fixture that stopped firing went
+    // unnoticed. The recovery has to show up in the result.
+    const { driver } = surfaceWithModal();
+    const result = await engineFor(withDialogRecovery(), driver).run();
+
+    const recoveries = result.steps.flatMap((s) => s.recoveries);
+    expect(recoveries.map((r) => r.code)).toContain('ACCEPT_SYSTEM_DIALOG');
+    expect(recoveries.every((r) => r.succeeded)).toBe(true);
+    expect(result.steps.some((s) => s.status === 'recovered')).toBe(true);
+  });
+
+  it('does not mistake an unreadable page for a business outcome', async () => {
+    // "" contains no declared outcome text, so a blank read must not resolve as
+    // one. Reporting MEMBER_NOT_FOUND because a modal was in the way would be a
+    // wrong answer delivered confidently.
+    const { driver } = surfaceWithModal();
+    const result = await engineFor(withDialogRecovery(), driver).run();
+    expect(result.status).not.toBe('business_outcome');
+  });
+});
+
 describe('ReplayEngine, recovery', () => {
   const recoveringArtifact = (maxAttempts: number) =>
     artifact({

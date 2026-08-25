@@ -40,6 +40,8 @@ export interface ProbeCommandOptions {
   inputs?: Record<string, string>;
   /** Report what probing found without writing it back to the artifact. */
   dryRun?: boolean;
+  /** Re-verify only outcomes whose evidence has aged out or is missing. */
+  staleOnly?: boolean;
 }
 
 export async function runProbeCommand(opts: ProbeCommandOptions): Promise<number> {
@@ -86,6 +88,7 @@ export async function runProbeCommand(opts: ProbeCommandOptions): Promise<number
       policy,
       logger,
       ...(opts.maxProbes ? { maxProbes: opts.maxProbes } : {}),
+      ...(opts.staleOnly ? { staleOnly: true } : {}),
     });
 
     const updated = withProbingProvenance(probed);

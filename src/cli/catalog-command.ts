@@ -13,6 +13,13 @@ import { join } from 'node:path';
 import { listArtifacts, loadArtifact, saveArtifact } from '../artifact/store.js';
 import { CapabilityArtifactSchema } from '../artifact/schema.js';
 import { formatTokens, formatUsd, pricing } from '../discovery/cost.js';
+import {
+  freshnessReport,
+  staleOutcomes,
+  summariseFreshness,
+  describeAge,
+  maxObservationAgeDays,
+} from '../artifact/staleness.js';
 import { toolDefinitionFor, catalogToolDefinitions } from '../catalog/tools.js';
 
 export async function runCatalogCommand(
@@ -37,18 +44,12 @@ export async function runCatalogCommand(
           `    inputs: ${a.inputs.filter((i) => !i.injected).map((i) => i.name).join(', ') || '(none)'}` +
             ` → outputs: ${a.outputs.map((o) => o.name).join(', ') || '(none)'}\n`,
         );
-        // How many of the declared outcomes are actually backed by an
-        // observation, rather than by the recording model's word. A reviewer
-        // scanning the catalog should be able to see that without opening the
-        // artifact.
-        const byState = (state: string) => a.outcomes.filter((o) => o.evidence.state === state).length;
-        const evidence = a.outcomes.length === 0
-          ? ''
-          : ` (${[
-              byState('observed') > 0 ? `${byState('observed')} observed` : '',
-              byState('refuted') > 0 ? `${byState('refuted')} REFUTED` : '',
-              byState('hypothesised') > 0 ? `${byState('hypothesised')} unverified` : '',
-            ].filter(Boolean).join(', ')})`;
+        // How many declared outcomes are backed by an observation, and how
+        // many of those observations are old enough that nobody should still be
+        // relying on them. A reviewer scanning the catalog should see both
+        // without opening the artifact.
+        const summary = summariseFreshness(freshnessReport(a));
+        const evidence = summary ? ` (${summary})` : '';
         process.stdout.write(
           `    ${a.steps.length} steps · ${a.outcomes.length} declared outcomes${evidence} · ${a.recovery.length} recovery rules\n\n`,
         );
@@ -101,6 +102,23 @@ export async function runCatalogCommand(
           `\nNote: ${hypothesised.length} outcome(s) remain unverified hypotheses ` +
             `(${hypothesised.map((o) => o.code).join(', ')}).\n` +
             `They were never observed. Approving accepts them on the model's word.\n\n`,
+        );
+      }
+
+      // An observation is true about the application on the day it was made.
+      // Approving on the strength of one taken a year ago trusts a check nobody
+      // has repeated across however many vendor releases have shipped since.
+      // This warns rather than blocks: unlike a refutation, a stale observation
+      // is not known to be wrong, and refusing on it would expire every
+      // capability on a date nobody chose.
+      const stale = staleOutcomes(artifact);
+      if (stale.length > 0) {
+        process.stderr.write(
+          `\nNote: ${stale.length} outcome(s) were verified, but not recently ` +
+            `(threshold ${maxObservationAgeDays()} days):\n` +
+            stale.map((f) => `  · ${f.code} — last observed ${describeAge(f.ageDays)}\n`).join('') +
+            `\nRe-verify before relying on them:\n` +
+            `  npx tsx src/cli/index.ts probe ${artifact.id} --stale-only\n\n`,
         );
       }
 

@@ -120,7 +120,15 @@
 <script type="text/javascript">
   // Fires shortly after load rather than during it, so the navigation itself
   // completes and the dialog is a genuine mid-run interruption.
-  setTimeout(function () { window.confirm(<%- JSON.stringify(popupMessage) %>); }, 350);
+  //
+  // The delay has to land inside the window where replay still has work to do.
+  // It was 350ms, and replay got fast enough that the run finished first: the
+  // dialog fired into a closing browser, the recovery rule never ran, and the
+  // committed evidence for "unexpected dialog" was quietly an ordinary
+  // successful run. A fixture that stops reproducing the condition it exists
+  // for is worse than no fixture, because everything downstream still claims
+  // it does.
+  setTimeout(function () { window.confirm(<%- JSON.stringify(popupMessage) %>); }, 80);
 </script>
 <% } %>
 

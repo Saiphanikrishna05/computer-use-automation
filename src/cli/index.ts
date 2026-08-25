@@ -87,6 +87,7 @@ program
   .option('--headless', 'run without a visible browser window')
   .option('--max-probes <n>', 'ceiling on probe runs', (v) => Number(v))
   .option('--dry-run', 'report findings without writing them back to the artifact')
+  .option('--stale-only', 'only re-verify outcomes whose evidence has aged out or is missing')
   .action(async (capability: string, opts) => {
     const { runProbeCommand } = await import('./probe-command.js');
     process.exit(
@@ -98,6 +99,7 @@ program
         headless: opts.headless,
         maxProbes: opts.maxProbes,
         dryRun: opts.dryRun,
+        staleOnly: opts.staleOnly,
       }),
     );
   });
@@ -152,6 +154,7 @@ program
   .option('-i, --input <key=value>', 'capability input (repeatable)', collectInputs, {})
   .option('-t, --tenant <id>', 'tenant to run against', DEFAULT_TENANT)
   .option('-n, --runs <n>', 'how many times to replay', (v) => Number(v), 5)
+  .option('--headless', 'run without a visible browser window')
   .action(async (capability: string, opts) => {
     const { runStabilityCommand } = await import('./stability-command.js');
     process.exit(
@@ -160,7 +163,7 @@ program
         inputs: opts.input,
         tenant: opts.tenant,
         runs: opts.runs,
-        headless: true,
+        headless: opts.headless ?? true,
       }),
     );
   });
