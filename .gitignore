@@ -12,3 +12,4 @@ test-results/
 .docs-shot*.tmp.ts
 *.bak
 audit/
+audit-log.jsonl

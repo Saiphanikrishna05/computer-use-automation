@@ -128,7 +128,7 @@ program
 program
   .command('catalog')
   .description('List, inspect, price and approve saved capabilities.')
-  .argument('[action]', 'list | show | approve | schema | economics', 'list')
+  .argument('[action]', 'list | show | approve | schema | economics | history', 'list')
   .argument('[capability]', 'capability id, for show/approve/schema/economics')
   .option('--by <name>', 'approver name', 'operator')
   .option('--note <text>', 'approval note', 'reviewed and approved for unattended replay')

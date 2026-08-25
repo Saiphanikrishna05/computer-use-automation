@@ -298,6 +298,42 @@ separately. What probing still cannot do is invent a probe value; an outcome
 nobody can say how to provoke stays a flagged hypothesis, which is honest but
 not satisfying.
 
+**Four things were added after the first submission**, each kept to one idea so
+each stays defensible. **Assisted re-resolution** covers the one failure a
+declared rule cannot express: there is no condition to key on when the failure
+*is* the absence of the control. One model call, off unless asked for, once per
+run, and it *points* rather than authoring a locator — the synthesised
+descriptor must itself resolve cleanly, so an assisted step is held to the same
+standard as a recorded one. `TARGET_AMBIGUOUS` is excluded deliberately: that
+means the recording is under-specified, and breaking the tie with a model papers
+over the real defect with a coin toss on a live account. The successful repair
+is written beside the evidence as a **proposal**, never applied, because
+finishing today's run and changing what runs tomorrow are different acts and
+only the first is safe without a person.
+
+Building it exposed two bugs worth more than the feature. **The coordinates tier
+could never fail** — a point on a screen always hits something, so a control
+that had genuinely gone was reported as found, the click landed on whatever had
+moved into that spot, and the run died later at the checkpoint pointing
+somewhere else entirely. Coordinates now honour the role the descriptor's richer
+candidates already record. And `inpage.ts` contained a NUL byte used as a map-key
+delimiter: safe, but it made the file read as binary, so `grep` silently skipped
+the one file where the locator logic lives.
+
+**The desktop driver** is a design in code: every method throws with its UIA
+equivalent, and the point is that it *compiles as a `SurfaceDriver`*. If
+anything above the driver had leaked a browser assumption, it could not. The
+mapping from `UiNode` to UIA is in the file header, along with what I expect to
+have got wrong — the label heuristics, which lean on DOM adjacency that Win32
+does not have. **The governance log** is append-only and hash-chained: an
+artifact recording its own approval is a claim in a file anyone can edit, so
+approvals and probe results also append a chained entry. Tamper-*evident*, not
+tamper-proof, and the tests say so — someone who can write the file can forge a
+consistent history; what they cannot do is alter one entry quietly, which is the
+realistic failure mode. No authentication, deliberately: a deployment binds the
+actor to the institution's own identity system, and inventing a user store here
+would be the least interesting half of the problem.
+
 **Next**, in order. Wiring stability scoring into `catalog approve`; a real
 approval workflow with an authenticated reviewer and an append-only audit;
 *running* `probe --stale-only` on a schedule rather than only supporting it, which

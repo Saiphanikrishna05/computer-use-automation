@@ -13,6 +13,7 @@ import { join } from 'node:path';
 import { listArtifacts, loadArtifact, saveArtifact } from '../artifact/store.js';
 import { CapabilityArtifactSchema } from '../artifact/schema.js';
 import { formatTokens, formatUsd, pricing } from '../discovery/cost.js';
+import { appendAudit, verifyAuditLog, historyOf } from '../artifact/audit-log.js';
 import {
   freshnessReport,
   staleOutcomes,
@@ -146,7 +147,24 @@ export async function runCatalogCommand(
         },
       };
       const path = saveArtifact(approved);
-      process.stdout.write(`Approved ${approved.id} v${approved.version} → ${path}\n`);
+
+      // The artifact records who approved it; the log records it somewhere the
+      // artifact cannot quietly disagree with later.
+      const entry = appendAudit({
+        action: 'approved',
+        capabilityId: approved.id,
+        capabilityVersion: approved.version,
+        actor: opts.by,
+        summary:
+          opts.note +
+          (refuted.length > 0 ? ` [--force over ${refuted.length} refuted]` : '') +
+          (hypothesised.length > 0 ? ` [${hypothesised.length} unverified]` : ''),
+      });
+
+      process.stdout.write(
+        `Approved ${approved.id} v${approved.version} → ${path}\n` +
+          `Audit entry #${entry.seq} recorded (${entry.hash.slice(0, 12)}…)\n`,
+      );
       return 0;
     }
 
@@ -220,9 +238,32 @@ export async function runCatalogCommand(
       return 0;
     }
 
+    case 'history': {
+      const entries = capability ? historyOf(capability) : [];
+      const check = verifyAuditLog();
+
+      process.stdout.write(`\n${'─'.repeat(72)}\n  Governance log${capability ? ` — ${capability}` : ''}\n${'─'.repeat(72)}\n\n`);
+      if (entries.length === 0 && capability) {
+        process.stdout.write(`  Nothing recorded for ${capability}.\n\n`);
+      }
+      for (const e of entries) {
+        process.stdout.write(
+          `  #${e.seq}  ${e.at.slice(0, 19).replace('T', ' ')}  ${e.action}\n` +
+            `      by ${e.actor}${e.runId ? ` · ${e.runId}` : ''}\n` +
+            `      ${e.summary}\n\n`,
+        );
+      }
+      process.stdout.write(
+        check.ok
+          ? `  Chain verified: ${check.entries} entr${check.entries === 1 ? 'y' : 'ies'}, unbroken.\n\n`
+          : `  CHAIN BROKEN at entry ${check.brokenAt}: ${check.reason}\n\n`,
+      );
+      return check.ok ? 0 : 1;
+    }
+
     default:
       process.stderr.write(
-        `Unknown catalog action "${action}". Use list, show, schema, economics or approve.\n`,
+        `Unknown catalog action "${action}". Use list, show, schema, economics, history or approve.\n`,
       );
       return 1;
   }
