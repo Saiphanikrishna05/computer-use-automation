@@ -139,6 +139,25 @@ program
   });
 
 program
+  .command('audit')
+  .description('Generate the audit pack for a capability: what it does, what backs it, and what it cannot vouch for.')
+  .argument('[capability]', 'capability id; omit for every capability in the catalog')
+  .option('-v, --capability-version <n>', 'pin a specific artifact version', (v) => Number(v))
+  .option('-o, --out <path>', 'write to this path instead of audit/<id>.v<n>.md')
+  .option('--stdout', 'print the document instead of writing it')
+  .action(async (capability: string | undefined, opts) => {
+    const { runAuditCommand } = await import('./audit-command.js');
+    process.exit(
+      await runAuditCommand({
+        capability,
+        version: opts.capabilityVersion,
+        out: opts.out,
+        stdout: opts.stdout,
+      }),
+    );
+  });
+
+program
   .command('console')
   .description('Serve the read-only capability console.')
   .option('-p, --port <n>', 'port', (v) => Number(v), 7318)
