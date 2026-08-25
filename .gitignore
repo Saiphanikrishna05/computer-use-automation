@@ -10,3 +10,4 @@ runs/
 test-results/
 .DS_Store
 .docs-shot*.tmp.ts
+*.bak
