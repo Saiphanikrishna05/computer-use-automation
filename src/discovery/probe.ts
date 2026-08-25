@@ -45,6 +45,7 @@ import type { RunLogger } from '../evidence/logger.js';
 import { PolicyEngine } from '../policy/engine.js';
 import { ReplayEngine } from '../replay/executor.js';
 import { describeCondition } from '../replay/conditions.js';
+import { freshnessOf, describeAge } from '../artifact/staleness.js';
 import type { ReplayResult } from '../replay/result.js';
 
 export interface ProbeOptions {
@@ -73,6 +74,15 @@ export interface ProbeOptions {
    * should not silently turn one discovery into ten runs.
    */
   maxProbes?: number;
+  /**
+   * Re-verify only what is not currently backed by a fresh observation.
+   *
+   * Re-probing is the answer to observations ageing out, and it has to be
+   * cheap enough to run on a schedule or nobody will. A capability with nine
+   * outcomes of which one has aged past the threshold should cost one run, not
+   * nine, or the honest maintenance habit becomes the expensive one.
+   */
+  staleOnly?: boolean;
 }
 
 export interface ProbeReport {
@@ -146,6 +156,18 @@ export async function probeOutcomes(options: ProbeOptions): Promise<ProbeResult>
         reason: 'Observed during another outcome\'s probe run.',
       });
       continue;
+    }
+
+    if (options.staleOnly) {
+      const freshness = freshnessOf(outcome);
+      if (freshness.freshness === 'fresh') {
+        reports.push({
+          code: outcome.code,
+          state: 'skipped',
+          reason: `Still current: observed ${describeAge(freshness.ageDays)}. Not re-probed.`,
+        });
+        continue;
+      }
     }
 
     if (!outcome.probe) {
@@ -403,9 +425,15 @@ export function renderProbeSummary(probed: ProbeResult): string {
     return `    ${mark} ${r.code}${probe}\n      ${r.reason}\n`;
   });
 
-  const observed = probed.reports.filter((r) => r.state === 'observed').length;
+  // Counted from the artifact rather than from this pass. A re-verification
+  // run that correctly re-probed nothing, because every observation was still
+  // current, would otherwise report "0 observed" and read as a total failure
+  // to verify anything.
+  const backed = probed.artifact.outcomes.filter((o) => o.evidence.state === 'observed').length;
+  const spent = probed.reports.filter((r) => r.state !== 'skipped').length;
   return (
-    `  probing      ${observed}/${probed.reports.length} outcome(s) observed by provoking them\n` +
+    `  probing      ${backed}/${probed.artifact.outcomes.length} outcome(s) backed by an observation` +
+    ` · ${spent} probe run(s) this pass\n` +
     lines.join('') +
     '\n'
   );

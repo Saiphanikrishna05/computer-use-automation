@@ -163,6 +163,24 @@ Probing runs automatically at the end of `discover`. This command re-runs it, so
 a reviewer can add a probe the model couldn't supply and verify it without
 paying for another discovery.
 
+**An observation has a shelf life.** It answers a question about the application
+*on the day it was asked*, so `catalog list` reports how old each one is and
+flags any past the threshold (90 days by default, `CUA_OBSERVATION_MAX_AGE_DAYS`):
+
+```
+5 steps · 4 declared outcomes (2 STALE, 2 unverified) · 1 recovery rules
+```
+
+Re-verify only what has aged out, rather than paying for the whole set:
+
+```bash
+npm run probe -- lookup_member_savings_balance --stale-only
+```
+
+Staleness is derived from the recorded timestamp, never stored, so there is no
+background job to flip `observed` to `stale` and therefore nothing that is wrong
+the moment it stops running.
+
 ### 3. Review and approve
 
 ```bash

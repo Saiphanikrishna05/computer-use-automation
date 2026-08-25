@@ -73,6 +73,25 @@ this a gate rather than a report. Capabilities whose `maxRisk` is
 `mutate_irreversible` are never probed: provoking an outcome there would mean
 committing the transaction with a deliberately invalid input.
 
+**An observation has a shelf life**, which is the same drift argument the
+locator ladder makes, one level up. Probing answers a question about the
+application *on the day it was asked*; a capability verified in March still
+claiming `observed` in September has survived however many vendor releases
+shipped in between, and nothing would say so. So freshness is **derived, never
+stored**: there is no fourth evidence state and no job flipping `observed` to
+`stale`, because that job would be wrong from the moment it stopped running, and
+an artifact disagreeing with the clock is worse than one that never claimed
+freshness. The artifact records *when*; how old that makes it is arithmetic done
+when someone asks, the same reason a record holds a date of birth rather than an
+age. The catalog and the approval gate report it, and `probe --stale-only`
+re-verifies just what has aged out, because re-probing has to be cheap enough to
+run on a schedule or the honest maintenance habit becomes the expensive one.
+Ageing warns rather than blocks: unlike a refutation, a stale observation is not
+known to be wrong, and refusing on it would expire every capability on a date
+nobody chose. The threshold defaults to 90 days and belongs to whoever operates
+the system (`CUA_OBSERVATION_MAX_AGE_DAYS`), since an institution on a quarterly
+vendor cadence wants something different from one taking continuous updates.
+
 ## 3. Determinism & error handling
 
 Determinism here is also the economic argument, so discovery now measures
@@ -259,9 +278,8 @@ not satisfying.
 
 **Next**, in order. Wiring stability scoring into `catalog approve`; a real
 approval workflow with an authenticated reviewer and an append-only audit;
-re-probing on a schedule, so an outcome observed in March is not still trusted
-in September after the vendor reworded the banner, which is the same drift
-argument the locator ladder already makes and the natural extension of the
-`observed` state; and a UIA driver against one genuine Windows application, to
-find out which parts of `UiNode` I got wrong. I expect the answer is "the label
-heuristics".
+*running* `probe --stale-only` on a schedule rather than only supporting it, which
+needs somewhere to run it from and somewhere for the result to go, neither of
+which this repository should invent; and a UIA driver against one genuine
+Windows application, to find out which parts of `UiNode` I got wrong. I expect
+the answer is "the label heuristics".

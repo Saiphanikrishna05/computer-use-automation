@@ -87,6 +87,7 @@ program
   .option('--headless', 'run without a visible browser window')
   .option('--max-probes <n>', 'ceiling on probe runs', (v) => Number(v))
   .option('--dry-run', 'report findings without writing them back to the artifact')
+  .option('--stale-only', 'only re-verify outcomes whose evidence has aged out or is missing')
   .action(async (capability: string, opts) => {
     const { runProbeCommand } = await import('./probe-command.js');
     process.exit(
@@ -98,6 +99,7 @@ program
         headless: opts.headless,
         maxProbes: opts.maxProbes,
         dryRun: opts.dryRun,
+        staleOnly: opts.staleOnly,
       }),
     );
   });
