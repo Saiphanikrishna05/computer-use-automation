@@ -103,6 +103,25 @@ program
   });
 
 program
+  .command('voice')
+  .description('Serve the voice front door: speak a request, hear the answer, see where the time went.')
+  .option('-p, --port <n>', 'port', (v) => Number(v), 7319)
+  .option('-t, --tenant <id>', 'tenant to run capabilities against', DEFAULT_TENANT)
+  .option('--route <mode>', 'how an utterance becomes a call: llm | rules', 'llm')
+  .option('--no-headless', 'show the browser the capability drives')
+  .action(async (opts) => {
+    const { startVoiceServer } = await import('../voice/server.js');
+    const route = opts.route === 'rules' ? 'rules' : 'llm';
+    await startVoiceServer({ port: opts.port, tenant: opts.tenant, route, headless: opts.headless !== false });
+    process.stdout.write(
+      `\nVoice front door on http://localhost:${opts.port}\n` +
+        `  routing: ${route}${route === 'llm' ? ' (needs ANTHROPIC_API_KEY)' : ' (deterministic, no key needed)'}\n` +
+        `  tenant:  ${opts.tenant}\n\n` +
+        `Speech happens in the browser. Ctrl-C to stop.\n\n`,
+    );
+  });
+
+program
   .command('catalog')
   .description('List, inspect, price and approve saved capabilities.')
   .argument('[action]', 'list | show | approve | schema | economics', 'list')

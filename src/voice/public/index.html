@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Voice front door</title>
+<style>
+  :root {
+    --bg: #0f1216; --panel: #171b21; --line: #262c35;
+    --ink: #e8ecf1; --dim: #8b95a3; --accent: #5aa9ff;
+    --model: #c99a3d; --deterministic: #43b581; --bad: #d9534f;
+    --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    display: flex; justify-content: center; padding: 32px 20px 60px;
+  }
+  main { width: 100%; max-width: 860px; }
+  h1 { font-size: 19px; margin: 0 0 4px; font-weight: 600; letter-spacing: -0.01em; }
+  .sub { color: var(--dim); font-size: 13px; margin-bottom: 28px; }
+
+  .mic-row { display: flex; align-items: center; gap: 16px; margin-bottom: 22px; flex-wrap: wrap; }
+  button.mic {
+    background: var(--accent); color: #06121f; border: 0; border-radius: 999px;
+    padding: 15px 30px; font-size: 15px; font-weight: 650; cursor: pointer;
+  }
+  button.mic[disabled] { opacity: .45; cursor: default; }
+  button.mic.live { background: var(--bad); color: #fff; animation: pulse 1.1s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity: .62; } }
+  .hint { color: var(--dim); font-size: 13px; }
+
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; margin-bottom: 16px; }
+  .label { font-size: 11px; text-transform: uppercase; letter-spacing: .09em; color: var(--dim); margin-bottom: 7px; }
+  .heard { font-size: 17px; }
+  .spoken { font-size: 19px; line-height: 1.45; }
+  .muted { color: var(--dim); }
+
+  /* The timing split is the argument, so it gets the most visual weight. */
+  .bar { display: flex; height: 34px; border-radius: 6px; overflow: hidden; margin: 14px 0 10px; background: #10141a; }
+  .seg { display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 650; color: #0d1117; white-space: nowrap; min-width: 0; }
+  .seg.model { background: var(--model); }
+  .seg.deterministic { background: var(--deterministic); }
+  .legend { display: flex; gap: 22px; flex-wrap: wrap; font-size: 13px; }
+  .legend div { display: flex; align-items: center; gap: 7px; }
+  .dot { width: 10px; height: 10px; border-radius: 2px; }
+  .dot.model { background: var(--model); }
+  .dot.deterministic { background: var(--deterministic); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 6px; }
+  td { padding: 5px 10px 5px 0; vertical-align: top; }
+  td.k { color: var(--dim); width: 150px; }
+  code, .mono { font-family: var(--mono); font-size: 12.5px; }
+  .pill { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 11.5px; font-weight: 650; }
+  .pill.success { background: #16362a; color: #6ee7a8; }
+  .pill.business_outcome { background: #3a3117; color: #f0c674; }
+  .pill.failure, .pill.escalated { background: #3b1f1f; color: #f0a0a0; }
+  .none { color: var(--dim); font-style: italic; }
+  .err { color: #f0a0a0; }
+  .caps { font-family: var(--mono); font-size: 12px; color: var(--dim); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Voice front door</h1>
+  <div class="sub">
+    Speech in and out happen in this browser. Everything between is the system in this repository.
+  </div>
+
+  <div class="mic-row">
+    <button class="mic" id="mic">Hold to speak</button>
+    <span class="hint" id="hint">Ready.</span>
+  </div>
+
+  <div class="panel">
+    <div class="label">Heard</div>
+    <div class="heard" id="heard"><span class="none">nothing yet</span></div>
+  </div>
+
+  <div class="panel">
+    <div class="label">Answered</div>
+    <div class="spoken" id="spoken"><span class="none">nothing yet</span></div>
+  </div>
+
+  <div class="panel">
+    <div class="label">Where the time went</div>
+    <div class="bar" id="bar"></div>
+    <div class="legend">
+      <div><span class="dot model"></span> understanding &mdash; a model turns speech into a typed call</div>
+      <div><span class="dot deterministic"></span> doing &mdash; a recorded capability, no model</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="label">What it actually ran</div>
+    <div id="ran"><span class="none">nothing yet</span></div>
+  </div>
+
+  <div class="panel">
+    <div class="label">Approved capabilities it may call</div>
+    <div class="caps" id="caps">loading…</div>
+  </div>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+
+let recognition = null;
+let listening = false;
+
+async function loadCatalog() {
+  try {
+    const r = await fetch('/api/catalog');
+    const d = await r.json();
+    $('caps').textContent = d.capabilities.length
+      ? d.capabilities.map((c) => c.name).join('\n')
+      : 'none approved — the assistant genuinely cannot do anything yet';
+    $('hint').textContent = `Ready. Routing: ${d.route}.`;
+  } catch {
+    $('caps').textContent = 'could not read the catalog';
+  }
+}
+
+function renderTiming(t) {
+  const bar = $('bar');
+  bar.innerHTML = '';
+  if (!t || !t.totalMs) return;
+  const seg = (cls, ms, label) => {
+    if (ms <= 0) return;
+    const el = document.createElement('div');
+    el.className = `seg ${cls}`;
+    el.style.width = `${(ms / t.totalMs) * 100}%`;
+    el.textContent = `${label} ${(ms / 1000).toFixed(1)}s`;
+    bar.appendChild(el);
+  };
+  seg('model', t.understandingMs, 'understanding');
+  seg('deterministic', t.doingMs, 'doing');
+}
+
+function renderRan(invocations) {
+  if (!invocations || invocations.length === 0) {
+    $('ran').innerHTML = '<span class="none">no capability was invoked</span>';
+    return;
+  }
+  $('ran').innerHTML = invocations.map((i) => `
+    <table>
+      <tr><td class="k">capability</td><td><code>${esc(i.capability)}</code></td></tr>
+      <tr><td class="k">inputs</td><td><code>${esc(JSON.stringify(i.inputs))}</code></td></tr>
+      <tr><td class="k">result</td><td><span class="pill ${esc(i.status)}">${esc(i.status)}</span>
+        ${i.outcome ? ` <code>${esc(i.outcome)}</code>` : ''}</td></tr>
+      ${i.outputs ? `<tr><td class="k">outputs</td><td><code>${esc(JSON.stringify(i.outputs))}</code></td></tr>` : ''}
+      <tr><td class="k">replay time</td><td>${i.durationMs} ms, no model in the path</td></tr>
+      <tr><td class="k">degraded locators</td><td>${i.degradedResolutions}</td></tr>
+      <tr><td class="k">evidence</td><td><code>${esc(i.evidencePath)}</code></td></tr>
+    </table>`).join('');
+}
+
+async function send(utterance) {
+  $('heard').textContent = utterance;
+  $('spoken').innerHTML = '<span class="none">working…</span>';
+  $('ran').innerHTML = '<span class="none">…</span>';
+  $('bar').innerHTML = '';
+  try {
+    const r = await fetch('/api/ask', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ utterance }),
+    });
+    const d = await r.json();
+    if (d.error) throw new Error(d.error);
+    $('spoken').textContent = d.spoken;
+    renderTiming(d.timing);
+    renderRan(d.invocations);
+    speak(d.spoken);
+  } catch (e) {
+    $('spoken').innerHTML = `<span class="err">${esc(e.message)}</span>`;
+  }
+}
+
+function speak(text) {
+  try {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.rate = 1.0;
+    window.speechSynthesis.speak(u);
+  } catch { /* speech synthesis is a nicety, not a dependency */ }
+}
+
+function setupSpeech() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    $('hint').innerHTML = 'This browser has no speech recognition. Type instead: '
+      + '<input id="typed" style="background:#10141a;color:#e8ecf1;border:1px solid #262c35;border-radius:6px;padding:7px 10px;width:340px">';
+    $('mic').disabled = true;
+    setTimeout(() => {
+      const t = document.getElementById('typed');
+      t && t.addEventListener('keydown', (e) => { if (e.key === 'Enter' && t.value.trim()) send(t.value.trim()); });
+    }, 0);
+    return;
+  }
+  recognition = new SR();
+  recognition.lang = 'en-US';
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  recognition.onresult = (e) => send(e.results[0][0].transcript);
+  recognition.onerror = (e) => { $('hint').textContent = `Microphone: ${e.error}`; };
+  recognition.onend = () => { listening = false; $('mic').classList.remove('live'); $('mic').textContent = 'Hold to speak'; };
+}
+
+$('mic').addEventListener('click', () => {
+  if (!recognition) return;
+  if (listening) { recognition.stop(); return; }
+  listening = true;
+  $('mic').classList.add('live');
+  $('mic').textContent = 'Listening… click to stop';
+  $('hint').textContent = '';
+  recognition.start();
+});
+
+setupSpeech();
+loadCatalog();
+</script>
+</body>
+</html>

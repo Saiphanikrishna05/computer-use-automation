@@ -73,6 +73,20 @@ export function modelConfig(): ModelConfig {
   };
 }
 
+/**
+ * The model that turns a spoken request into a typed call.
+ *
+ * Deliberately not the discovery model. Discovery is one careful exploration
+ * where reasoning quality is worth waiting for; routing an utterance is a
+ * short, well-bounded classification that happens while a person is waiting to
+ * hear something back. Opus spends four or five seconds on it, which in a voice
+ * turn is not thoroughness, it is silence. A small fast model does the same job
+ * inside a conversational pause, which is what a real deployment would use.
+ */
+export function voiceModel(): string {
+  return process.env.CUA_VOICE_MODEL ?? 'claude-haiku-4-5-20251001';
+}
+
 export function headless(explicit?: boolean): boolean {
   if (explicit !== undefined) return explicit;
   return (process.env.CUA_HEADLESS ?? 'false').toLowerCase() === 'true';
