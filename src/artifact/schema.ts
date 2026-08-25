@@ -488,6 +488,30 @@ export const ProvenanceSchema = z.object({
     })
     .optional(),
   /**
+   * What producing this capability consumed.
+   *
+   * Recorded because the system's central claim is economic as well as
+   * architectural: the model runs once, the recording runs forever. A reviewer
+   * deciding whether a capability earns its keep, or an operator sizing what it
+   * costs to onboard an institution, should not have to reconstruct that from a
+   * billing dashboard. Token counts are measured; `costUsd` is those counts at
+   * the rate configured when the run happened, so a reader who prices
+   * differently can still use the counts.
+   */
+  cost: z
+    .object({
+      turns: z.number().int().nonnegative(),
+      totalTokens: z.number().int().nonnegative(),
+      inputTokens: z.number().int().nonnegative().default(0),
+      outputTokens: z.number().int().nonnegative().default(0),
+      cacheReadTokens: z.number().int().nonnegative().default(0),
+      cacheWriteTokens: z.number().int().nonnegative().default(0),
+      costUsd: z.number().nonnegative(),
+      /** What prompt-caching saved, versus billing the same tokens as input. */
+      cacheSavingUsd: z.number().nonnegative().default(0),
+    })
+    .optional(),
+  /**
    * Result of the probing pass, which goes further than validation: rather than
    * checking declarations against screens we happen to have, it provokes the
    * state each outcome describes and looks at what the application does.

@@ -17,6 +17,7 @@ import {
   withProbingProvenance,
   renderProbeSummary,
 } from '../discovery/probe.js';
+import { formatTokens, formatUsd } from '../discovery/cost.js';
 import { DEFAULT_TENANT, TENANT_RUNTIMES, headless, modelConfig, resolveCredentials } from '../config.js';
 
 export interface DiscoverCommandOptions {
@@ -134,7 +135,11 @@ export async function runDiscoverCommand(opts: DiscoverCommandOptions): Promise<
       return 1;
     }
 
-    const draft = opts.capabilityId ? { ...result.artifact, id: opts.capabilityId } : result.artifact;
+    const withId = opts.capabilityId ? { ...result.artifact, id: opts.capabilityId } : result.artifact;
+    // What the run spent, carried into the artifact it produced. See
+    // discovery/cost.ts for why this is recorded rather than left to a
+    // billing dashboard.
+    const draft = { ...withId, provenance: { ...withId.provenance, cost: result.cost } };
 
     // Check what is checkable before a human is asked to review it. See
     // discovery/validate.ts for why this pass exists.
@@ -185,6 +190,9 @@ export async function runDiscoverCommand(opts: DiscoverCommandOptions): Promise<
         `  outputs      ${artifact.outputs.map((o) => `${o.name}:${o.type}`).join(', ') || '(none)'}\n` +
         `  outcomes     ${artifact.outcomes.map((o) => `${o.code} [${o.evidence.state}]`).join(', ') || '(none)'}\n` +
         `  max risk     ${artifact.maxRisk}\n` +
+        `  recorded for ${formatUsd(result.cost.costUsd)} · ${formatTokens(result.cost.totalTokens)} tokens over ` +
+        `${result.cost.turns} model turn(s)\n` +
+        `               every replay of it costs 0 tokens\n` +
         `  approval     ${artifact.approval.state}\n\n` +
         (validated.rejected.length > 0
           ? `  validation removed ${validated.rejected.length} declared condition(s) that already held\n` +

@@ -104,12 +104,14 @@ program
 
 program
   .command('catalog')
-  .description('List, inspect and approve saved capabilities.')
-  .argument('[action]', 'list | show | approve | schema', 'list')
-  .argument('[capability]', 'capability id, for show/approve/schema')
+  .description('List, inspect, price and approve saved capabilities.')
+  .argument('[action]', 'list | show | approve | schema | economics', 'list')
+  .argument('[capability]', 'capability id, for show/approve/schema/economics')
   .option('--by <name>', 'approver name', 'operator')
   .option('--note <text>', 'approval note', 'reviewed and approved for unattended replay')
   .option('--force', 'approve despite outcomes that were probed and did not fire')
+  .option('--invocations <n>', 'projection horizon for `economics`', (v) => Number(v))
+  .option('--from <bundle>', 'read `economics` from a committed run bundle rather than the catalog')
   .action(async (action: string, capability: string | undefined, opts) => {
     const { runCatalogCommand } = await import('./catalog-command.js');
     process.exit(await runCatalogCommand(action, capability, opts));
