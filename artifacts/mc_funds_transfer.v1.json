@@ -1,0 +1,1107 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "mc_funds_transfer",
+  "version": 1,
+  "title": "Stage a member funds transfer up to the confirmation screen",
+  "description": "Signs on to Meridian Core, searches a member by member number, opens the member record, opens the Funds Transfer form, fills From Share, To Share, Amount and Memo, and clicks Continue to reach the CONFIRM FUNDS TRANSFER review screen. It deliberately STOPS before Post Transfer, so no money moves and nothing is committed. Returns the confirmation summary: from-share and to-share ids with their current balances and the staged amount. Use this to validate/preview a transfer; a human must post it.",
+  "target": {
+    "surface": "web",
+    "app": {
+      "vendor": "cornerstone",
+      "product": "meridian-core",
+      "versionRange": "1.x"
+    },
+    "entryUrlTemplate": "{{baseUrl}}/"
+  },
+  "approval": {
+    "state": "approved",
+    "approvedBy": "operator",
+    "approvedAt": "2026-08-27T01:51:32.108Z",
+    "note": "reviewed and approved for unattended replay"
+  },
+  "inputs": [
+    {
+      "name": "operatorId",
+      "type": "string",
+      "description": "Servicing console operator user ID. Injected by the runtime credential store.",
+      "required": true,
+      "sensitivity": "pii",
+      "injected": true
+    },
+    {
+      "name": "operatorPassword",
+      "type": "string",
+      "description": "Servicing console operator password. Injected by the runtime credential store.",
+      "required": true,
+      "sensitivity": "secret",
+      "injected": true
+    },
+    {
+      "name": "branch",
+      "type": "string",
+      "description": "Branch the operator signs on against. Injected by the runtime.",
+      "required": true,
+      "sensitivity": "none",
+      "injected": true
+    },
+    {
+      "name": "memberNumber",
+      "type": "string",
+      "description": "Member number to search for and transfer within",
+      "required": true,
+      "sensitivity": "none",
+      "pattern": "^\\d{6}$",
+      "example": "102777",
+      "injected": false
+    },
+    {
+      "name": "fromShare",
+      "type": "string",
+      "description": "Share ID to debit, as shown in the From Share dropdown",
+      "required": true,
+      "sensitivity": "none",
+      "example": "102777-MMKT-4",
+      "injected": false
+    },
+    {
+      "name": "toShare",
+      "type": "string",
+      "description": "Share ID to credit, as shown in the To Share dropdown",
+      "required": true,
+      "sensitivity": "none",
+      "example": "102777-S0001",
+      "injected": false
+    },
+    {
+      "name": "amount",
+      "type": "money",
+      "description": "Transfer amount",
+      "required": true,
+      "sensitivity": "none",
+      "example": "1.00",
+      "injected": false
+    },
+    {
+      "name": "memo",
+      "type": "string",
+      "description": "Memo text for the transfer",
+      "required": true,
+      "sensitivity": "none",
+      "example": "demo transfer",
+      "injected": false
+    }
+  ],
+  "outputs": [
+    {
+      "name": "confirmationNumber",
+      "type": "string",
+      "description": "Host confirmation number for the posted transfer.",
+      "required": true,
+      "sensitivity": "none",
+      "extract": {
+        "target": {
+          "description": "Confirmation value on the posted-transfer receipt",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Confirmation",
+              "positional": true,
+              "expect": "cell"
+            }
+          ],
+          "evidence": {}
+        },
+        "source": "text",
+        "transforms": [
+          "collapse_whitespace"
+        ]
+      }
+    }
+  ],
+  "steps": [
+    {
+      "id": "type_1",
+      "intent": "Enter the operator ID in the Operator Sign On panel",
+      "action": {
+        "kind": "type",
+        "target": {
+          "description": "textbox labelled \"Operator ID:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Operator ID:",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "input[name=\"operator\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.35118408203125,
+              "yFraction": 0.11611111111111111
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+          },
+          "evidence": {
+            "role": "textbox",
+            "tag": "input",
+            "boundingBox": {
+              "x": 374.515625,
+              "y": 96,
+              "width": 150,
+              "height": 17
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "{{operatorId}}",
+        "clearFirst": true,
+        "secret": true
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "type_2",
+      "intent": "Enter the operator password in the Operator Sign On panel",
+      "action": {
+        "kind": "type",
+        "target": {
+          "description": "textbox labelled \"Password:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Password:",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "input[name=\"password\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.35118408203125,
+              "yFraction": 0.14166666666666666
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+          },
+          "ordinal": 1,
+          "evidence": {
+            "role": "textbox",
+            "tag": "input",
+            "boundingBox": {
+              "x": 374.515625,
+              "y": 119,
+              "width": 150,
+              "height": 17
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "{{operatorPassword}}",
+        "clearFirst": true,
+        "secret": true
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "select_3",
+      "intent": "Select branch 001 (Main Office) for the sign-on",
+      "action": {
+        "kind": "select",
+        "target": {
+          "description": "combobox labelled \"Branch:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Branch:",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "select[name=\"branch\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.35352783203125,
+              "yFraction": 0.16833333333333333
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+          },
+          "evidence": {
+            "role": "combobox",
+            "tag": "select",
+            "textSnippet": "MAIN-001 - Main OfficeWEST-014 - WestsideEAST-022 - Eastgate",
+            "boundingBox": {
+              "x": 374.515625,
+              "y": 142,
+              "width": 156,
+              "height": 19
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "MAIN-{{branch}}"
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "click_4",
+      "intent": "Submit the operator sign-on form",
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "button \"Sign On\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "role_name",
+              "role": "button",
+              "name": "Sign On",
+              "exact": true
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.317529296875,
+              "yFraction": 0.21055555555555555
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+          },
+          "evidence": {
+            "role": "button",
+            "accessibleName": "Sign On",
+            "tag": "input",
+            "boundingBox": {
+              "x": 374.515625,
+              "y": 180,
+              "width": 63.84375,
+              "height": 19
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        }
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "click_5",
+      "intent": "Open Member Inquiry / Selection to search for the member",
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "link \"Member Inquiry / Selection\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "role_name",
+              "role": "link",
+              "name": "Member Inquiry / Selection",
+              "exact": true
+            },
+            {
+              "kind": "label",
+              "text": "1.",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.31287841796875,
+              "yFraction": 0.1461111111111111
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™",
+            "nearestLabel": "1."
+          },
+          "evidence": {
+            "role": "link",
+            "accessibleName": "Member Inquiry / Selection",
+            "tag": "a",
+            "textSnippet": "Member Inquiry / Selection",
+            "boundingBox": {
+              "x": 324.875,
+              "y": 125,
+              "width": 151.21875,
+              "height": 13
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        }
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "select_6",
+      "intent": "Set the Member Inquiry search type to Member Number",
+      "action": {
+        "kind": "select",
+        "target": {
+          "description": "combobox labelled \"Search by:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Search by:",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "select[name=\"by\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.3287353515625,
+              "yFraction": 0.1361111111111111
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+          },
+          "evidence": {
+            "role": "combobox",
+            "tag": "select",
+            "textSnippet": "Member Number Last Name",
+            "boundingBox": {
+              "x": 361.28125,
+              "y": 113,
+              "width": 119,
+              "height": 19
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "Member Number"
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "type_7",
+      "intent": "Type the member number into the search Value field",
+      "action": {
+        "kind": "type",
+        "target": {
+          "description": "textbox labelled \"Value:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Value:",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "input[name=\"q\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.3627197265625,
+              "yFraction": 0.1638888888888889
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+          },
+          "evidence": {
+            "role": "textbox",
+            "tag": "input",
+            "boundingBox": {
+              "x": 361.28125,
+              "y": 139,
+              "width": 206,
+              "height": 17
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "{{memberNumber}}",
+        "clearFirst": true,
+        "secret": false
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "click_8",
+      "intent": "Run the member search",
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "button \"Search\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "role_name",
+              "role": "button",
+              "name": "Search",
+              "exact": true
+            },
+            {
+              "kind": "label",
+              "text": "Value:",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.474945068359375,
+              "yFraction": 0.1638888888888889
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™",
+            "nearestLabel": "Value:"
+          },
+          "evidence": {
+            "role": "button",
+            "accessibleName": "Search",
+            "tag": "input",
+            "boundingBox": {
+              "x": 578.890625,
+              "y": 138,
+              "width": 58.078125,
+              "height": 19
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        }
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "click_9",
+      "intent": "Open the member record for 102777 from the search results",
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "link \"Select\" in the Member No. panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "role_name",
+              "role": "link",
+              "name": "Select",
+              "exact": true
+            },
+            {
+              "kind": "label",
+              "text": "4",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.71751708984375,
+              "yFraction": 0.245
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "Member No.",
+            "nearestLabel": "4"
+          },
+          "evidence": {
+            "role": "link",
+            "accessibleName": "Select",
+            "tag": "a",
+            "textSnippet": "Select",
+            "boundingBox": {
+              "x": 901.5625,
+              "y": 214,
+              "width": 33.71875,
+              "height": 13
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        }
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "click_10",
+      "intent": "Open the Funds Transfer form for this member",
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "link \"Funds Transfer\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "role_name",
+              "role": "link",
+              "name": "Funds Transfer",
+              "exact": true
+            },
+            {
+              "kind": "label",
+              "text": "Main Menu · Member Inquiry · System Settings · Sign Off",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.246612548828125,
+              "yFraction": 0.3605555555555556
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™",
+            "nearestLabel": "Main Menu · Member Inquiry · System Settings · Sign Off"
+          },
+          "evidence": {
+            "role": "link",
+            "accessibleName": "Funds Transfer",
+            "tag": "a",
+            "textSnippet": "Funds Transfer",
+            "boundingBox": {
+              "x": 275,
+              "y": 318,
+              "width": 81.328125,
+              "height": 13
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        }
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "select_11",
+      "intent": "Set the From Share to the member's open money market share",
+      "action": {
+        "kind": "select",
+        "target": {
+          "description": "combobox labelled \"From Share:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "From Share:",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "select[name=\"from\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.42216796875,
+              "yFraction": 0.15055555555555555
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+          },
+          "evidence": {
+            "role": "combobox",
+            "tag": "select",
+            "textSnippet": "{{toShare}} - Regular Shares ($42,000.00){{memberNumber}}-MMKT - Money Market ($9,800.00){{memberNumber}}-S0070-3 - Share Draft (Checking)…",
+            "boundingBox": {
+              "x": 383.375,
+              "y": 126,
+              "width": 314,
+              "height": 19
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "{{fromShare}}"
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "select_12",
+      "intent": "Set the To Share to the member's regular share",
+      "action": {
+        "kind": "select",
+        "target": {
+          "description": "combobox labelled \"To Share:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "To Share:",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "select[name=\"to\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.42216796875,
+              "yFraction": 0.17833333333333334
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+          },
+          "ordinal": 1,
+          "evidence": {
+            "role": "combobox",
+            "tag": "select",
+            "textSnippet": "{{toShare}} - Regular Shares ($42,000.00){{memberNumber}}-MMKT - Money Market ($9,800.00){{memberNumber}}-S0070-3 - Share Draft (Checking)…",
+            "boundingBox": {
+              "x": 383.375,
+              "y": 151,
+              "width": 314,
+              "height": 19
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "{{toShare}}"
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "type_13",
+      "intent": "Enter the transfer amount",
+      "action": {
+        "kind": "type",
+        "target": {
+          "description": "textbox labelled \"Amount:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Amount:",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "input[name=\"amount\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.34716796875,
+              "yFraction": 0.205
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+          },
+          "evidence": {
+            "role": "textbox",
+            "tag": "input",
+            "boundingBox": {
+              "x": 390.375,
+              "y": 176,
+              "width": 108,
+              "height": 17
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "{{amount}}",
+        "clearFirst": true,
+        "secret": false
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "type_14",
+      "intent": "Enter the transfer memo",
+      "action": {
+        "kind": "type",
+        "target": {
+          "description": "textbox labelled \"Memo:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Memo:",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "input[name=\"memo\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.41279296875,
+              "yFraction": 0.23055555555555557
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+          },
+          "ordinal": 1,
+          "evidence": {
+            "role": "textbox",
+            "tag": "input",
+            "boundingBox": {
+              "x": 383.375,
+              "y": 199,
+              "width": 290,
+              "height": 17
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "{{memo}}",
+        "clearFirst": true,
+        "secret": false
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "click_15",
+      "intent": "Click Continue to reach the transfer confirmation screen (without posting)",
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "button \"Continue\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "role_name",
+              "role": "button",
+              "name": "Continue",
+              "exact": true
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.32652587890625,
+              "yFraction": 0.27166666666666667
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+          },
+          "evidence": {
+            "role": "button",
+            "accessibleName": "Continue",
+            "tag": "input",
+            "boundingBox": {
+              "x": 383.375,
+              "y": 235,
+              "width": 69.15625,
+              "height": 19
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        }
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "post_transfer",
+      "intent": "Post the transfer to the host. This moves money and cannot be reversed from this screen.",
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "Post Transfer button on the confirmation screen",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "role_name",
+              "role": "button",
+              "name": "Post Transfer",
+              "exact": true
+            }
+          ],
+          "anchor": {
+            "containerName": "CONFIRM FUNDS TRANSFER"
+          },
+          "evidence": {}
+        }
+      },
+      "risk": "mutate_irreversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    }
+  ],
+  "checkpoint": {
+    "description": "The host returned a posted-transfer receipt carrying a confirmation number.",
+    "condition": {
+      "kind": "text_present",
+      "text": "TRANSFER POSTED",
+      "framePath": [],
+      "caseSensitive": false
+    }
+  },
+  "outcomes": [
+    {
+      "code": "MEMBER_NOT_FOUND",
+      "description": "No member exists with the supplied member number, so no result row can be selected.",
+      "when": {
+        "kind": "text_present",
+        "text": "No member records matched",
+        "framePath": [],
+        "caseSensitive": false
+      },
+      "extract": [],
+      "probe": {
+        "parameter": "memberNumber",
+        "value": "999999",
+        "rationale": "Provokes this validation on the live target."
+      },
+      "evidence": {
+        "state": "observed",
+        "probedAt": "2026-08-27T01:50:21.926Z",
+        "runId": "probe-20260827T015021-01",
+        "note": "Provoked with memberNumber=\"999999\"; condition (page contains \"No member records matched\") held on the resulting screen."
+      }
+    },
+    {
+      "code": "SAME_SOURCE_AND_DESTINATION",
+      "description": "Source and destination shares are the same, which the host rejects.",
+      "when": {
+        "kind": "text_present",
+        "text": "Source and destination shares must differ",
+        "framePath": [],
+        "caseSensitive": false
+      },
+      "extract": [],
+      "probe": {
+        "parameter": "toShare",
+        "value": "102777-MMKT-4",
+        "rationale": "Provokes this validation on the live target."
+      },
+      "evidence": {
+        "state": "observed",
+        "probedAt": "2026-08-27T01:50:24.109Z",
+        "runId": "probe-20260827T015021-01",
+        "note": "Provoked with toShare=\"102777-MMKT-4\"; condition (page contains \"Source and destination shares must differ\") held on the resulting screen."
+      }
+    },
+    {
+      "code": "INSUFFICIENT_FUNDS",
+      "description": "The amount exceeds the available balance of the from share, so the form rejects it instead of showing the confirmation screen.",
+      "when": {
+        "kind": "text_present",
+        "text": "Insufficient available balance",
+        "framePath": [],
+        "caseSensitive": false
+      },
+      "extract": [],
+      "probe": {
+        "parameter": "amount",
+        "value": "99999.00",
+        "rationale": "Provokes this validation on the live target."
+      },
+      "evidence": {
+        "state": "observed",
+        "probedAt": "2026-08-27T01:50:27.432Z",
+        "runId": "probe-20260827T015021-01",
+        "note": "Provoked with amount=\"99999.00\"; condition (page contains \"Insufficient available balance\") held on the resulting screen."
+      }
+    },
+    {
+      "code": "ACCOUNT_ON_HOLD",
+      "description": "The selected from share is flagged HOLD and cannot be debited.",
+      "when": {
+        "kind": "text_present",
+        "text": "Source share is HOLD and cannot be debited",
+        "framePath": [],
+        "caseSensitive": false
+      },
+      "extract": [],
+      "probe": {
+        "parameter": "fromShare",
+        "value": "102777-MMKT",
+        "rationale": "Provokes this validation on the live target."
+      },
+      "evidence": {
+        "state": "observed",
+        "probedAt": "2026-08-27T01:50:30.877Z",
+        "runId": "probe-20260827T015021-01",
+        "note": "Provoked with fromShare=\"102777-MMKT\"; condition (page contains \"Source share is HOLD and cannot be debited\") held on the resulting screen."
+      }
+    }
+  ],
+  "recovery": [
+    {
+      "code": "ACCEPT_SYSTEM_DIALOG",
+      "description": "A native dialog is blocking the page. Acknowledging it is required before any further step can run. Review whether acknowledging is safe for this flow before approving.",
+      "when": {
+        "kind": "dialog_present"
+      },
+      "then": [
+        {
+          "kind": "accept_dialog"
+        }
+      ],
+      "maxAttempts": 3
+    }
+  ],
+  "failures": [],
+  "maxRisk": "mutate_irreversible",
+  "provenance": {
+    "discoveredAt": "2026-08-27T01:43:59.984Z",
+    "runId": "discovery-20260827T014242-01",
+    "goal": "Sign on. Search by Member Number for 102777. Open that member's record. Click Funds Transfer. On the transfer form set From Share to '102777-MMKT-4', To Share to '102777-S0001', Amount to '1.00', and Memo to 'demo transfer'. Click Continue to reach the CONFIRM FUNDS TRANSFER screen. STOP THERE. Do NOT click Post Transfer - posting money is irreversible and you must never perform it. Use the confirmation screen as your checkpoint and call finish immediately.",
+    "model": "claude-opus-5",
+    "evidencePath": "runs/discovery-20260827T014242-01",
+    "humanEdits": [
+      {
+        "at": "2026-08-27T01:50:00.000Z",
+        "by": "reviewer",
+        "note": "Corrected all five declared outcomes to the wording probing read off the live screens. Appended the post_transfer step by hand and marked it mutate_irreversible: the discovery agent is forbidden irreversible actions, so it can walk this flow only to the confirmation screen and cannot record its final step. Moved the checkpoint to the posted receipt and extract the host confirmation number."
+      },
+      {
+        "at": "2026-08-27T01:55:00.000Z",
+        "by": "reviewer",
+        "note": "Removed INVALID_AMOUNT: probing showed it is unreachable through this capability, because amount is typed money and a non-numeric value is rejected by the input contract before the host sees it. The host does validate it — but not on any path this capability can take."
+      },
+      {
+        "at": "2026-08-27T01:51:32.108Z",
+        "by": "operator",
+        "note": "approved for unattended replay: reviewed and approved for unattended replay"
+      }
+    ],
+    "validation": {
+      "checkedAt": "2026-08-27T01:44:00.459Z",
+      "warnings": [
+        "5 declared outcome(s) were hypothesised by the run that recorded them, which never took these paths: MEMBER_NOT_FOUND (\"No members found\"), SHARE_NOT_AVAILABLE (\"Share not found\"), INSUFFICIENT_FUNDS (\"Insufficient funds\"), ACCOUNT_ON_HOLD (\"account is on hold\"), INVALID_AMOUNT (\"Invalid amount\")"
+      ],
+      "rejected": []
+    },
+    "cost": {
+      "turns": 23,
+      "totalTokens": 356201,
+      "inputTokens": 254213,
+      "outputTokens": 3456,
+      "cacheReadTokens": 94248,
+      "cacheWriteTokens": 4284,
+      "costUsd": 4.294092,
+      "cacheSavingUsd": 1.272348
+    },
+    "probing": {
+      "probedAt": "2026-08-27T01:50:34.273Z",
+      "runs": 5,
+      "observed": [
+        "MEMBER_NOT_FOUND",
+        "SAME_SOURCE_AND_DESTINATION",
+        "INSUFFICIENT_FUNDS",
+        "ACCOUNT_ON_HOLD"
+      ],
+      "refuted": [
+        "INVALID_AMOUNT"
+      ],
+      "unprobed": [],
+      "warnings": [
+        "INVALID_AMOUNT was probed and did not fire: amount=\"abc\" is rejected by this capability's own input contract (Parameter \"amount\" must be numeric), so the application never saw it. INVALID_AMOUNT is unreachable through this capability: either the outcome does not belong here, or the parameter is over-constrained. Confirm the real on-screen wording before approving."
+      ]
+    }
+  }
+}

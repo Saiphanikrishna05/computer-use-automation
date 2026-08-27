@@ -122,25 +122,21 @@ export async function probeOutcomes(options: ProbeOptions): Promise<ProbeResult>
   const warnings: string[] = [];
   const reports: ProbeReport[] = [];
 
-  // A probe re-runs the whole recorded flow. On a capability that commits
-  // something, that means committing it, with a deliberately wrong input, which
-  // is a worse idea than not probing at all. The driver's action ceiling would
-  // refuse the step anyway; refusing here as well means the reason a reviewer
-  // reads is "this capability is not probeable" rather than a policy stack
-  // trace from halfway through a form.
-  if (artifact.maxRisk === 'mutate_irreversible') {
-    const reason =
-      `Capability is ${artifact.maxRisk}: probing would re-run its irreversible step with a deliberately ` +
-      'invalid input. Outcomes on this capability must be confirmed by a human against a test environment.';
-    logger.event('note', `probe skipped: ${reason}`);
-    return {
-      artifact,
-      reports: artifact.outcomes.map((o) => ({ code: o.code, state: 'skipped' as const, reason })),
-      warnings: [reason],
-      skippedEntirely: true,
-      learnedSomething: false,
-    };
-  }
+  // An earlier version refused to probe an irreversible capability at all, on
+  // the grounds that provoking an outcome would mean committing the
+  // transaction. Pointing this at a real transfer flow showed that to be both
+  // over-cautious and expensive: every outcome a funds transfer declares —
+  // insufficient balance, source on hold, same source and destination — is a
+  // validation that fires at the *review* step, long before anything posts.
+  // Refusing wholesale left five real conditions permanently unverified on the
+  // one capability where being sure matters most.
+  //
+  // What actually protects the money is the action ceiling, enforced in the
+  // driver: a probe runs under a policy that caps at mutate_reversible, so an
+  // irreversible step is refused there whatever this function decides. So the
+  // rule is now precise rather than blanket — probe it, and if a run reaches
+  // the irreversible step, report that the ceiling stopped it rather than
+  // pretending the outcome was tested.
 
   const budget = options.maxProbes ?? DEFAULT_MAX_PROBES;
   const evidence = new Map<string, BusinessOutcome['evidence']>();
@@ -332,6 +328,19 @@ async function runOneProbe(
   // cannot be reached through this capability at all. Reporting that as
   // "the wording is probably wrong" would send a reviewer to fix the one thing
   // that is not broken.
+  if (result.status === 'failure' && result.error.code === 'POLICY_BLOCKED') {
+    // The probe walked the flow and arrived at the step that commits. Policy
+    // stopped it, which is the system working — but it means this outcome was
+    // never reached, and saying "refuted" would be a lie about a condition
+    // nobody tested.
+    const reason =
+      `Provoking ${target.code} with ${probe.parameter}="${probe.value}" walked the flow as far as an ` +
+      'irreversible step, where the action ceiling refused it. The outcome was never reached, so it ' +
+      'remains untested rather than disproven. Confirm it against a test environment.';
+    evidence.set(target.code, { state: 'hypothesised', probedAt, runId, note: reason });
+    return { code: target.code, state: 'skipped', reason, probe: probeOf(target) };
+  }
+
   if (result.status === 'failure' && result.error.code === 'INPUT_VALIDATION_FAILED') {
     const reason =
       `${probe.parameter}="${probe.value}" is rejected by this capability's own input contract ` +

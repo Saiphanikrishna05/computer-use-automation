@@ -309,22 +309,23 @@ describe('probeOutcomes, catching a wrong declaration', () => {
 });
 
 describe('probeOutcomes, what it refuses to do', () => {
-  it('refuses to probe a capability that commits something irreversible', async () => {
-    const { driver, typed } = consoleSurface();
+  it('probes a capability that commits, because the ceiling is what stops the commit', async () => {
+    // This deliberately reverses an earlier rule. Refusing irreversible
+    // capabilities wholesale left every outcome on a funds transfer
+    // permanently unverified — and all of them are validations that fire at
+    // the review step, long before anything posts. What protects the money is
+    // the action ceiling in the driver, not this function declining to look.
+    const { driver } = consoleSurface();
     const result = await run(
       artifact(
-        [{ code: 'ACCOUNT_EXISTS', text: 'already has an account', probe: { parameter: 'memberId', value: '999999' } }],
+        [{ code: 'MEMBER_NOT_FOUND', text: 'No member record found', probe: { parameter: 'memberId', value: '999999' } }],
         { maxRisk: 'mutate_irreversible' },
       ),
       driver,
     );
 
-    expect(result.skippedEntirely).toBe(true);
-    expect(result.reports[0]!.state).toBe('skipped');
-    // The important assertion: nothing was driven at all. Refusing after
-    // half a form has been filled is not refusing.
-    expect(typed).toHaveLength(0);
-    expect(stateOf(result.artifact, 'ACCOUNT_EXISTS')).toBe('hypothesised');
+    expect(result.skippedEntirely).toBe(false);
+    expect(stateOf(result.artifact, 'MEMBER_NOT_FOUND')).toBe('observed');
   });
 
   it('refuses to vary an injected credential to provoke an outcome', async () => {
@@ -348,14 +349,6 @@ describe('probeOutcomes, what it refuses to do', () => {
     // file for no reason. A read-only operation modified its input. The flag
     // exists so the command can tell the difference.
     const { driver } = consoleSurface();
-
-    const irreversible = await run(
-      artifact([{ code: 'X', text: 'x', probe: { parameter: 'memberId', value: '999999' } }], {
-        maxRisk: 'mutate_irreversible',
-      }),
-      driver,
-    );
-    expect(irreversible.learnedSomething).toBe(false);
 
     const nothingDeclared = await run(artifact([{ code: 'Y', text: 'y' }]), driver);
     expect(nothingDeclared.learnedSomething).toBe(false);
