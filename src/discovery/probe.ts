@@ -46,6 +46,7 @@ import { PolicyEngine } from '../policy/engine.js';
 import { ReplayEngine } from '../replay/executor.js';
 import { describeCondition } from '../replay/conditions.js';
 import { freshnessOf, describeAge } from '../artifact/staleness.js';
+import { credentialInputs, type OperatorCredentials } from '../config.js';
 import type { ReplayResult } from '../replay/result.js';
 
 export interface ProbeOptions {
@@ -380,13 +381,10 @@ async function runOneProbe(
  */
 export function baselineInputsFor(
   artifact: CapabilityArtifact,
-  credentials: { operatorId: string; operatorPassword: string },
+  credentials: OperatorCredentials,
   overrides: Record<string, string> = {},
 ): Record<string, unknown> {
-  const inputs: Record<string, unknown> = {
-    operatorId: credentials.operatorId,
-    operatorPassword: credentials.operatorPassword,
-  };
+  const inputs: Record<string, unknown> = { ...credentialInputs(credentials) };
   for (const spec of artifact.inputs) {
     if (spec.injected) continue;
     if (spec.example !== undefined) inputs[spec.name] = spec.example;

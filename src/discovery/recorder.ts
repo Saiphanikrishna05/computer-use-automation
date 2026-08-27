@@ -159,20 +159,20 @@ export class StepRecorder {
         case 'navigate':
           return { ...base, action: { kind: 'navigate' as const, urlTemplate: this.canonicalizeUrl(action.url ?? '') } };
         case 'click':
-          return { ...base, action: { kind: 'click' as const, target: action.target! } };
+          return { ...base, action: { kind: 'click' as const, target: templatizeTarget(action.target!, allParams) } };
         case 'select':
           return {
             ...base,
             action: {
               kind: 'select' as const,
-              target: action.target!,
+              target: templatizeTarget(action.target!, allParams),
               valueTemplate: templatize(action.value ?? '', allParams),
             },
           };
         case 'press':
           return {
             ...base,
-            action: { kind: 'press' as const, key: action.key ?? 'Enter', ...(action.target ? { target: action.target } : {}) },
+            action: { kind: 'press' as const, key: action.key ?? 'Enter', ...(action.target ? { target: templatizeTarget(action.target, allParams) } : {}) },
           };
         case 'type': {
           const isSecret = secretParams.some((s) => s.value === action.value);
@@ -180,7 +180,7 @@ export class StepRecorder {
             ...base,
             action: {
               kind: 'type' as const,
-              target: action.target!,
+              target: templatizeTarget(action.target!, allParams),
               valueTemplate: templatize(action.value ?? '', allParams),
               clearFirst: true,
               secret: action.secret || isSecret,
@@ -208,7 +208,7 @@ export class StepRecorder {
       required: true,
       sensitivity: o.sensitivity,
       extract: {
-        target: o.target,
+        target: templatizeTarget(o.target, allParams),
         source: 'text' as const,
         transforms: o.type === 'money' || o.type === 'number' ? (['collapse_whitespace', 'money'] as const) : (['collapse_whitespace'] as const),
       },
@@ -300,6 +300,34 @@ export class StepRecorder {
 
 function rank(actionClass: ActionClass): number {
   return { read: 0, mutate_reversible: 1, mutate_irreversible: 2 }[actionClass];
+}
+
+/**
+ * The same rewrite, applied through a locator.
+ *
+ * A descriptor is mostly chrome — roles, column headings, panel names — which
+ * must be left alone. But where a landmark happens to *contain* a value the
+ * caller supplies, it is not a landmark at all: MERIDIAN CORE heads each share
+ * row with an id like "102777-S0001", and the member number is right there
+ * inside it. Recorded literally, that reads the correct cell for one member and
+ * a plausible wrong one for everybody else.
+ *
+ * Credentials are excluded deliberately. A locator that needed a password in it
+ * would be describing something no reviewer should be looking at, and quietly
+ * templating it would hide that rather than surface it.
+ */
+function templatizeTarget<T>(target: T, params: DeclaredParameter[]): T {
+  const usable = params.filter((p) => !p.injected && p.value && p.value.length >= 4);
+  if (usable.length === 0) return target;
+  const walk = (node: unknown): unknown => {
+    if (typeof node === 'string') return templatize(node, usable);
+    if (Array.isArray(node)) return node.map(walk);
+    if (node && typeof node === 'object') {
+      return Object.fromEntries(Object.entries(node as Record<string, unknown>).map(([k, v]) => [k, walk(v)]));
+    }
+    return node;
+  };
+  return walk(target) as T;
 }
 
 /**

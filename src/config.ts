@@ -101,6 +101,28 @@ export function resolveCredentials(tenantId: string): OperatorCredentials {
   };
 }
 
+/**
+ * Credentials as the typed inputs a capability declares them to be.
+ *
+ * Every caller that supplies injected values goes through here rather than
+ * naming the fields itself. Two of them used to name `operatorId` and
+ * `operatorPassword` directly, which was invisible until a target turned up
+ * whose sign-on also wants a branch: the recording declared three injected
+ * inputs and replay supplied two, so it failed on the contract before touching
+ * the application. Probing caught that within a minute of the first capability
+ * existing.
+ *
+ * A credential set that grows a field should not need anyone to remember two
+ * other files.
+ */
+export function credentialInputs(credentials: OperatorCredentials): Record<string, string> {
+  return {
+    operatorId: credentials.operatorId,
+    operatorPassword: credentials.operatorPassword,
+    ...(credentials.branch ? { branch: credentials.branch } : {}),
+  };
+}
+
 export interface ModelConfig {
   model: string;
   effort: 'low' | 'medium' | 'high' | 'xhigh' | 'max';

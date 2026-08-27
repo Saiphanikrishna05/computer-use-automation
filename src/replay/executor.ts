@@ -34,7 +34,7 @@ import type { SurfaceDriver, SurfaceElement } from '../surface/types.js';
 import { PolicyEngine, PolicyViolation } from '../policy/engine.js';
 import type { RunLogger } from '../evidence/logger.js';
 import { evaluateCondition, describeCondition } from './conditions.js';
-import { bindInputs, coerceOutput, interpolate, InputValidationError } from './values.js';
+import { bindInputs, coerceOutput, interpolate, interpolateTarget, InputValidationError } from './values.js';
 import { assistedReresolve, type AssistedAttempt } from './assisted.js';
 import type {
   FailureCode,
@@ -379,7 +379,7 @@ export class ReplayEngine {
     for (const action of rule.then) {
       switch (action.kind) {
         case 'click': {
-          const resolved = await driver.resolve(action.target);
+          const resolved = await driver.resolve(interpolateTarget(action.target, this.values));
           if (resolved.ok) await driver.click(resolved.element);
           break;
         }
@@ -452,7 +452,7 @@ export class ReplayEngine {
       // which action kind it was.
       let element: SurfaceElement | undefined;
       if ('target' in action && action.target) {
-        const resolved = await driver.resolve(action.target);
+        const resolved = await driver.resolve(interpolateTarget(action.target, this.values));
         report.resolution = resolved.report;
         if (resolved.report.degraded) this.degradedResolutions += 1;
         logger.event('resolution', `${step.id} → ${resolved.report.winningKind ?? 'unresolved'}`, {
@@ -619,7 +619,7 @@ export class ReplayEngine {
     const values: Record<string, unknown> = {};
 
     for (const spec of specs) {
-      const resolved = await driver.resolve(spec.extract.target);
+      const resolved = await driver.resolve(interpolateTarget(spec.extract.target, this.values));
 
       // Output extraction resolves targets exactly as steps do, so it must
       // report them the same way. Without this the drift counter could

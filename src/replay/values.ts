@@ -22,6 +22,34 @@ export class InputValidationError extends Error {
 
 const TEMPLATE = /\{\{\s*([a-zA-Z][a-zA-Z0-9_]*)\s*\}\}/g;
 
+/**
+ * Fills `{{param}}` references inside a locator, not just inside a typed value.
+ *
+ * On my own target the balance cell is addressed as "the Savings row, Current
+ * Balance column" — and "Savings" is chrome: a product name, identical for
+ * every member. On MERIDIAN CORE the same row is headed by a share id,
+ * "102777-S0001", which carries the member number inside it. That is record
+ * data wearing a landmark's clothes, and a recording that hard-codes it reads
+ * the right cell for exactly one member and a plausible wrong cell for
+ * everybody else.
+ *
+ * So a descriptor may now be parameterised the way a typed value always could.
+ * Applied at resolve time rather than baked in at record time, because the
+ * artifact should stay a document describing *which* control, with the values
+ * supplied per run.
+ */
+export function interpolateTarget<T>(target: T, values: Record<string, unknown>): T {
+  const walk = (node: unknown): unknown => {
+    if (typeof node === 'string') return node.includes('{{') ? interpolate(node, values) : node;
+    if (Array.isArray(node)) return node.map(walk);
+    if (node && typeof node === 'object') {
+      return Object.fromEntries(Object.entries(node as Record<string, unknown>).map(([k, v]) => [k, walk(v)]));
+    }
+    return node;
+  };
+  return walk(target) as T;
+}
+
 export function referencedParameters(template: string): string[] {
   return [...template.matchAll(TEMPLATE)].map((m) => m[1]!);
 }

@@ -15,7 +15,7 @@ import { summarize, type ReplayResult } from '../replay/result.js';
 import { loadArtifact, loadOverlay, applyOverlay } from '../artifact/store.js';
 import { ControlLease } from '../escalation/lease.js';
 import { ConsoleEscalationHandler } from '../escalation/handler.js';
-import { DEFAULT_TENANT, TENANT_RUNTIMES, resolveCredentials, headless } from '../config.js';
+import { DEFAULT_TENANT, TENANT_RUNTIMES, credentialInputs, resolveCredentials, headless } from '../config.js';
 
 export interface ReplayCommandOptions {
   capability: string;
@@ -91,11 +91,7 @@ export async function runReplayCommand(options: ReplayCommandOptions): Promise<R
   try {
     const engine = new ReplayEngine({
       artifact: specialized.artifact,
-      inputs: {
-        ...options.inputs,
-        operatorId: credentials.operatorId,
-        operatorPassword: credentials.operatorPassword,
-      },
+      inputs: { ...options.inputs, ...credentialInputs(credentials) },
       driver,
       policy,
       logger,
