@@ -25,6 +25,17 @@ export interface TenantRuntime {
 }
 
 export const TENANT_RUNTIMES: Record<string, TenantRuntime> = {
+  /**
+   * MERIDIAN CORE, hosted by interface.ai. The first target this system was
+   * pointed at that I did not write, which is the whole point of it being
+   * here: everything below is a base URL and a credential, and no code above
+   * the driver changed to reach it.
+   */
+  'meridian-core': {
+    id: 'meridian-core',
+    name: 'Meridian Core · Cornerstone Financial Systems',
+    baseUrl: process.env.CUA_MERIDIAN_URL ?? 'https://web-sample.interface-hiring.com',
+  },
   'northpoint-fcu': {
     id: 'northpoint-fcu',
     name: 'Northpoint Federal Credit Union',
@@ -43,6 +54,29 @@ export const DEFAULT_TENANT = 'northpoint-fcu';
 export interface OperatorCredentials {
   operatorId: string;
   operatorPassword: string;
+  /**
+   * Some targets sign on against a specific branch or terminal. Absent where
+   * the application has no such concept, rather than defaulted to a value that
+   * would silently be wrong somewhere.
+   */
+  branch?: string;
+}
+
+/**
+ * A supervisor sign-on, where the application distinguishes one.
+ *
+ * Kept separate from the operator rather than being "the operator with more
+ * rights", because they are different people: the whole point of a
+ * supervisor-gated action is that the person performing it is not the person
+ * who started it.
+ */
+export function resolveSupervisorCredentials(tenantId: string): OperatorCredentials | undefined {
+  if (tenantId !== 'meridian-core') return undefined;
+  return {
+    operatorId: process.env.CUA_SUPERVISOR_ID ?? 'super1',
+    operatorPassword: process.env.CUA_SUPERVISOR_PASSWORD ?? 'password',
+    branch: process.env.CUA_MERIDIAN_BRANCH ?? '001',
+  };
 }
 
 /**
@@ -50,7 +84,17 @@ export interface OperatorCredentials {
  * service credentials from a vault; the shape of the call is the same, which
  * is what matters for the design.
  */
-export function resolveCredentials(_tenantId: string): OperatorCredentials {
+export function resolveCredentials(tenantId: string): OperatorCredentials {
+  // The parameter finally earns its keep. It was always here because a real
+  // deployment resolves per-institution service credentials from a vault; a
+  // second target with different operators is the first time that mattered.
+  if (tenantId === 'meridian-core') {
+    return {
+      operatorId: process.env.CUA_MERIDIAN_OPERATOR ?? 'teller1',
+      operatorPassword: process.env.CUA_MERIDIAN_PASSWORD ?? 'password',
+      branch: process.env.CUA_MERIDIAN_BRANCH ?? '001',
+    };
+  }
   return {
     operatorId: process.env.CUA_OPERATOR_ID ?? 'teller01',
     operatorPassword: process.env.CUA_OPERATOR_PASSWORD ?? 'demo-password',

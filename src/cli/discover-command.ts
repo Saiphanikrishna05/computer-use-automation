@@ -104,6 +104,17 @@ export async function runDiscoverCommand(opts: DiscoverCommandOptions): Promise<
         description: 'Servicing console operator password. Injected by the runtime credential store.',
         sensitivity: 'secret',
       },
+      // Not a secret, but supplied by the runtime for the same reason the
+      // operator id is: which branch a session signs on against is a property
+      // of the deployment, not something a calling agent should choose.
+      ...(credentials.branch
+        ? [{
+            name: 'branch' as const,
+            value: credentials.branch,
+            description: 'Branch the operator signs on against. Injected by the runtime.',
+            sensitivity: 'none' as const,
+          }]
+        : []),
     ],
   });
 
