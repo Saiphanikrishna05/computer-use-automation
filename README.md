@@ -76,6 +76,11 @@ npm run discover -- --tenant meridian-core --capability-id mc_something \
   --max-steps 22 --goal "Sign on. Search by Member Number for 102777. …"
 
 npm run probe -- mc_something --tenant meridian-core   # provoke its declared outcomes
+
+# A supervisor-gated capability has to be baselined as a supervisor, or every
+# run stops at the entitlement check. Its SUPERVISOR_REQUIRED probe then steps
+# *down* to the teller identity to provoke the refusal.
+npm run probe -- mc_place_hold --tenant meridian-core --as supervisor
 npx tsx src/cli/index.ts catalog approve mc_something
 ```
 
