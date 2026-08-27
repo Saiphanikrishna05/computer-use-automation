@@ -8,6 +8,17 @@ agent invokes it by name with typed arguments.
 The design write-up is in **[REPORT.md](REPORT.md)**. Evidence from real runs is
 in **[evidence/](evidence/)**.
 
+> **Adaptation project — MERIDIAN CORE.** This system has since been pointed at
+> a live legacy console it had never seen, hosted by interface.ai, and wrapped
+> in a callable API, a chatbot and a dashboard. That write-up is
+> **[ADAPTATION.md](ADAPTATION.md)** — what it took (sixty lines of
+> configuration), the four things their target found wrong with the core, and
+> what I left out.
+>
+> ```bash
+> npm run serve -- --tenant meridian-core   # dashboard + chatbot on :7400
+> ```
+
 ![A capability replaying against an application that changed underneath it](docs/demo.gif)
 
 *A capability recorded once by an LLM, replaying with no model in the loop:
