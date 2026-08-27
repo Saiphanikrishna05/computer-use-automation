@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { bindInputs, coerceOutput, interpolate, InputValidationError } from '../src/replay/values.js';
+import { bindInputs, coerceOutput, interpolate, InputValidationError, interpolateTarget } from '../src/replay/values.js';
 import type { OutputSpec, ParamSpec } from '../src/artifact/schema.js';
 
 const memberId: ParamSpec = {
@@ -120,5 +120,51 @@ describe('coerceOutput', () => {
 
   it('keeps leading zeros on account numbers by treating them as strings', () => {
     expect(coerceOutput('000410028815', spec('string', ['collapse_whitespace']))).toBe('000410028815');
+  });
+});
+
+/**
+ * Parameterised locators.
+ *
+ * A descriptor is mostly chrome and must be left alone. But MERIDIAN CORE
+ * heads each share row with an id like "102777-S0001" — the member number is
+ * inside the landmark. Recorded literally, that reads the right cell for one
+ * member and a plausible wrong one for every other, which is the failure mode
+ * worth naming: not a crash, a confident wrong number.
+ */
+describe('interpolateTarget', () => {
+  const target = {
+    description: 'cell in the Share ID panel',
+    framePath: [],
+    candidates: [
+      { kind: 'label', text: '{{memberNumber}}-S0001', expect: 'cell', column: 'Balance' },
+      { kind: 'coordinates', xFraction: 0.6, yFraction: 0.23 },
+    ],
+    evidence: {},
+  };
+
+  it('fills a reference nested inside a candidate', () => {
+    const out = interpolateTarget(target, { memberNumber: '100234' });
+    expect((out.candidates[0] as { text: string }).text).toBe('100234-S0001');
+  });
+
+  it('leaves chrome, numbers and structure untouched', () => {
+    const out = interpolateTarget(target, { memberNumber: '100234' });
+    expect((out.candidates[0] as { column: string }).column).toBe('Balance');
+    expect((out.candidates[1] as { xFraction: number }).xFraction).toBe(0.6);
+    expect(out.description).toBe('cell in the Share ID panel');
+  });
+
+  it('does not mutate the artifact it was given', () => {
+    // The descriptor on disk stays a document describing *which* control; the
+    // values are supplied per run. Mutating here would bake one run's member
+    // number into every subsequent one in the same process.
+    interpolateTarget(target, { memberNumber: '100234' });
+    expect((target.candidates[0] as { text: string }).text).toBe('{{memberNumber}}-S0001');
+  });
+
+  it('passes through a target with no references at all', () => {
+    const plain = { description: 'Search', candidates: [{ kind: 'role_name', role: 'button', name: 'Search' }] };
+    expect(interpolateTarget(plain, {})).toEqual(plain);
   });
 });

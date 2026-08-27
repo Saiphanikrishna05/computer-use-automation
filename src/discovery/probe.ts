@@ -46,6 +46,7 @@ import { PolicyEngine } from '../policy/engine.js';
 import { ReplayEngine } from '../replay/executor.js';
 import { describeCondition } from '../replay/conditions.js';
 import { freshnessOf, describeAge } from '../artifact/staleness.js';
+import { credentialInputs, type OperatorCredentials } from '../config.js';
 import type { ReplayResult } from '../replay/result.js';
 
 export interface ProbeOptions {
@@ -65,6 +66,14 @@ export interface ProbeOptions {
   newDriver: () => Promise<SurfaceDriver>;
   /** The inputs discovery itself used, including injected credentials. */
   baselineInputs: Record<string, unknown>;
+  /**
+   * Other configured identities a probe may sign on as.
+   *
+   * Supplied by the caller from the credential store rather than assembled
+   * here, so probing never composes a credential of its own — it can only
+   * choose between ones a deployment has already provisioned.
+   */
+  identities?: Partial<Record<'operator' | 'supervisor', Record<string, string>>>;
   bindings: Record<string, string>;
   policy: PolicyEngine;
   logger: RunLogger;
@@ -121,25 +130,21 @@ export async function probeOutcomes(options: ProbeOptions): Promise<ProbeResult>
   const warnings: string[] = [];
   const reports: ProbeReport[] = [];
 
-  // A probe re-runs the whole recorded flow. On a capability that commits
-  // something, that means committing it, with a deliberately wrong input, which
-  // is a worse idea than not probing at all. The driver's action ceiling would
-  // refuse the step anyway; refusing here as well means the reason a reviewer
-  // reads is "this capability is not probeable" rather than a policy stack
-  // trace from halfway through a form.
-  if (artifact.maxRisk === 'mutate_irreversible') {
-    const reason =
-      `Capability is ${artifact.maxRisk}: probing would re-run its irreversible step with a deliberately ` +
-      'invalid input. Outcomes on this capability must be confirmed by a human against a test environment.';
-    logger.event('note', `probe skipped: ${reason}`);
-    return {
-      artifact,
-      reports: artifact.outcomes.map((o) => ({ code: o.code, state: 'skipped' as const, reason })),
-      warnings: [reason],
-      skippedEntirely: true,
-      learnedSomething: false,
-    };
-  }
+  // An earlier version refused to probe an irreversible capability at all, on
+  // the grounds that provoking an outcome would mean committing the
+  // transaction. Pointing this at a real transfer flow showed that to be both
+  // over-cautious and expensive: every outcome a funds transfer declares —
+  // insufficient balance, source on hold, same source and destination — is a
+  // validation that fires at the *review* step, long before anything posts.
+  // Refusing wholesale left five real conditions permanently unverified on the
+  // one capability where being sure matters most.
+  //
+  // What actually protects the money is the action ceiling, enforced in the
+  // driver: a probe runs under a policy that caps at mutate_reversible, so an
+  // irreversible step is refused there whatever this function decides. So the
+  // rule is now precise rather than blanket — probe it, and if a run reaches
+  // the irreversible step, report that the ceiling stopped it rather than
+  // pretending the outcome was tested.
 
   const budget = options.maxProbes ?? DEFAULT_MAX_PROBES;
   const evidence = new Map<string, BusinessOutcome['evidence']>();
@@ -178,6 +183,38 @@ export async function probeOutcomes(options: ProbeOptions): Promise<ProbeResult>
       continue;
     }
 
+    // An identity probe names no parameter, so the parameter checks below do
+    // not apply to it. What it needs instead is that the identity it asks for
+    // has actually been provisioned — probing chooses between credentials a
+    // deployment holds, and never invents one.
+    if (outcome.probe.as) {
+      const identity = options.identities?.[outcome.probe.as];
+      if (!identity || Object.keys(identity).length === 0) {
+        const reason =
+          `Probe asks to sign on as "${outcome.probe.as}", which this deployment has not configured. ` +
+          'Nothing was run.';
+        reports.push({ code: outcome.code, state: 'skipped', reason, probe: probeOf(outcome) });
+        warnings.push(`${outcome.code}: ${reason}`);
+        continue;
+      }
+      if (spent >= budget) {
+        const reason = `Probe budget of ${budget} run(s) for this discovery was already spent. Remains a hypothesis.`;
+        reports.push({ code: outcome.code, state: 'skipped', reason, probe: probeOf(outcome) });
+        warnings.push(`${outcome.code}: ${reason}`);
+        continue;
+      }
+      spent += 1;
+      const report = await runOneProbe(options, outcome, evidence);
+      reports.push(report);
+      if (report.state === 'refuted') {
+        warnings.push(
+          `${outcome.code} was probed and did not fire: ${report.reason} Confirm the real on-screen wording ` +
+            'before approving.',
+        );
+      }
+      continue;
+    }
+
     const inputSpec = artifact.inputs.find((i) => i.name === outcome.probe!.parameter);
     if (!inputSpec) {
       const reason =
@@ -188,10 +225,12 @@ export async function probeOutcomes(options: ProbeOptions): Promise<ProbeResult>
       continue;
     }
 
-    // An injected parameter is a credential the runtime supplies. Varying one
-    // is not probing a business outcome, it is an authentication test against
-    // whatever the operator account happens to be, and repeated failures lock
-    // real accounts out. Business outcomes are provoked with business data.
+    // An injected parameter is a credential the runtime supplies, and guessing
+    // at one is an authentication test rather than a business one: sign-on
+    // fails, and repeated failures lock real accounts out. Note the shape of
+    // that hazard — it is guessing a *secret*. Signing on as a different
+    // identity the credential store already holds is a different act, and
+    // `probe.as` is how an outcome asks for it.
     if (inputSpec.injected) {
       const reason =
         `Probe would vary the injected credential "${inputSpec.name}". Credentials are supplied by the ` +
@@ -250,7 +289,7 @@ async function runOneProbe(
 
   logger.event(
     'note',
-    `probing ${target.code}: replaying with ${probe.parameter}="${probe.value}"` +
+    `probing ${target.code}: replaying with ${describeProbe(probe)}` +
       (probe.rationale ? ` (${probe.rationale})` : ''),
   );
 
@@ -268,7 +307,7 @@ async function runOneProbe(
   try {
     result = await new ReplayEngine({
       artifact,
-      inputs: { ...options.baselineInputs, [probe.parameter]: probe.value },
+      inputs: inputsForProbe(options.baselineInputs, probe, options.identities),
       driver,
       policy,
       logger,
@@ -294,7 +333,7 @@ async function runOneProbe(
 
   if (result.status === 'business_outcome' && result.outcome === target.code) {
     const note =
-      `Provoked with ${probe.parameter}="${probe.value}"; condition (${describeCondition(target.when)}) held ` +
+      `Provoked with ${describeProbe(probe)}; condition (${describeCondition(target.when)}) held ` +
       'on the resulting screen.';
     evidence.set(target.code, { state: 'observed', probedAt, runId, note });
     return { code: target.code, state: 'observed', reason: note, probe: probeOf(target) };
@@ -314,11 +353,11 @@ async function runOneProbe(
         state: 'observed',
         probedAt,
         runId,
-        note: `Observed while probing ${target.code} with ${probe.parameter}="${probe.value}".`,
+        note: `Observed while probing ${target.code} with ${describeProbe(probe)}.`,
       });
     }
     const reason =
-      `Replaying with ${probe.parameter}="${probe.value}" produced ${other}, not ${target.code}. ` +
+      `Replaying with ${describeProbe(probe)} produced ${other}, not ${target.code}. ` +
       'Either the probe value does not provoke this state, or the two conditions overlap and ' +
       `${other} is matching first.`;
     evidence.set(target.code, { state: 'refuted', probedAt, runId, observedInstead, note: reason });
@@ -331,9 +370,22 @@ async function runOneProbe(
   // cannot be reached through this capability at all. Reporting that as
   // "the wording is probably wrong" would send a reviewer to fix the one thing
   // that is not broken.
+  if (result.status === 'failure' && result.error.code === 'POLICY_BLOCKED') {
+    // The probe walked the flow and arrived at the step that commits. Policy
+    // stopped it, which is the system working — but it means this outcome was
+    // never reached, and saying "refuted" would be a lie about a condition
+    // nobody tested.
+    const reason =
+      `Provoking ${target.code} with ${describeProbe(probe)} walked the flow as far as an ` +
+      'irreversible step, where the action ceiling refused it. The outcome was never reached, so it ' +
+      'remains untested rather than disproven. Confirm it against a test environment.';
+    evidence.set(target.code, { state: 'hypothesised', probedAt, runId, note: reason });
+    return { code: target.code, state: 'skipped', reason, probe: probeOf(target) };
+  }
+
   if (result.status === 'failure' && result.error.code === 'INPUT_VALIDATION_FAILED') {
     const reason =
-      `${probe.parameter}="${probe.value}" is rejected by this capability's own input contract ` +
+      `${describeProbe(probe)} is rejected by this capability's own input contract ` +
       `(${result.error.observed}), so the application never saw it. ${target.code} is unreachable through ` +
       'this capability: either the outcome does not belong here, or the parameter is over-constrained.';
     evidence.set(target.code, { state: 'refuted', probedAt, runId, observedInstead, note: reason });
@@ -346,9 +398,9 @@ async function runOneProbe(
   // the model guessed wrong is right there in it.
   const reason =
     result.status === 'success'
-      ? `Replaying with ${probe.parameter}="${probe.value}" still succeeded, so this input does not provoke ` +
-        `${target.code} and the condition was never tested.`
-      : `Replaying with ${probe.parameter}="${probe.value}" ended in ${observedInstead}, and no declared ` +
+      ? `Replaying with ${describeProbe(probe)} still succeeded, so ${probe.as ? 'that identity' : 'this input'} ` +
+        `does not provoke ${target.code} and the condition was never tested.`
+      : `Replaying with ${describeProbe(probe)} ended in ${observedInstead}, and no declared ` +
         `condition matched the screen it ended on. The wording in (${describeCondition(target.when)}) is ` +
         `probably not what this application shows.`;
 
@@ -380,13 +432,10 @@ async function runOneProbe(
  */
 export function baselineInputsFor(
   artifact: CapabilityArtifact,
-  credentials: { operatorId: string; operatorPassword: string },
+  credentials: OperatorCredentials,
   overrides: Record<string, string> = {},
 ): Record<string, unknown> {
-  const inputs: Record<string, unknown> = {
-    operatorId: credentials.operatorId,
-    operatorPassword: credentials.operatorPassword,
-  };
+  const inputs: Record<string, unknown> = { ...credentialInputs(credentials) };
   for (const spec of artifact.inputs) {
     if (spec.injected) continue;
     if (spec.example !== undefined) inputs[spec.name] = spec.example;
@@ -439,8 +488,36 @@ export function renderProbeSummary(probed: ProbeResult): string {
   );
 }
 
+/**
+ * How a probe reads in a note a human will later rely on.
+ *
+ * An identity probe varies no parameter, so interpolating `probe.parameter`
+ * wrote `undefined="undefined"` into the evidence — a note that says nothing
+ * while looking like it says something, which is worse than no note at all.
+ */
+function describeProbe(probe: NonNullable<BusinessOutcome['probe']>): string {
+  if (probe.as) return `a sign-on as the ${probe.as} identity`;
+  return `${probe.parameter}="${probe.value}"`;
+}
+
 function probeOf(outcome: BusinessOutcome): ProbeReport['probe'] {
-  return outcome.probe ? { parameter: outcome.probe.parameter, value: outcome.probe.value } : undefined;
+  const p = outcome.probe;
+  if (!p) return undefined;
+  if (p.as) return { parameter: 'signed on as', value: p.as };
+  return p.parameter && p.value !== undefined ? { parameter: p.parameter, value: p.value } : undefined;
+}
+
+/**
+ * The inputs one probe implies: either one business value changed, or a
+ * different configured identity signed on as.
+ */
+function inputsForProbe(
+  baseline: Record<string, unknown>,
+  probe: NonNullable<BusinessOutcome['probe']>,
+  identities: ProbeOptions['identities'],
+): Record<string, unknown> {
+  if (probe.as) return { ...baseline, ...(identities?.[probe.as] ?? {}) };
+  return probe.parameter ? { ...baseline, [probe.parameter]: probe.value } : { ...baseline };
 }
 
 function describeResult(result: ReplayResult): string {

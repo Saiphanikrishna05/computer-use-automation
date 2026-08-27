@@ -1,0 +1,121 @@
+{
+  "capabilityId": "mc_member_balance",
+  "capabilityVersion": 1,
+  "tenantId": "meridian-core",
+  "startedAt": "2026-08-27T02:34:40.657Z",
+  "finishedAt": "2026-08-27T02:34:41.826Z",
+  "durationMs": 1169,
+  "steps": [
+    {
+      "stepId": "type_1",
+      "intent": "Enter the operator ID in the Operator Sign On panel",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 192,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"Operator ID:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 24
+      }
+    },
+    {
+      "stepId": "type_2",
+      "intent": "Enter the operator [redacted:literal] in the Operator Sign On panel",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 168,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"Password:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 8
+      }
+    },
+    {
+      "stepId": "select_3",
+      "intent": "Select branch 001 (Main Office) for sign on",
+      "action": "select",
+      "status": "ok",
+      "elapsedMs": 12,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "combobox labelled \"Branch:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 7
+      }
+    },
+    {
+      "stepId": "click_4",
+      "intent": "Submit the operator sign on form",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 312,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "button \"Sign On\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "role_name",
+            "tier": 1,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 1,
+        "winningKind": "role_name",
+        "degraded": false,
+        "elapsedMs": 6
+      }
+    }
+  ],
+  "degradedResolutions": 0,
+  "evidence": {
+    "runId": "replay-20260827T023440-01",
+    "bundlePath": "runs/replay-20260827T023440-01",
+    "screenshots": [
+      "runs/replay-20260827T023440-01/screenshots/016-declared-failure-app-error.png"
+    ],
+    "domSnapshots": [
+      "runs/replay-20260827T023440-01/dom/017-declared-failure-app-error.html"
+    ]
+  },
+  "status": "failure",
+  "error": {
+    "code": "APP_ERROR",
+    "stepId": "click_5",
+    "expected": "to perform: Open the Member Inquiry / Selection screen from the Main Menu",
+    "observed": "The host returned its application error page with a reference number. Nothing replay can do about it, and the reference is what a person will need. (page contains \"APPLICATION ERROR\")",
+    "detail": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ Main Menu · Member Inquiry · System Settings · Sign Off APPLICATION ERROR An unexpected error occurred while processing your request. Reference: ERR-7B059DDA Please contact the Help Desk if the problem persists. Return to previous screen OPR TELLER1 | BR MAIN-001 | [redacted:dob] 02:34:41 | SID E41DB61F F3=Sign Off F5=Main Me"
+  }
+}

@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Capability dashboard · Meridian Core</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header>
+  <h1>Capability dashboard</h1>
+  <span class="sub" id="tenant">—</span>
+  <nav>
+    <a href="/" class="on">Dashboard</a>
+    <a href="/chat">Chatbot</a>
+  </nav>
+</header>
+
+<main>
+  <section style="margin-bottom:2rem">
+    <h2>Capabilities · recorded once, replayed since</h2>
+    <div id="caps"><p class="empty">loading…</p></div>
+  </section>
+
+  <div class="split">
+    <section>
+      <h2>Runs · discovery, probes and replays</h2>
+      <table>
+        <thead><tr><th>When</th><th>Capability</th><th>Result</th><th>Time</th><th>Drift</th></tr></thead>
+        <tbody id="runs"><tr><td colspan="5" class="empty">loading…</td></tr></tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Evidence · <span id="runTitle" class="muted">select a run</span></h2>
+      <div id="detail"><p class="empty">Every run keeps its own log, typed result, masked screenshots and DOM snapshots. Pick one.</p></div>
+    </section>
+  </div>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pill = (v) => v ? `<span class="pill ${esc(v)}">${esc(v)}</span>` : '';
+const when = (iso) => iso ? iso.slice(0,19).replace('T',' ') : '—';
+
+async function load() {
+  const tenants = await (await fetch('/api/tenants')).json();
+  const t = tenants.find(x => x.default) || tenants[0];
+  $('tenant').textContent = t ? `${t.name} · ${t.baseUrl}` : '';
+
+  const caps = await (await fetch('/api/capabilities')).json();
+
+  // The store holds capabilities for more than one application. Grouping by
+  // the product each was recorded against — the one being served first — is
+  // the difference between "why is a shopping cart in my banking console"
+  // and "the same engine drives three unrelated systems".
+  const card = (c) => `
+    <div class="card">
+      <h3>${esc(c.name)}</h3>
+      <p>${esc((c.description || '').split('\n')[0]).slice(0,150)}…</p>
+      <p>${pill(c.risk)} ${pill(c.approval)}</p>
+      <p class="mono muted" style="font-size:12px">${esc(c.evidenceSummary || 'no outcomes declared')}</p>
+      <p class="mono muted" style="font-size:12px">${(c.input_schema?.required || []).join(', ') || 'no inputs'}</p>
+    </div>`;
+
+  const groups = new Map();
+  for (const c of caps) {
+    const key = c.app ? `${c.app.vendor} · ${c.app.product}` : 'unattributed';
+    if (!groups.has(key)) groups.set(key, { served: !!c.servedHere, items: [] });
+    groups.get(key).items.push(c);
+  }
+  const ordered = [...groups.entries()].sort((a, b) => (b[1].served ? 1 : 0) - (a[1].served ? 1 : 0));
+
+  $('caps').innerHTML = caps.length ? ordered.map(([name, g]) => `
+    <div style="margin-bottom:1.6rem">
+      <div class="mono" style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+           color:${g.served ? 'var(--brass)' : 'var(--faint)'};margin-bottom:.6rem">
+        ${esc(name)}${g.served ? ' · serving now' : ' · recorded, not this target'}
+      </div>
+      <div class="grid cols">${g.items.map(card).join('')}</div>
+    </div>`).join('') : '<p class="empty">No approved capabilities.</p>';
+
+  const runs = await (await fetch('/api/runs?limit=40')).json();
+  $('runs').innerHTML = runs.length ? runs.map(r => {
+    const result = r.status === 'business_outcome' ? pill('business_outcome') + ' ' + esc(r.outcome || '')
+                 : r.status === 'failure' ? pill('failure') + ' ' + esc(r.failureCode || '')
+                 : r.status === 'success' ? pill('success')
+                 : pill(r.kind);
+    return `<tr class="click" onclick="showRun('${esc(r.runId)}')">
+      <td class="mono">${when(r.startedAt)}</td>
+      <td class="mono">${esc(r.capability || r.kind)}</td>
+      <td>${result}</td>
+      <td class="mono">${r.durationMs ? r.durationMs + ' ms' : '—'}</td>
+      <td class="mono">${r.degradedLocators ? '<span style="color:var(--warn)">' + r.degradedLocators + '</span>' : (r.degradedLocators === 0 ? '0' : '—')}</td>
+    </tr>`;
+  }).join('') : '<tr><td colspan="5" class="empty">No runs yet.</td></tr>';
+}
+
+async function showRun(runId) {
+  $('runTitle').textContent = runId;
+  $('detail').innerHTML = '<p class="empty">loading…</p>';
+  const run = await (await fetch('/api/runs/' + encodeURIComponent(runId))).json();
+  const r = run.result;
+
+  let html = '';
+  if (r) {
+    html += `<p>${pill(r.status)} <span class="mono muted">${r.durationMs} ms · ${r.tenantId || ''}</span></p>`;
+    if (r.outputs && Object.keys(r.outputs).length) html += `<pre>${esc(JSON.stringify(r.outputs, null, 2))}</pre>`;
+    if (r.status === 'business_outcome') html += `<p><b>${esc(r.outcome)}</b> — ${esc(r.outcomeDescription)}</p>`;
+    if (r.status === 'failure') html += `<p><b>${esc(r.error.code)}</b> at <code>${esc(r.error.stepId || '—')}</code><br><span class="muted">${esc(r.error.observed).slice(0,300)}</span></p>`;
+
+    if (r.steps?.length) {
+      html += '<table><thead><tr><th>Step</th><th>Status</th><th>Tier</th><th>ms</th></tr></thead><tbody>';
+      for (const s of r.steps) {
+        const res = s.resolution || {};
+        const tier = res.winningTier != null
+          ? `${res.winningTier} <span class="muted">${esc(res.winningKind || '')}</span>${res.degraded ? ' <span style="color:var(--warn)">↓</span>' : ''}`
+          : '—';
+        html += `<tr><td class="mono">${esc(s.stepId)}</td><td>${pill(s.status === 'ok' ? 'success' : s.status)}</td><td class="mono">${tier}</td><td class="mono">${s.elapsedMs}</td></tr>`;
+      }
+      html += '</tbody></table>';
+    }
+  }
+
+  if (run.screenshots?.length) {
+    html += `<h2 style="margin-top:1.2rem">Screenshots · masked at capture</h2>`;
+    html += run.screenshots.map(n =>
+      `<div style="margin:.6rem 0"><div class="mono muted" style="font-size:11px">${esc(n)}</div>
+       <img src="/api/runs/${encodeURIComponent(runId)}/screenshots/${encodeURIComponent(n)}"
+            style="max-width:100%;border:1px solid var(--rule);margin-top:.3rem" loading="lazy" alt="${esc(n)}"></div>`
+    ).join('');
+  }
+
+  const notable = (run.events || []).filter(e =>
+    ['business_outcome','recovery_attempt','escalation_raised','control_transfer','assisted_attempt','error'].includes(e.type)
+    || (e.type === 'note' && /drift|redact|probe|policy|dialog/i.test(e.message || '')));
+  if (notable.length) {
+    html += '<h2 style="margin-top:1.2rem">Notable events</h2><pre>' +
+      esc(notable.map(e => `[${String(e.seq).padStart(3,'0')}] ${e.type}  ${e.message || ''}`).join('\n')) + '</pre>';
+  }
+
+  $('detail').innerHTML = html || '<p class="empty">No structured result — this bundle is a log only.</p>';
+}
+
+load();
+setInterval(load, 15000);
+</script>
+</body>
+</html>

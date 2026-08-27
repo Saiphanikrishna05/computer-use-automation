@@ -221,3 +221,64 @@ describe('label/value grids are not tables', () => {
     expect(balance.columnHeader).toBe('Current Balance');
   });
 });
+
+/**
+ * Nested identifiers, which is what MERIDIAN CORE turned out to be full of.
+ *
+ * Row and label matching is containment on purpose — it lets one recording
+ * survive a tenant that says "Member No." where another says "Member ID". That
+ * tolerance is correct right up until identifiers nest inside each other, and
+ * on a share ledger they do: "100234-S0001" is a prefix of "100234-S0001-3",
+ * "-6", "-11" and twenty more.
+ *
+ * Without exact-first, asking for the balance of the first share matches
+ * twenty-six rows and returns whichever came back — a plausible number from
+ * the wrong account, reported confidently. The failure this pins is not a
+ * crash; it is a wrong answer that looks right.
+ */
+describe('identifiers that are prefixes of each other', () => {
+  const LEDGER = `<html><body>
+    <table border="1">
+      <tr><th>Share ID</th><th>Type</th><th>Balance</th></tr>
+      <tr><td>100234-S0001</td><td>Regular Shares</td><td>$1,500.00</td></tr>
+      <tr><td>100234-S0001-3</td><td>Regular Shares</td><td>$2,070.51</td></tr>
+      <tr><td>100234-S0001-11</td><td>Regular Shares</td><td>$45.00</td></tr>
+    </table>
+  </body></html>`;
+
+  let lp: Page;
+  let lsnap: RawSnapshot;
+
+  beforeAll(async () => {
+    lp = await browser.newPage();
+    await lp.setContent(LEDGER);
+    await lp.evaluate('globalThis.__name = globalThis.__name || function (f) { return f; }');
+    lsnap = await lp.evaluate(collectUiNodes);
+  }, 60_000);
+
+  afterAll(async () => { await lp?.close(); });
+
+  const lresolve = (candidate: Record<string, unknown>) =>
+    lp.evaluate(resolveCandidateInPage, { candidate } as never);
+
+  it('returns the exact row, not the twenty-six that contain it', async () => {
+    const hits = await lresolve({ kind: 'label', text: '100234-S0001', expect: 'cell', column: 'Balance' });
+    expect(hits).toHaveLength(1);
+    expect(lsnap.nodes[hits[0]!]!.text).toBe('$1,500.00');
+  });
+
+  it('still finds a longer identifier exactly', async () => {
+    const hits = await lresolve({ kind: 'label', text: '100234-S0001-3', expect: 'cell', column: 'Balance' });
+    expect(hits).toHaveLength(1);
+    expect(lsnap.nodes[hits[0]!]!.text).toBe('$2,070.51');
+  });
+
+  it('keeps containment where nothing matches exactly, so tenant wording still resolves', async () => {
+    // "S0001-11" matches no row header exactly, so the tolerant path applies
+    // and finds the one row containing it. Losing this would trade one bug for
+    // another.
+    const hits = await lresolve({ kind: 'label', text: 'S0001-11', expect: 'cell', column: 'Balance' });
+    expect(hits).toHaveLength(1);
+    expect(lsnap.nodes[hits[0]!]!.text).toBe('$45.00');
+  });
+});

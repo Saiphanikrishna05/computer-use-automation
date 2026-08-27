@@ -29,7 +29,14 @@ import {
   renderProbeSummary,
 } from '../discovery/probe.js';
 import { appendAudit } from '../artifact/audit-log.js';
-import { DEFAULT_TENANT, TENANT_RUNTIMES, headless, resolveCredentials } from '../config.js';
+import {
+  DEFAULT_TENANT,
+  TENANT_RUNTIMES,
+  credentialInputs,
+  headless,
+  resolveCredentials,
+  resolveSupervisorCredentials,
+} from '../config.js';
 
 export interface ProbeCommandOptions {
   capability: string;
@@ -43,6 +50,16 @@ export interface ProbeCommandOptions {
   dryRun?: boolean;
   /** Re-verify only outcomes whose evidence has aged out or is missing. */
   staleOnly?: boolean;
+  /**
+   * Which configured identity the *baseline* run signs on as.
+   *
+   * A supervisor-gated capability has to be probed as a supervisor, or every
+   * run stops at the entitlement check and nothing past it is ever reached.
+   * The outcome that fires for a teller is then provoked by a probe declaring
+   * `as: "operator"`, which is the right way round: the baseline is the
+   * identity the capability is *for*, and the probe is the departure from it.
+   */
+  as?: 'operator' | 'supervisor';
 }
 
 export async function runProbeCommand(opts: ProbeCommandOptions): Promise<number> {
@@ -55,7 +72,9 @@ export async function runProbeCommand(opts: ProbeCommandOptions): Promise<number
   }
 
   const runId = newRunId('probe');
-  const credentials = resolveCredentials(tenant.id);
+  const operator = resolveCredentials(tenant.id);
+  const supervisor = resolveSupervisorCredentials(tenant.id);
+  const credentials = opts.as === 'supervisor' && supervisor ? supervisor : operator;
   const redactor = new Redactor();
   redactor.addLiteral(credentials.operatorPassword);
 
@@ -85,6 +104,12 @@ export async function runProbeCommand(opts: ProbeCommandOptions): Promise<number
       artifact,
       newDriver,
       baselineInputs: baselineInputsFor(artifact, credentials, opts.inputs ?? {}),
+      // Only identities this deployment has actually provisioned. Probing
+      // chooses between credentials the store holds; it never composes one.
+      identities: {
+        operator: credentialInputs(operator),
+        ...(supervisor ? { supervisor: credentialInputs(supervisor) } : {}),
+      },
       bindings: { baseUrl: tenant.baseUrl },
       policy,
       logger,

@@ -190,6 +190,13 @@ function run(art: CapabilityArtifact, driver: SurfaceDriver, maxProbes?: number)
   });
 }
 
+/** An artifact whose one outcome is provoked by signing on as someone else. */
+function identityProbeArtifact(): CapabilityArtifact {
+  const a = artifact([{ code: 'SUPERVISOR_REQUIRED', text: 'No member record found' }]);
+  a.outcomes[0]!.probe = { as: 'operator', rationale: 'a teller is not entitled' } as never;
+  return a;
+}
+
 const stateOf = (art: CapabilityArtifact, code: string) =>
   art.outcomes.find((o) => o.code === code)?.evidence.state;
 
@@ -309,22 +316,23 @@ describe('probeOutcomes, catching a wrong declaration', () => {
 });
 
 describe('probeOutcomes, what it refuses to do', () => {
-  it('refuses to probe a capability that commits something irreversible', async () => {
-    const { driver, typed } = consoleSurface();
+  it('probes a capability that commits, because the ceiling is what stops the commit', async () => {
+    // This deliberately reverses an earlier rule. Refusing irreversible
+    // capabilities wholesale left every outcome on a funds transfer
+    // permanently unverified — and all of them are validations that fire at
+    // the review step, long before anything posts. What protects the money is
+    // the action ceiling in the driver, not this function declining to look.
+    const { driver } = consoleSurface();
     const result = await run(
       artifact(
-        [{ code: 'ACCOUNT_EXISTS', text: 'already has an account', probe: { parameter: 'memberId', value: '999999' } }],
+        [{ code: 'MEMBER_NOT_FOUND', text: 'No member record found', probe: { parameter: 'memberId', value: '999999' } }],
         { maxRisk: 'mutate_irreversible' },
       ),
       driver,
     );
 
-    expect(result.skippedEntirely).toBe(true);
-    expect(result.reports[0]!.state).toBe('skipped');
-    // The important assertion: nothing was driven at all. Refusing after
-    // half a form has been filled is not refusing.
-    expect(typed).toHaveLength(0);
-    expect(stateOf(result.artifact, 'ACCOUNT_EXISTS')).toBe('hypothesised');
+    expect(result.skippedEntirely).toBe(false);
+    expect(stateOf(result.artifact, 'MEMBER_NOT_FOUND')).toBe('observed');
   });
 
   it('refuses to vary an injected credential to provoke an outcome', async () => {
@@ -349,14 +357,6 @@ describe('probeOutcomes, what it refuses to do', () => {
     // exists so the command can tell the difference.
     const { driver } = consoleSurface();
 
-    const irreversible = await run(
-      artifact([{ code: 'X', text: 'x', probe: { parameter: 'memberId', value: '999999' } }], {
-        maxRisk: 'mutate_irreversible',
-      }),
-      driver,
-    );
-    expect(irreversible.learnedSomething).toBe(false);
-
     const nothingDeclared = await run(artifact([{ code: 'Y', text: 'y' }]), driver);
     expect(nothingDeclared.learnedSomething).toBe(false);
 
@@ -367,6 +367,65 @@ describe('probeOutcomes, what it refuses to do', () => {
       driver,
     );
     expect(real.learnedSomething).toBe(true);
+  });
+
+  it('signs on as another configured identity, because that is not guessing a secret', async () => {
+    // The rule this pins is a distinction an earlier version collapsed.
+    // Refusing to touch credentials is right about *passwords*: guessing one
+    // fails sign-on and locks real accounts out. Signing on as a different
+    // identity the credential store already holds does neither — authentication
+    // succeeds, and what is under test is what happens next.
+    //
+    // A probe may change who you are. It may never guess what you know.
+    const { driver, typed } = consoleSurface();
+    const result = await probeOutcomes({
+      artifact: identityProbeArtifact(),
+      newDriver: async () => driver,
+      baselineInputs: { memberId: '100001', operatorPassword: 'hunter2' },
+      // Only parameters this capability declares. An identity carrying one it
+      // does not would be rejected by the input contract before the surface is
+      // touched — correctly, and for the same reason a caller cannot invent an
+      // argument.
+      identities: { operator: { operatorPassword: 'hunter2' } },
+      bindings: { baseUrl: BASE },
+      policy: new PolicyEngine({ ...PROBE_POLICY, allowedOrigins: [BASE] }),
+      logger: logger(),
+    });
+    // No assertion on the outcome itself — the fake surface has no entitlement
+    // model. What matters is that it ran at all rather than being refused.
+    expect(result.reports[0]!.state).not.toBe('skipped');
+    expect(typed.length).toBeGreaterThan(0);
+
+    // The note a human reads later must say what was actually varied. The
+    // first version of this interpolated probe.parameter, which an identity
+    // probe does not have, and wrote `undefined="undefined"` into the
+    // evidence — a note that says nothing while looking like it says
+    // something, which is worse than leaving it blank.
+    const note = result.reports[0]!.reason ?? '';
+    expect(note).not.toMatch(/undefined/);
+    expect(note).toMatch(/operator identity/);
+  });
+
+  it('will not sign on as an identity the deployment has not configured', async () => {
+    // Probing chooses between credentials a deployment holds. It never
+    // composes one, so an unprovisioned identity is a refusal rather than an
+    // improvisation.
+    const { driver, typed } = consoleSurface();
+    const outcome = artifact([{ code: 'SUPERVISOR_REQUIRED', text: 'x' }]);
+    outcome.outcomes[0]!.probe = { as: 'supervisor', rationale: '' } as never;
+
+    const result = await probeOutcomes({
+      artifact: outcome,
+      newDriver: async () => driver,
+      baselineInputs: { memberId: '100001', operatorPassword: 'hunter2' },
+      identities: { operator: { operatorPassword: 'hunter2' } },
+      bindings: { baseUrl: BASE },
+      policy: new PolicyEngine({ ...PROBE_POLICY, allowedOrigins: [BASE] }),
+      logger: logger(),
+    });
+    expect(result.reports[0]!.state).toBe('skipped');
+    expect(result.reports[0]!.reason).toMatch(/has not configured/);
+    expect(typed).toHaveLength(0);
   });
 
   it('leaves an outcome with no declared probe as an unverified hypothesis', async () => {

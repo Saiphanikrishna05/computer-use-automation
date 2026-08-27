@@ -260,6 +260,52 @@ describe('ReplayEngine, precedence', () => {
   });
 });
 
+/**
+ * A recovery that fires and does not work.
+ *
+ * `tryRecovery` used to answer "did a rule run?", and the declared-failure check
+ * treats a truthy answer as reason not to call the condition fatal. So a
+ * recovery that fired and failed suppressed the failure it had failed to fix: a
+ * host stuck in a maintenance window reported TARGET_NOT_FOUND several steps
+ * later, pointing at a missing button rather than at the host being closed.
+ *
+ * Attempted and succeeded are different facts, and only one of them is grounds
+ * for carrying on.
+ */
+describe('ReplayEngine, recovery that does not fix anything', () => {
+  const stuck = () =>
+    artifact({
+      steps: [{ id: 'a', intent: 'a', action: { kind: 'click', target: target('A') } }],
+      failures: [{ code: 'HOST_UNAVAILABLE', description: 'maintenance window', when: textPresent('MAINTENANCE') }],
+      recovery: [{
+        code: 'WAIT_IT_OUT',
+        description: 'wait for the window to clear',
+        when: textPresent('MAINTENANCE'),
+        then: [{ kind: 'wait', ms: 1 }],
+        maxAttempts: 2,
+      }],
+    });
+
+  it('reports the declared failure when the condition survives recovery', async () => {
+    // The surface never clears: every screen still says MAINTENANCE.
+    const { driver } = scriptedSurface(['MAINTENANCE', 'MAINTENANCE', 'MAINTENANCE', 'MAINTENANCE']);
+    const result = await engineFor(stuck(), driver).run();
+
+    expect(result.status).toBe('failure');
+    if (result.status !== 'failure') return;
+    expect(result.error.code).toBe('HOST_UNAVAILABLE');
+  });
+
+  it('records the attempt even though it failed, rather than hiding it', async () => {
+    const { driver } = scriptedSurface(['MAINTENANCE', 'MAINTENANCE', 'MAINTENANCE', 'MAINTENANCE']);
+    const result = await engineFor(stuck(), driver).run();
+    const attempts = result.steps.flatMap((s) => s.recoveries);
+    expect(attempts.length).toBeGreaterThan(0);
+    expect(attempts.every((a) => a.succeeded === false)).toBe(true);
+    expect(attempts[0]!.note).toMatch(/still holds/);
+  });
+});
+
 describe('ReplayEngine, a modal blocking the page', () => {
   /**
    * A surface behaving the way a real browser does with an unanswered dialog:

@@ -550,6 +550,30 @@ export function resolveCandidateInPage(request: ResolveRequest): number[] {
     }
   });
 
+  // An exact hit beats a containing one, when there is an exact hit at all.
+  //
+  // Label and row matching is containment on purpose: it lets one recording
+  // survive a tenant that says "Member No." where another says "Member ID".
+  // That tolerance is fine until identifiers nest — and on this target they
+  // do. Share "100234-S0001" is a prefix of "100234-S0001-3", "-6", "-11" and
+  // twenty others, so asking for the first row *contains* twenty-six of them,
+  // and the reading returned belongs to whichever row happened to come back.
+  // Silently, and with a plausible number.
+  //
+  // So: if any candidate matches the requested text exactly, the containing
+  // ones were never what was meant. Where nothing matches exactly, containment
+  // still applies and the tolerance is untouched.
+  if (matches.length > 1 && typeof c.text === 'string' && c.text) {
+    const exact = matches.filter(
+      (node) =>
+        textMatches(node.rowHeader, c.text, true) ||
+        textMatches(node.nearestLabel, c.text, true) ||
+        textMatches(node.name, c.text, true) ||
+        textMatches(node.text, c.text, true),
+    );
+    if (exact.length > 0) matches = exact;
+  }
+
   // Anchors never widen a match set, only narrow it, and only when they
   // actually help. Narrowing to zero would turn a usable ambiguous result into
   // a failure, so a fruitless anchor is discarded rather than applied.

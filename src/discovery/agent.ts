@@ -44,7 +44,7 @@ export interface DiscoveryOptions {
   maxTurns: number;
   apiKey: string;
   /** Told to the model so it can sign on; never persisted into the artifact. */
-  credentials: { operatorId: string; operatorPassword: string };
+  credentials: { operatorId: string; operatorPassword: string; branch?: string };
 }
 
 /**
@@ -93,6 +93,9 @@ export async function runDiscovery(options: DiscoveryOptions): Promise<Discovery
         `The application is already open at ${options.entryUrl}.`,
         `If the application asks you to sign on, use operator id "${options.credentials.operatorId}"`,
         `with password "${options.credentials.operatorPassword}".`,
+        ...(options.credentials.branch
+          ? [`If it also asks for a branch or terminal, use "${options.credentials.branch}".`]
+          : []),
         '',
         'Start by calling observe to see the current screen.',
       ].join('\n'),

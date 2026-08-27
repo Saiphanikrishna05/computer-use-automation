@@ -1,0 +1,375 @@
+{
+  "capabilityId": "mc_funds_transfer",
+  "capabilityVersion": 1,
+  "tenantId": "meridian-core",
+  "startedAt": "2026-08-27T02:52:59.801Z",
+  "finishedAt": "2026-08-27T02:53:03.062Z",
+  "durationMs": 3261,
+  "steps": [
+    {
+      "stepId": "type_1",
+      "intent": "Enter the operator ID in the Operator Sign On panel",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 157,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"Operator ID:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 14
+      }
+    },
+    {
+      "stepId": "type_2",
+      "intent": "Enter the operator [redacted:literal] in the Operator Sign On panel",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 168,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"Password:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 7
+      }
+    },
+    {
+      "stepId": "select_3",
+      "intent": "Select branch 001 (Main Office) for the sign-on",
+      "action": "select",
+      "status": "ok",
+      "elapsedMs": 11,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "combobox labelled \"Branch:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 6
+      }
+    },
+    {
+      "stepId": "click_4",
+      "intent": "Submit the operator sign-on form",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 307,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "button \"Sign On\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "role_name",
+            "tier": 1,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 1,
+        "winningKind": "role_name",
+        "degraded": false,
+        "elapsedMs": 6
+      }
+    },
+    {
+      "stepId": "click_5",
+      "intent": "Open Member Inquiry / Selection to search for the member",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 339,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "link \"Member Inquiry / Selection\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "role_name",
+            "tier": 1,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 1,
+        "winningKind": "role_name",
+        "degraded": false,
+        "elapsedMs": 15
+      }
+    },
+    {
+      "stepId": "select_6",
+      "intent": "Set the Member Inquiry search type to Member Number",
+      "action": "select",
+      "status": "ok",
+      "elapsedMs": 33,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "combobox labelled \"Search by:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 10
+      }
+    },
+    {
+      "stepId": "type_7",
+      "intent": "Type the member number into the search Value field",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 100,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"Value:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 2,
+            "chosen": false,
+            "note": "ambiguous: multiple matches and no ordinal recorded"
+          },
+          {
+            "kind": "structural",
+            "tier": 5,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 5,
+        "winningKind": "structural",
+        "degraded": true,
+        "elapsedMs": 6
+      }
+    },
+    {
+      "stepId": "click_8",
+      "intent": "Run the member search",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 367,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "button \"Search\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "role_name",
+            "tier": 1,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 1,
+        "winningKind": "role_name",
+        "degraded": false,
+        "elapsedMs": 5
+      }
+    },
+    {
+      "stepId": "click_9",
+      "intent": "Open the member record for 102777 from the search results",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 320,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "link \"Select\" in the Member No. panel",
+        "attempts": [
+          {
+            "kind": "role_name",
+            "tier": 1,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 1,
+        "winningKind": "role_name",
+        "degraded": false,
+        "elapsedMs": 11
+      }
+    },
+    {
+      "stepId": "click_10",
+      "intent": "Open the Funds Transfer form for this member",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 304,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "link \"Funds Transfer\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "role_name",
+            "tier": 1,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 1,
+        "winningKind": "role_name",
+        "degraded": false,
+        "elapsedMs": 17
+      }
+    },
+    {
+      "stepId": "select_11",
+      "intent": "Set the From Share to the member's open money market share",
+      "action": "select",
+      "status": "ok",
+      "elapsedMs": 35,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "combobox labelled \"From Share:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 12
+      }
+    },
+    {
+      "stepId": "select_12",
+      "intent": "Set the To Share to the member's regular share",
+      "action": "select",
+      "status": "ok",
+      "elapsedMs": 11,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "combobox labelled \"To Share:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 8
+      }
+    },
+    {
+      "stepId": "type_13",
+      "intent": "Enter the transfer amount",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 85,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"Amount:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 7
+      }
+    },
+    {
+      "stepId": "type_14",
+      "intent": "Enter the transfer memo",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 130,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"Memo:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 7
+      }
+    },
+    {
+      "stepId": "click_15",
+      "intent": "Click Continue to reach the transfer confirmation screen (without posting)",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 307,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "button \"Continue\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "role_name",
+            "tier": 1,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 1,
+        "winningKind": "role_name",
+        "degraded": false,
+        "elapsedMs": 8
+      }
+    }
+  ],
+  "degradedResolutions": 1,
+  "evidence": {
+    "runId": "replay-20260827T025259-06",
+    "bundlePath": "runs/replay-20260827T025259-06",
+    "screenshots": [
+      "runs/replay-20260827T025259-06/screenshots/053-outcome-insufficient-funds.png"
+    ],
+    "domSnapshots": []
+  },
+  "status": "business_outcome",
+  "outcome": "INSUFFICIENT_FUNDS",
+  "outcomeDescription": "The amount exceeds the available balance of the from share, so the form rejects it instead of showing the confirmation screen.",
+  "data": {}
+}
