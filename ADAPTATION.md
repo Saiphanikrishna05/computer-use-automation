@@ -234,6 +234,18 @@ member number is distinctive, and would not on a value like `001`.
 
 ---
 
+## The recording
+
+`npm run record` drives the whole demo with Playwright and writes
+`docs/demo-recording/meridian-core-demo.webm` — about seventy seconds: the
+catalog, a balance that succeeds, an overdraw that comes back as a business
+outcome, a transfer that stops at the irreversible step and says so, and the
+evidence behind one of those runs.
+
+Driven rather than screen-captured on purpose. Change the system, re-run it, and
+the backup matches what the system now does; a capture taken once drifts from
+the thing it stands in for, and drifts silently.
+
 ## Running it
 
 ```bash
