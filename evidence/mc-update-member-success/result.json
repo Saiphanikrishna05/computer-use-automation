@@ -1,0 +1,327 @@
+{
+  "capabilityId": "mc_update_member",
+  "capabilityVersion": 1,
+  "tenantId": "meridian-core",
+  "startedAt": "2026-08-27T02:46:14.828Z",
+  "finishedAt": "2026-08-27T02:46:18.465Z",
+  "durationMs": 3637,
+  "steps": [
+    {
+      "stepId": "type_1",
+      "intent": "Enter the operator ID in the Operator Sign On panel",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 186,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"Operator ID:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 23
+      }
+    },
+    {
+      "stepId": "type_2",
+      "intent": "Enter the operator [redacted:literal] in the Operator Sign On panel",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 173,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"Password:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 8
+      }
+    },
+    {
+      "stepId": "click_3",
+      "intent": "Submit the sign-on form",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 314,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "button \"Sign On\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "role_name",
+            "tier": 1,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 1,
+        "winningKind": "role_name",
+        "degraded": false,
+        "elapsedMs": 6
+      }
+    },
+    {
+      "stepId": "click_4",
+      "intent": "Open Member Inquiry / Selection to search for the member",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 292,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "link \"Member Inquiry / Selection\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "role_name",
+            "tier": 1,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 1,
+        "winningKind": "role_name",
+        "degraded": false,
+        "elapsedMs": 12
+      }
+    },
+    {
+      "stepId": "select_5",
+      "intent": "Set the search mode to Member Number",
+      "action": "select",
+      "status": "ok",
+      "elapsedMs": 33,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "combobox labelled \"Search by:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 8
+      }
+    },
+    {
+      "stepId": "type_6",
+      "intent": "Type the member number to search for into the Member Inquiry value field",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 99,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"Value:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 2,
+            "chosen": false,
+            "note": "ambiguous: multiple matches and no ordinal recorded"
+          },
+          {
+            "kind": "structural",
+            "tier": 5,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 5,
+        "winningKind": "structural",
+        "degraded": true,
+        "elapsedMs": 7
+      }
+    },
+    {
+      "stepId": "click_7",
+      "intent": "Run the member search",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 278,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "button \"Search\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "role_name",
+            "tier": 1,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 1,
+        "winningKind": "role_name",
+        "degraded": false,
+        "elapsedMs": 6
+      }
+    },
+    {
+      "stepId": "click_8",
+      "intent": "Open the member record for the matching search result row",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 290,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "link \"Select\" in the Member No. panel",
+        "attempts": [
+          {
+            "kind": "role_name",
+            "tier": 1,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 1,
+        "winningKind": "role_name",
+        "degraded": false,
+        "elapsedMs": 11
+      }
+    },
+    {
+      "stepId": "click_9",
+      "intent": "Open the Update Member Information form for this member",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 311,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "link \"Update Member Information\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "role_name",
+            "tier": 1,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 1,
+        "winningKind": "role_name",
+        "degraded": false,
+        "elapsedMs": 18
+      }
+    },
+    {
+      "stepId": "type_10",
+      "intent": "Set the member's e-mail address on the Update Member Information form",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 290,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"E-mail:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 12
+      }
+    },
+    {
+      "stepId": "type_11",
+      "intent": "Set the member's phone number on the Update Member Information form",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 139,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"Phone:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 10
+      }
+    },
+    {
+      "stepId": "type_12",
+      "intent": "Set the member's mailing address on the Update Member Information form",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 401,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"Mailing Address:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 9
+      }
+    },
+    {
+      "stepId": "click_13",
+      "intent": "Save the updated member contact information",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 285,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "button \"Save Changes\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "role_name",
+            "tier": 1,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 1,
+        "winningKind": "role_name",
+        "degraded": false,
+        "elapsedMs": 8
+      }
+    }
+  ],
+  "degradedResolutions": 1,
+  "evidence": {
+    "runId": "replay-20260827T024614-01",
+    "bundlePath": "runs/replay-20260827T024614-01",
+    "screenshots": [
+      "runs/replay-20260827T024614-01/screenshots/049-replay-success.png"
+    ],
+    "domSnapshots": []
+  },
+  "status": "success",
+  "outputs": {}
+}

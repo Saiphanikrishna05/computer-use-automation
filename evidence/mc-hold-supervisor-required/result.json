@@ -1,0 +1,329 @@
+{
+  "capabilityId": "mc_place_hold",
+  "capabilityVersion": 1,
+  "tenantId": "meridian-core",
+  "startedAt": "2026-08-27T02:38:46.639Z",
+  "finishedAt": "2026-08-27T02:38:49.577Z",
+  "durationMs": 2938,
+  "steps": [
+    {
+      "stepId": "type_1",
+      "intent": "Enter the operator ID in the Operator Sign On panel",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 169,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"Operator ID:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 19
+      }
+    },
+    {
+      "stepId": "type_2",
+      "intent": "Enter the operator [redacted:literal] in the Operator Sign On panel",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 169,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"Password:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 7
+      }
+    },
+    {
+      "stepId": "click_3",
+      "intent": "Submit the operator sign-on form",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 326,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "button \"Sign On\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "role_name",
+            "tier": 1,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 1,
+        "winningKind": "role_name",
+        "degraded": false,
+        "elapsedMs": 6
+      }
+    },
+    {
+      "stepId": "click_4",
+      "intent": "Open Member Inquiry / Selection to search for the member",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 296,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "link \"Member Inquiry / Selection\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "role_name",
+            "tier": 1,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 1,
+        "winningKind": "role_name",
+        "degraded": false,
+        "elapsedMs": 16
+      }
+    },
+    {
+      "stepId": "select_5",
+      "intent": "Set the search type to Member Number",
+      "action": "select",
+      "status": "ok",
+      "elapsedMs": 37,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "combobox labelled \"Search by:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 12
+      }
+    },
+    {
+      "stepId": "type_6",
+      "intent": "Enter the member number to search for",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 102,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"Value:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 2,
+            "chosen": false,
+            "note": "ambiguous: multiple matches and no ordinal recorded"
+          },
+          {
+            "kind": "structural",
+            "tier": 5,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 5,
+        "winningKind": "structural",
+        "degraded": true,
+        "elapsedMs": 8
+      }
+    },
+    {
+      "stepId": "click_7",
+      "intent": "Run the member search",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 276,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "button \"Search\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "role_name",
+            "tier": 1,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 1,
+        "winningKind": "role_name",
+        "degraded": false,
+        "elapsedMs": 6
+      }
+    },
+    {
+      "stepId": "click_8",
+      "intent": "Open the member record for member 102777 from the search results",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 310,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "link \"Select\" in the Member No. panel",
+        "attempts": [
+          {
+            "kind": "role_name",
+            "tier": 1,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 1,
+        "winningKind": "role_name",
+        "degraded": false,
+        "elapsedMs": 13
+      }
+    },
+    {
+      "stepId": "click_9",
+      "intent": "Open the Place Account Hold form for this member",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 325,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "link \"Place Account Hold\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "role_name",
+            "tier": 1,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 1,
+        "winningKind": "role_name",
+        "degraded": false,
+        "elapsedMs": 19
+      }
+    },
+    {
+      "stepId": "select_10",
+      "intent": "Select the share 102777-MMKT-4 on the hold form",
+      "action": "select",
+      "status": "ok",
+      "elapsedMs": 36,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "combobox labelled \"Share:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 13
+      }
+    },
+    {
+      "stepId": "select_11",
+      "intent": "Select the FRAUD reason code on the hold form",
+      "action": "select",
+      "status": "ok",
+      "elapsedMs": 11,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "combobox labelled \"Reason Code:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 8
+      }
+    },
+    {
+      "stepId": "type_12",
+      "intent": "Enter the notes text on the hold form",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 70,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"Notes:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 6
+      }
+    },
+    {
+      "stepId": "click_13",
+      "intent": "Click Continue to reach the confirmation screen (without applying the hold)",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 282,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "button \"Continue\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "role_name",
+            "tier": 1,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 1,
+        "winningKind": "role_name",
+        "degraded": false,
+        "elapsedMs": 7
+      }
+    }
+  ],
+  "degradedResolutions": 1,
+  "evidence": {
+    "runId": "replay-20260827T023846-01",
+    "bundlePath": "runs/replay-20260827T023846-01",
+    "screenshots": [
+      "runs/replay-20260827T023846-01/screenshots/046-outcome-supervisor-required.png"
+    ],
+    "domSnapshots": []
+  },
+  "status": "business_outcome",
+  "outcome": "SUPERVISOR_REQUIRED",
+  "outcomeDescription": "The signed-on operator is not entitled to place a hold. A supervisor must sign on to complete it.",
+  "data": {}
+}

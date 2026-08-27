@@ -1,0 +1,128 @@
+{
+  "capabilityId": "mc_member_balance",
+  "capabilityVersion": 1,
+  "tenantId": "meridian-core",
+  "startedAt": "2026-08-27T02:37:19.711Z",
+  "finishedAt": "2026-08-27T02:37:23.660Z",
+  "durationMs": 3949,
+  "steps": [
+    {
+      "stepId": "type_1",
+      "intent": "Enter the operator ID in the Operator Sign On panel",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 193,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"Operator ID:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 30
+      }
+    },
+    {
+      "stepId": "type_2",
+      "intent": "Enter the operator [redacted:literal] in the Operator Sign On panel",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 171,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"Password:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 7
+      }
+    },
+    {
+      "stepId": "select_3",
+      "intent": "Select branch 001 (Main Office) for sign on",
+      "action": "select",
+      "status": "ok",
+      "elapsedMs": 12,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "combobox labelled \"Branch:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 7
+      }
+    },
+    {
+      "stepId": "click_4",
+      "intent": "Submit the operator sign on form",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 317,
+      "recoveries": [
+        {
+          "code": "WAIT_OUT_MAINTENANCE",
+          "attempt": 1,
+          "succeeded": false,
+          "note": "condition still holds after recovery"
+        }
+      ],
+      "resolution": {
+        "targetDescription": "button \"Sign On\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "role_name",
+            "tier": 1,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 1,
+        "winningKind": "role_name",
+        "degraded": false,
+        "elapsedMs": 7
+      }
+    }
+  ],
+  "degradedResolutions": 0,
+  "evidence": {
+    "runId": "replay-20260827T023719-01",
+    "bundlePath": "runs/replay-20260827T023719-01",
+    "screenshots": [
+      "runs/replay-20260827T023719-01/screenshots/017-declared-failure-host-unavailable.png"
+    ],
+    "domSnapshots": [
+      "runs/replay-20260827T023719-01/dom/018-declared-failure-host-unavailable.html"
+    ]
+  },
+  "status": "failure",
+  "error": {
+    "code": "HOST_UNAVAILABLE",
+    "stepId": "click_5",
+    "expected": "to perform: Open the Member Inquiry / Selection screen from the Main Menu",
+    "observed": "The host is in a scheduled maintenance window. Declared as a failure as well as a recovery so that when waiting does not clear it, the run reports the reason rather than the symptom. (page contains \"SCHEDULED MAINTENANCE IN PROGRESS\")",
+    "detail": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ Main Menu · Member Inquiry · System Settings · Sign Off SCHEDULED MAINTENANCE IN PROGRESS The host is temporarily unavailable while nightly batch posting completes. This window normally clears within a few moments. Continue OPR TELLER1 | BR MAIN-001 | [redacted:dob] 02:37:23 | SID C850ED3E F3=Sign Off F5=Main Menu F7=Member I"
+  }
+}

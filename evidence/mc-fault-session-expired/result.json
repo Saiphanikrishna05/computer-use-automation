@@ -1,0 +1,121 @@
+{
+  "capabilityId": "mc_member_balance",
+  "capabilityVersion": 1,
+  "tenantId": "meridian-core",
+  "startedAt": "2026-08-27T02:34:45.263Z",
+  "finishedAt": "2026-08-27T02:34:46.390Z",
+  "durationMs": 1127,
+  "steps": [
+    {
+      "stepId": "type_1",
+      "intent": "Enter the operator ID in the Operator Sign On panel",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 168,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"Operator ID:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 21
+      }
+    },
+    {
+      "stepId": "type_2",
+      "intent": "Enter the operator [redacted:literal] in the Operator Sign On panel",
+      "action": "type",
+      "status": "ok",
+      "elapsedMs": 174,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "textbox labelled \"Password:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 7
+      }
+    },
+    {
+      "stepId": "select_3",
+      "intent": "Select branch 001 (Main Office) for sign on",
+      "action": "select",
+      "status": "ok",
+      "elapsedMs": 10,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "combobox labelled \"Branch:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "label",
+            "tier": 2,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 2,
+        "winningKind": "label",
+        "degraded": false,
+        "elapsedMs": 6
+      }
+    },
+    {
+      "stepId": "click_4",
+      "intent": "Submit the operator sign on form",
+      "action": "click",
+      "status": "ok",
+      "elapsedMs": 320,
+      "recoveries": [],
+      "resolution": {
+        "targetDescription": "button \"Sign On\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+        "attempts": [
+          {
+            "kind": "role_name",
+            "tier": 1,
+            "matchCount": 1,
+            "chosen": true
+          }
+        ],
+        "winningTier": 1,
+        "winningKind": "role_name",
+        "degraded": false,
+        "elapsedMs": 7
+      }
+    }
+  ],
+  "degradedResolutions": 0,
+  "evidence": {
+    "runId": "replay-20260827T023445-01",
+    "bundlePath": "runs/replay-20260827T023445-01",
+    "screenshots": [
+      "runs/replay-20260827T023445-01/screenshots/016-declared-failure-session-expired.png"
+    ],
+    "domSnapshots": [
+      "runs/replay-20260827T023445-01/dom/017-declared-failure-session-expired.html"
+    ]
+  },
+  "status": "failure",
+  "error": {
+    "code": "SESSION_EXPIRED",
+    "stepId": "click_5",
+    "expected": "to perform: Open the Member Inquiry / Selection screen from the Main Menu",
+    "observed": "The session ended mid-flow. The recorded steps begin at sign-on, so resuming is not a matter of retrying one step, and re-running the capability is the honest remedy. (page contains \"YOUR SESSION HAS TIMED OUT\")",
+    "detail": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ YOUR SESSION HAS TIMED OUT For security, your session ended due to inactivity. Return to Sign On NOT SIGNED ON | [redacted:dob] 02:34:46 F3=Sign Off F5=Main Menu F7=Member Inquiry F12=Cancel"
+  }
+}
