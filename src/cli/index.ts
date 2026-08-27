@@ -90,6 +90,7 @@ program
   .option('--max-probes <n>', 'ceiling on probe runs', (v) => Number(v))
   .option('--dry-run', 'report findings without writing them back to the artifact')
   .option('--stale-only', 'only re-verify outcomes whose evidence has aged out or is missing')
+  .option('--as <identity>', 'identity the baseline run signs on as: operator | supervisor')
   .action(async (capability: string, opts) => {
     const { runProbeCommand } = await import('./probe-command.js');
     process.exit(
@@ -102,6 +103,7 @@ program
         maxProbes: opts.maxProbes,
         dryRun: opts.dryRun,
         staleOnly: opts.staleOnly,
+        as: opts.as === 'supervisor' ? 'supervisor' : undefined,
       }),
     );
   });

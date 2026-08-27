@@ -352,11 +352,27 @@ export type Step = z.infer<typeof StepSchema>;
  * this system cannot honestly claim to have observed it, and says so.
  */
 export const OutcomeProbeSchema = z.object({
-  /** Name of a declared, non-injected input. */
-  parameter: z.string(),
+  /** Name of a declared, non-injected input. Omitted when probing `as`. */
+  parameter: z.string().optional(),
   /** Value to supply instead of the one discovery used. */
-  value: z.string(),
-  /** Why this value should provoke the outcome, in the declarer's own words. */
+  value: z.string().optional(),
+  /**
+   * Sign on as a different configured identity instead of changing an input.
+   *
+   * Some outcomes turn on *who* is asking rather than on what they asked for.
+   * A teller reaching a supervisor-only function is the obvious one: nothing
+   * about the request is wrong, the operator simply is not entitled.
+   *
+   * Kept separate from `parameter` because the hazard people mean when they
+   * say "don't touch credentials" is guessing a *secret* — that fails sign-on
+   * and locks real accounts out. Signing on as a different identity the
+   * credential store already holds does neither: authentication succeeds, and
+   * the outcome under test is what happens next.
+   *
+   * So a probe may change who you are. It may never guess what you know.
+   */
+  as: z.enum(['operator', 'supervisor']).optional(),
+  /** Why this should provoke the outcome, in the declarer's own words. */
   rationale: z.string().default(''),
 });
 export type OutcomeProbe = z.infer<typeof OutcomeProbeSchema>;

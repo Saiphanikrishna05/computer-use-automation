@@ -66,6 +66,14 @@ export interface ProbeOptions {
   newDriver: () => Promise<SurfaceDriver>;
   /** The inputs discovery itself used, including injected credentials. */
   baselineInputs: Record<string, unknown>;
+  /**
+   * Other configured identities a probe may sign on as.
+   *
+   * Supplied by the caller from the credential store rather than assembled
+   * here, so probing never composes a credential of its own — it can only
+   * choose between ones a deployment has already provisioned.
+   */
+  identities?: Partial<Record<'operator' | 'supervisor', Record<string, string>>>;
   bindings: Record<string, string>;
   policy: PolicyEngine;
   logger: RunLogger;
@@ -175,6 +183,38 @@ export async function probeOutcomes(options: ProbeOptions): Promise<ProbeResult>
       continue;
     }
 
+    // An identity probe names no parameter, so the parameter checks below do
+    // not apply to it. What it needs instead is that the identity it asks for
+    // has actually been provisioned — probing chooses between credentials a
+    // deployment holds, and never invents one.
+    if (outcome.probe.as) {
+      const identity = options.identities?.[outcome.probe.as];
+      if (!identity || Object.keys(identity).length === 0) {
+        const reason =
+          `Probe asks to sign on as "${outcome.probe.as}", which this deployment has not configured. ` +
+          'Nothing was run.';
+        reports.push({ code: outcome.code, state: 'skipped', reason, probe: probeOf(outcome) });
+        warnings.push(`${outcome.code}: ${reason}`);
+        continue;
+      }
+      if (spent >= budget) {
+        const reason = `Probe budget of ${budget} run(s) for this discovery was already spent. Remains a hypothesis.`;
+        reports.push({ code: outcome.code, state: 'skipped', reason, probe: probeOf(outcome) });
+        warnings.push(`${outcome.code}: ${reason}`);
+        continue;
+      }
+      spent += 1;
+      const report = await runOneProbe(options, outcome, evidence);
+      reports.push(report);
+      if (report.state === 'refuted') {
+        warnings.push(
+          `${outcome.code} was probed and did not fire: ${report.reason} Confirm the real on-screen wording ` +
+            'before approving.',
+        );
+      }
+      continue;
+    }
+
     const inputSpec = artifact.inputs.find((i) => i.name === outcome.probe!.parameter);
     if (!inputSpec) {
       const reason =
@@ -185,10 +225,12 @@ export async function probeOutcomes(options: ProbeOptions): Promise<ProbeResult>
       continue;
     }
 
-    // An injected parameter is a credential the runtime supplies. Varying one
-    // is not probing a business outcome, it is an authentication test against
-    // whatever the operator account happens to be, and repeated failures lock
-    // real accounts out. Business outcomes are provoked with business data.
+    // An injected parameter is a credential the runtime supplies, and guessing
+    // at one is an authentication test rather than a business one: sign-on
+    // fails, and repeated failures lock real accounts out. Note the shape of
+    // that hazard — it is guessing a *secret*. Signing on as a different
+    // identity the credential store already holds is a different act, and
+    // `probe.as` is how an outcome asks for it.
     if (inputSpec.injected) {
       const reason =
         `Probe would vary the injected credential "${inputSpec.name}". Credentials are supplied by the ` +
@@ -265,7 +307,7 @@ async function runOneProbe(
   try {
     result = await new ReplayEngine({
       artifact,
-      inputs: { ...options.baselineInputs, [probe.parameter]: probe.value },
+      inputs: inputsForProbe(options.baselineInputs, probe, options.identities),
       driver,
       policy,
       logger,
@@ -447,7 +489,23 @@ export function renderProbeSummary(probed: ProbeResult): string {
 }
 
 function probeOf(outcome: BusinessOutcome): ProbeReport['probe'] {
-  return outcome.probe ? { parameter: outcome.probe.parameter, value: outcome.probe.value } : undefined;
+  const p = outcome.probe;
+  if (!p) return undefined;
+  if (p.as) return { parameter: 'signed on as', value: p.as };
+  return p.parameter && p.value !== undefined ? { parameter: p.parameter, value: p.value } : undefined;
+}
+
+/**
+ * The inputs one probe implies: either one business value changed, or a
+ * different configured identity signed on as.
+ */
+function inputsForProbe(
+  baseline: Record<string, unknown>,
+  probe: NonNullable<BusinessOutcome['probe']>,
+  identities: ProbeOptions['identities'],
+): Record<string, unknown> {
+  if (probe.as) return { ...baseline, ...(identities?.[probe.as] ?? {}) };
+  return probe.parameter ? { ...baseline, [probe.parameter]: probe.value } : { ...baseline };
 }
 
 function describeResult(result: ReplayResult): string {

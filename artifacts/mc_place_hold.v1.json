@@ -91,7 +91,7 @@
       "sensitivity": "financial",
       "extract": {
         "target": {
-          "description": "cell \"{{shareId}} - Money Market\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122 panel",
+          "description": "cell \"{{shareId}} - Money Market\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
           "framePath": [],
           "candidates": [
             {
@@ -114,7 +114,7 @@
           ],
           "anchor": {
             "containerRole": "panel",
-            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™",
             "nearestLabel": "Share:"
           },
           "ordinal": 0,
@@ -149,7 +149,7 @@
       "action": {
         "kind": "type",
         "target": {
-          "description": "textbox labelled \"Operator ID:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122 panel",
+          "description": "textbox labelled \"Operator ID:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
           "framePath": [],
           "candidates": [
             {
@@ -171,7 +171,7 @@
           ],
           "anchor": {
             "containerRole": "panel",
-            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122"
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
           },
           "evidence": {
             "role": "textbox",
@@ -202,7 +202,7 @@
       "action": {
         "kind": "type",
         "target": {
-          "description": "textbox labelled \"Password:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122 panel",
+          "description": "textbox labelled \"Password:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
           "framePath": [],
           "candidates": [
             {
@@ -224,7 +224,7 @@
           ],
           "anchor": {
             "containerRole": "panel",
-            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122"
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
           },
           "ordinal": 1,
           "evidence": {
@@ -256,7 +256,7 @@
       "action": {
         "kind": "click",
         "target": {
-          "description": "button \"Sign On\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122 panel",
+          "description": "button \"Sign On\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
           "framePath": [],
           "candidates": [
             {
@@ -273,7 +273,7 @@
           ],
           "anchor": {
             "containerRole": "panel",
-            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122"
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
           },
           "evidence": {
             "role": "button",
@@ -302,7 +302,7 @@
       "action": {
         "kind": "click",
         "target": {
-          "description": "link \"Member Inquiry / Selection\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122 panel",
+          "description": "link \"Member Inquiry / Selection\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
           "framePath": [],
           "candidates": [
             {
@@ -325,7 +325,7 @@
           ],
           "anchor": {
             "containerRole": "panel",
-            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™",
             "nearestLabel": "1."
           },
           "evidence": {
@@ -356,7 +356,7 @@
       "action": {
         "kind": "select",
         "target": {
-          "description": "combobox labelled \"Search by:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122 panel",
+          "description": "combobox labelled \"Search by:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
           "framePath": [],
           "candidates": [
             {
@@ -378,7 +378,7 @@
           ],
           "anchor": {
             "containerRole": "panel",
-            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122"
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
           },
           "evidence": {
             "role": "combobox",
@@ -408,7 +408,7 @@
       "action": {
         "kind": "type",
         "target": {
-          "description": "textbox labelled \"Value:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122 panel",
+          "description": "textbox labelled \"Value:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
           "framePath": [],
           "candidates": [
             {
@@ -430,7 +430,7 @@
           ],
           "anchor": {
             "containerRole": "panel",
-            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122"
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
           },
           "evidence": {
             "role": "textbox",
@@ -461,7 +461,7 @@
       "action": {
         "kind": "click",
         "target": {
-          "description": "button \"Search\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122 panel",
+          "description": "button \"Search\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
           "framePath": [],
           "candidates": [
             {
@@ -484,7 +484,7 @@
           ],
           "anchor": {
             "containerRole": "panel",
-            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™",
             "nearestLabel": "Value:"
           },
           "evidence": {
@@ -568,7 +568,7 @@
       "action": {
         "kind": "click",
         "target": {
-          "description": "link \"Place Account Hold\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122 panel",
+          "description": "link \"Place Account Hold\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
           "framePath": [],
           "candidates": [
             {
@@ -579,7 +579,7 @@
             },
             {
               "kind": "label",
-              "text": "Main Menu \u00b7 Member Inquiry \u00b7 System Settings \u00b7 Sign Off",
+              "text": "Main Menu · Member Inquiry · System Settings · Sign Off",
               "positional": true,
               "expect": "control"
             },
@@ -591,8 +591,8 @@
           ],
           "anchor": {
             "containerRole": "panel",
-            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122",
-            "nearestLabel": "Main Menu \u00b7 Member Inquiry \u00b7 System Settings \u00b7 Sign Off"
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™",
+            "nearestLabel": "Main Menu · Member Inquiry · System Settings · Sign Off"
           },
           "evidence": {
             "role": "link",
@@ -622,7 +622,7 @@
       "action": {
         "kind": "select",
         "target": {
-          "description": "combobox labelled \"Share:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122 panel",
+          "description": "combobox labelled \"Share:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
           "framePath": [],
           "candidates": [
             {
@@ -644,12 +644,12 @@
           ],
           "anchor": {
             "containerRole": "panel",
-            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122"
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
           },
           "evidence": {
             "role": "combobox",
             "tag": "select",
-            "textSnippet": "{{memberNumber}}-S0001 - Regular Shares{{memberNumber}}-MMKT - Money Market{{memberNumber}}-S0070-3 - Share Draft (Checking){{shareId}} - Money Mar\u2026",
+            "textSnippet": "{{memberNumber}}-S0001 - Regular Shares{{memberNumber}}-MMKT - Money Market{{memberNumber}}-S0070-3 - Share Draft (Checking){{shareId}} - Money Mar…",
             "boundingBox": {
               "x": 391.46875,
               "y": 126,
@@ -674,7 +674,7 @@
       "action": {
         "kind": "select",
         "target": {
-          "description": "combobox labelled \"Reason Code:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122 panel",
+          "description": "combobox labelled \"Reason Code:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
           "framePath": [],
           "candidates": [
             {
@@ -696,7 +696,7 @@
           ],
           "anchor": {
             "containerRole": "panel",
-            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122"
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
           },
           "ordinal": 1,
           "evidence": {
@@ -727,7 +727,7 @@
       "action": {
         "kind": "type",
         "target": {
-          "description": "textbox labelled \"Notes:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122 panel",
+          "description": "textbox labelled \"Notes:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
           "framePath": [],
           "candidates": [
             {
@@ -749,7 +749,7 @@
           ],
           "anchor": {
             "containerRole": "panel",
-            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122"
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
           },
           "evidence": {
             "role": "textbox",
@@ -780,7 +780,7 @@
       "action": {
         "kind": "click",
         "target": {
-          "description": "button \"Continue\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122 panel",
+          "description": "button \"Continue\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
           "framePath": [],
           "candidates": [
             {
@@ -797,7 +797,7 @@
           ],
           "anchor": {
             "containerRole": "panel",
-            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122"
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
           },
           "evidence": {
             "role": "button",
@@ -822,7 +822,7 @@
     },
     {
       "id": "apply_hold",
-      "intent": "Apply the hold to the host. This restricts the member\u2019s share and cannot be reversed from this screen.",
+      "intent": "Apply the hold to the host. This restricts the member’s share and cannot be reversed from this screen.",
       "action": {
         "kind": "click",
         "target": {
@@ -874,8 +874,8 @@
       },
       "evidence": {
         "state": "observed",
-        "probedAt": "2026-08-27T02:30:29.774Z",
-        "runId": "probe-20260827T023029-01",
+        "probedAt": "2026-08-27T03:09:40.550Z",
+        "runId": "probe-20260827T030940-01",
         "note": "Provoked with memberNumber=\"999999\"; condition (page contains \"No member records matched\") held on the resulting screen."
       }
     },
@@ -889,8 +889,15 @@
         "caseSensitive": false
       },
       "extract": [],
+      "probe": {
+        "as": "operator",
+        "rationale": "A teller is not entitled to place a hold; the host refuses at the review step."
+      },
       "evidence": {
-        "state": "hypothesised"
+        "state": "observed",
+        "probedAt": "2026-08-27T03:09:42.896Z",
+        "runId": "probe-20260827T030940-01",
+        "note": "Provoked with undefined=\"undefined\"; condition (page contains \"not authorized to perform this\") held on the resulting screen."
       }
     }
   ],
@@ -983,6 +990,11 @@
         "at": "2026-08-27T02:45:00.000Z",
         "by": "reviewer",
         "note": "Declared how this capability meets the three host states Meridian Core can be forced into: maintenance is recoverable and bounded to two attempts, an application error and a session timeout are hard failures. Properties of the host, so declared identically on every capability recorded against it."
+      },
+      {
+        "at": "2026-08-27T03:10:00.000Z",
+        "by": "reviewer",
+        "note": "SUPERVISOR_REQUIRED can now be probed. It is provoked by signing on as the operator identity rather than the supervisor one — a credential the store already holds, so authentication succeeds and what is under test is the entitlement check rather than the sign-on."
       }
     ],
     "validation": {
@@ -1003,15 +1015,14 @@
       "cacheSavingUsd": 1.098846
     },
     "probing": {
-      "probedAt": "2026-08-27T02:30:32.389Z",
-      "runs": 1,
+      "probedAt": "2026-08-27T03:09:46.121Z",
+      "runs": 2,
       "observed": [
-        "MEMBER_NOT_FOUND"
-      ],
-      "refuted": [],
-      "unprobed": [
+        "MEMBER_NOT_FOUND",
         "SUPERVISOR_REQUIRED"
       ],
+      "refuted": [],
+      "unprobed": [],
       "warnings": []
     }
   }

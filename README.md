@@ -215,6 +215,8 @@ npm run probe -- lookup_member_savings_balance
       Probe would vary the injected credential "operatorPassword". Credentials
       are supplied by the runtime and are never varied to provoke an outcome.
       Nothing was run.
+      (A probe may sign on as a different *configured* identity — see
+       `--as` — but it never guesses a secret.)
     · NO_SAVINGS_ACCOUNT
       No probe declared: nothing was recorded about which input would provoke
       this state, so it could not be tested. Remains a hypothesis.

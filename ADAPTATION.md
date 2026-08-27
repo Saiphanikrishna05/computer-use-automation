@@ -63,7 +63,7 @@ steps later, pointing at a missing button rather than a closed host.
 | `mc_update_member` | 13 | 3 of 3 | reversible | $3.42 |
 | `mc_funds_transfer` | 16 | 4 of 4 | **irreversible** | $4.29 |
 | `mc_open_share` | 14 | 3 of 3 | **irreversible** | $3.81 |
-| `mc_place_hold` | 14 | 1 of 2 | **irreversible** | $3.50 |
+| `mc_place_hold` | 14 | 2 of 2 | **irreversible** | $3.50 |
 
 Five of seven functions, **$16.86 to record, $0 per replay** — verified by
 running with the API key removed from the environment.
@@ -122,10 +122,26 @@ wrong** by provoking each against the live host and reading back what it says:
 | `"account is on hold"` | "Source share is HOLD and cannot be debited." |
 | `"Invalid e-mail"` | "E-mail address is not in a valid format." |
 
-Corrected, twelve of thirteen outcomes across five capabilities are backed by a
-real screen. One was deleted rather than carried: `INVALID_AMOUNT` is
-unreachable, because `amount` is typed `money` and the contract rejects a
-non-numeric value before the host sees it.
+Corrected, **all thirteen outcomes across five capabilities are backed by a real
+screen.** One was deleted rather than carried: `INVALID_AMOUNT` is unreachable,
+because `amount` is typed `money` and the contract rejects a non-numeric value
+before the host sees it.
+
+The last one to fall was `SUPERVISOR_REQUIRED`, and getting to it meant fixing a
+rule that was too blunt. Probing refused to touch credentials at all, so an
+entitlement check — which turns on *who is signed on*, not on any caller
+argument — could never be provoked. But those are two different hazards wearing
+one name. Guessing a password fails sign-on and locks real accounts out.
+Choosing a different identity the deployment has already provisioned signs on
+fine; what is then under test is the check after it. So the rule is now sharper:
+
+> A probe may change **who you are**. It may never guess **what you know**.
+
+`mc_place_hold` is baselined as a supervisor, and its probe declares
+`as: "operator"`. The teller signs on, reaches the review step, and is refused
+there — which is the outcome, observed. An identity the deployment has not
+configured is still skipped rather than improvised, and both halves of that are
+pinned by tests.
 
 The three states their host can be forced into are declared identically on every
 capability, since they are properties of the host: `server` → `APP_ERROR`,
@@ -153,11 +169,11 @@ attempts, then `HOST_UNAVAILABLE`.
 inquiry by surname is the same flow as inquiry by number with one field changed.
 Neither would prove anything the five do not.
 
-**One outcome I could not verify.** `SUPERVISOR_REQUIRED` turns on which
-operator the runtime signs on as, not on any caller argument, and provoking it
-would mean varying an injected credential — which probing refuses by design.
-Declared, demonstrated by running under each operator, and left honestly
-unprobed.
+**Which identity a capability needs is configuration, not contract.**
+`mc_place_hold` has to be probed with `--as supervisor` because a teller never
+gets past the entitlement check — but the artifact does not say so. A human
+knows to pass the flag. The artifact should declare the role it was recorded
+under and let the runtime pick, and today it does not.
 
 **A contract blunter than the task.** Asked to change only a phone number, the
 assistant stops and asks for the email and address too, because
