@@ -93,9 +93,19 @@ within a minute of the first capability existing.**
 | | steps | outcomes observed | risk | cost to record |
 |---|---|---|---|---|
 | `mc_member_balance` | 9 | 1 of 1 | reversible | $1.83 |
+| `mc_update_member` | 13 | 3 of 3 | reversible | $3.42 |
 | `mc_funds_transfer` | 16 | 4 of 4 | **irreversible** | $4.29 |
+| `mc_open_share` | 14 | 3 of 3 | **irreversible** | $3.81 |
+| `mc_place_hold` | 14 | 1 of 2 | **irreversible** | $3.50 |
 
-Both must-haves in §2.1. Replay costs nothing and calls no model — verified by
+Five of the seven functions, $16.86 to record, and **twelve of thirteen declared
+outcomes backed by a real screen** rather than asserted.
+
+`mc_update_member` is the one worth noticing. It writes — a member's contact
+details change on the host — and it is still `mutate_reversible`, because a
+contact detail can be written back. The axis is reversibility, not whether
+anything changed; a system that gated every write would gate the ones that do
+not need it and teach everyone to wave the gate through. Replay costs nothing and calls no model — verified by
 running it with the API key removed from the environment.
 
 `mc_funds_transfer` could not be recorded end to end, and that is the system
@@ -189,6 +199,16 @@ action ceiling in the driver, not this function declining to look.
   replay of the transfer runs fifteen of sixteen steps and stops:
   `POLICY_BLOCKED at post_transfer · IRREVERSIBLE_REQUIRES_HUMAN`. The money
   does not move, from the CLI, the API or the chatbot.
+- **Two guards, answering different questions.** `mc_place_hold` run as
+  `teller1` returns `business_outcome SUPERVISOR_REQUIRED` — the host's own
+  entitlement model, reported as the real answer it is. Run as `super1` the host
+  allows it, and thirteen of fourteen steps in *my* policy refuses the last one.
+  Satisfying one guard does not satisfy the other.
+- **The catalog is scoped to the institution being served.** An agent is offered
+  only capabilities recorded against this vendor product. Without that it
+  reached for one belonging to a different console entirely, failed, and
+  recovered by trying another — it got there, but it spent a call learning
+  something the catalog already knew.
 - **Redaction** applies at every egress — logs, DOM snapshots, screenshots
   masked at capture, and any prompt. What is returned to the caller is not
   redacted, because a capability whose job is to return a balance cannot redact
@@ -202,12 +222,18 @@ action ceiling in the driver, not this function declining to look.
 
 ## 6. What I left out, and what is next
 
-**Five of seven functions are unrecorded** — open share, update member
-information, place hold, sign-off, and inquiry by surname. I recorded the two
-the brief names as minimum and spent the remaining time making them genuinely
-demoable, because a thin-but-real version of every must-have beats a polished
-subset. Each is the same shape as the two that exist; the cost is roughly $2 and
-twenty minutes of review apiece.
+**Two of seven functions are unrecorded** — sign-off, and member inquiry by
+surname. Sign-off is a single link and carries no contract worth recording;
+inquiry by surname is the same flow as inquiry by number with one field
+changed, and would be a sixth capability proving nothing the fifth did not.
+
+**`mc_place_hold` has one outcome I could not verify.** `SUPERVISOR_REQUIRED`
+turns on which operator the runtime signs on as, not on any argument a caller
+supplies, and provoking it would mean varying an injected credential — which
+probing refuses by design, because repeatedly failing sign-on against a real
+operator account is an authentication test rather than a business one. So it is
+declared, demonstrated by running the same capability under each operator, and
+left honestly unprobed.
 
 **Place Account Hold is the one I most regret cutting**, because it is the
 supervisor-gated action and would have exercised the second half of the
@@ -217,8 +243,11 @@ operator. The credential resolver already distinguishes a supervisor
 
 Also not done:
 
-- **The chatbot cannot chain capabilities.** It invokes one at a time. Reading a
-  balance and then transferring from it is two requests.
+- **A capability's contract can be coarser than the task.** Asked to change only
+  a phone number, the assistant stops and asks for the email and address too,
+  because `mc_update_member` declares all three as required — the recorded flow
+  types all three, since the host's form arrives pre-filled. It is right to ask
+  rather than guess, and the contract is still blunter than it should be.
 - **Injected faults are unexercised.** `?inject=maintenance` and friends are
   exactly the recoverable-versus-fatal distinction the core already reasons
   about, and I did not get to declaring recovery rules for them.

@@ -20,6 +20,13 @@
 import { listArtifacts } from '../artifact/store.js';
 import type { CapabilityArtifact, ParamSpec, ValueType } from '../artifact/schema.js';
 
+/** The application a catalog is being published for, when it is being published
+ *  for one in particular. */
+export interface CatalogScope {
+  vendor: string;
+  product: string;
+}
+
 export interface ToolDefinition {
   name: string;
   description: string;
@@ -99,8 +106,23 @@ export function toolDefinitionFor(artifact: CapabilityArtifact): ToolDefinition 
  * enforced at discovery time rather than only at execution time, an agent
  * cannot call something it was never told about.
  */
-export function catalogToolDefinitions(): ToolDefinition[] {
+/**
+ * The catalog an agent is handed.
+ *
+ * Scoped to one application when a scope is given, because a capability
+ * recorded against a different vendor product cannot work against this host,
+ * and an agent offered one will try it. That is not hypothetical: asked to
+ * check a balance and then move money on Meridian Core, the chatbot reached
+ * first for a capability recorded against a different console entirely, failed,
+ * and recovered by trying another. It got there, but it spent a call learning
+ * something the catalog already knew.
+ *
+ * Unscoped still returns everything, which is what the CLI and the dashboard
+ * want: a person looking at the whole estate should see the whole estate.
+ */
+export function catalogToolDefinitions(scope?: CatalogScope): ToolDefinition[] {
   return listArtifacts()
     .filter((a) => a.approval.state === 'approved')
+    .filter((a) => !scope || (a.target.app.vendor === scope.vendor && a.target.app.product === scope.product))
     .map(toolDefinitionFor);
 }

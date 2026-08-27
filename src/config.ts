@@ -22,6 +22,16 @@ export interface TenantRuntime {
   baseUrl: string;
   /** Overlay to apply, when this tenant is not the one the artifact was recorded on. */
   overlayId?: string;
+  /**
+   * The vendor product this institution runs.
+   *
+   * Stated rather than inferred, because it decides which capabilities are
+   * even offered here. Without it the catalog published to an agent is every
+   * capability ever recorded, including ones belonging to a different
+   * application entirely — and an agent handed a tool that cannot work against
+   * the host in front of it will try it, fail, and spend a call finding out.
+   */
+  app?: { vendor: string; product: string };
 }
 
 export const TENANT_RUNTIMES: Record<string, TenantRuntime> = {
@@ -35,17 +45,20 @@ export const TENANT_RUNTIMES: Record<string, TenantRuntime> = {
     id: 'meridian-core',
     name: 'Meridian Core · Cornerstone Financial Systems',
     baseUrl: process.env.CUA_MERIDIAN_URL ?? 'https://web-sample.interface-hiring.com',
+    app: { vendor: 'cornerstone', product: 'meridian-core' },
   },
   'northpoint-fcu': {
     id: 'northpoint-fcu',
     name: 'Northpoint Federal Credit Union',
     baseUrl: `http://localhost:${process.env.CUA_TARGET_PORT ?? 4173}`,
+    app: { vendor: 'meridian', product: 'servicing-console' },
   },
   'cascade-cu': {
     id: 'cascade-cu',
     name: 'Cascade Community Credit Union',
     baseUrl: `http://localhost:${process.env.CUA_TENANT_B_PORT ?? 4174}`,
     overlayId: 'cascade-cu',
+    app: { vendor: 'meridian', product: 'servicing-console' },
   },
 };
 

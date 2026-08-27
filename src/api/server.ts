@@ -277,12 +277,16 @@ export async function startApiServer(options: ApiServerOptions): Promise<Server>
   // fills its typed arguments; everything after that is the same invocation
   // path as a direct API call, guardrails included.
 
+  /** The application this server is invoking against, used to scope what an
+   *  agent is offered. */
+  const scope = TENANT_RUNTIMES[options.tenant]?.app;
+
   app.post('/api/chat', async (req, res) => {
     const message = String((req.body as { message?: unknown }).message ?? '').trim();
     if (!message) { res.status(400).json({ error: 'no message' }); return; }
 
     const model = modelConfig();
-    const tools = catalogToolDefinitions();
+    const tools = catalogToolDefinitions(scope);
     if (!model.apiKey) {
       res.json({ reply: 'The understanding step needs a model, and no API key is configured here.', invocations: [] });
       return;
