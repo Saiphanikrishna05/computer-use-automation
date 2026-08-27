@@ -874,8 +874,8 @@
       },
       "evidence": {
         "state": "observed",
-        "probedAt": "2026-08-27T03:09:40.550Z",
-        "runId": "probe-20260827T030940-01",
+        "probedAt": "2026-08-27T03:19:20.876Z",
+        "runId": "probe-20260827T031920-01",
         "note": "Provoked with memberNumber=\"999999\"; condition (page contains \"No member records matched\") held on the resulting screen."
       }
     },
@@ -895,9 +895,9 @@
       },
       "evidence": {
         "state": "observed",
-        "probedAt": "2026-08-27T03:09:42.896Z",
-        "runId": "probe-20260827T030940-01",
-        "note": "Provoked with undefined=\"undefined\"; condition (page contains \"not authorized to perform this\") held on the resulting screen."
+        "probedAt": "2026-08-27T03:19:23.234Z",
+        "runId": "probe-20260827T031920-01",
+        "note": "Provoked with a sign-on as the operator identity; condition (page contains \"not authorized to perform this\") held on the resulting screen."
       }
     }
   ],
@@ -1015,7 +1015,7 @@
       "cacheSavingUsd": 1.098846
     },
     "probing": {
-      "probedAt": "2026-08-27T03:09:46.121Z",
+      "probedAt": "2026-08-27T03:19:26.294Z",
       "runs": 2,
       "observed": [
         "MEMBER_NOT_FOUND",

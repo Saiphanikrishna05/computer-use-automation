@@ -395,6 +395,15 @@ describe('probeOutcomes, what it refuses to do', () => {
     // model. What matters is that it ran at all rather than being refused.
     expect(result.reports[0]!.state).not.toBe('skipped');
     expect(typed.length).toBeGreaterThan(0);
+
+    // The note a human reads later must say what was actually varied. The
+    // first version of this interpolated probe.parameter, which an identity
+    // probe does not have, and wrote `undefined="undefined"` into the
+    // evidence — a note that says nothing while looking like it says
+    // something, which is worse than leaving it blank.
+    const note = result.reports[0]!.reason ?? '';
+    expect(note).not.toMatch(/undefined/);
+    expect(note).toMatch(/operator identity/);
   });
 
   it('will not sign on as an identity the deployment has not configured', async () => {

@@ -289,7 +289,7 @@ async function runOneProbe(
 
   logger.event(
     'note',
-    `probing ${target.code}: replaying with ${probe.parameter}="${probe.value}"` +
+    `probing ${target.code}: replaying with ${describeProbe(probe)}` +
       (probe.rationale ? ` (${probe.rationale})` : ''),
   );
 
@@ -333,7 +333,7 @@ async function runOneProbe(
 
   if (result.status === 'business_outcome' && result.outcome === target.code) {
     const note =
-      `Provoked with ${probe.parameter}="${probe.value}"; condition (${describeCondition(target.when)}) held ` +
+      `Provoked with ${describeProbe(probe)}; condition (${describeCondition(target.when)}) held ` +
       'on the resulting screen.';
     evidence.set(target.code, { state: 'observed', probedAt, runId, note });
     return { code: target.code, state: 'observed', reason: note, probe: probeOf(target) };
@@ -353,11 +353,11 @@ async function runOneProbe(
         state: 'observed',
         probedAt,
         runId,
-        note: `Observed while probing ${target.code} with ${probe.parameter}="${probe.value}".`,
+        note: `Observed while probing ${target.code} with ${describeProbe(probe)}.`,
       });
     }
     const reason =
-      `Replaying with ${probe.parameter}="${probe.value}" produced ${other}, not ${target.code}. ` +
+      `Replaying with ${describeProbe(probe)} produced ${other}, not ${target.code}. ` +
       'Either the probe value does not provoke this state, or the two conditions overlap and ' +
       `${other} is matching first.`;
     evidence.set(target.code, { state: 'refuted', probedAt, runId, observedInstead, note: reason });
@@ -376,7 +376,7 @@ async function runOneProbe(
     // never reached, and saying "refuted" would be a lie about a condition
     // nobody tested.
     const reason =
-      `Provoking ${target.code} with ${probe.parameter}="${probe.value}" walked the flow as far as an ` +
+      `Provoking ${target.code} with ${describeProbe(probe)} walked the flow as far as an ` +
       'irreversible step, where the action ceiling refused it. The outcome was never reached, so it ' +
       'remains untested rather than disproven. Confirm it against a test environment.';
     evidence.set(target.code, { state: 'hypothesised', probedAt, runId, note: reason });
@@ -385,7 +385,7 @@ async function runOneProbe(
 
   if (result.status === 'failure' && result.error.code === 'INPUT_VALIDATION_FAILED') {
     const reason =
-      `${probe.parameter}="${probe.value}" is rejected by this capability's own input contract ` +
+      `${describeProbe(probe)} is rejected by this capability's own input contract ` +
       `(${result.error.observed}), so the application never saw it. ${target.code} is unreachable through ` +
       'this capability: either the outcome does not belong here, or the parameter is over-constrained.';
     evidence.set(target.code, { state: 'refuted', probedAt, runId, observedInstead, note: reason });
@@ -398,9 +398,9 @@ async function runOneProbe(
   // the model guessed wrong is right there in it.
   const reason =
     result.status === 'success'
-      ? `Replaying with ${probe.parameter}="${probe.value}" still succeeded, so this input does not provoke ` +
-        `${target.code} and the condition was never tested.`
-      : `Replaying with ${probe.parameter}="${probe.value}" ended in ${observedInstead}, and no declared ` +
+      ? `Replaying with ${describeProbe(probe)} still succeeded, so ${probe.as ? 'that identity' : 'this input'} ` +
+        `does not provoke ${target.code} and the condition was never tested.`
+      : `Replaying with ${describeProbe(probe)} ended in ${observedInstead}, and no declared ` +
         `condition matched the screen it ended on. The wording in (${describeCondition(target.when)}) is ` +
         `probably not what this application shows.`;
 
@@ -486,6 +486,18 @@ export function renderProbeSummary(probed: ProbeResult): string {
     lines.join('') +
     '\n'
   );
+}
+
+/**
+ * How a probe reads in a note a human will later rely on.
+ *
+ * An identity probe varies no parameter, so interpolating `probe.parameter`
+ * wrote `undefined="undefined"` into the evidence — a note that says nothing
+ * while looking like it says something, which is worse than no note at all.
+ */
+function describeProbe(probe: NonNullable<BusinessOutcome['probe']>): string {
+  if (probe.as) return `a sign-on as the ${probe.as} identity`;
+  return `${probe.parameter}="${probe.value}"`;
 }
 
 function probeOf(outcome: BusinessOutcome): ProbeReport['probe'] {
