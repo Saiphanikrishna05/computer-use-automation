@@ -744,9 +744,60 @@
         }
       ],
       "maxAttempts": 3
+    },
+    {
+      "code": "WAIT_OUT_MAINTENANCE",
+      "description": "The host is in a scheduled maintenance window. It says the window normally clears within moments, so waiting and reloading is worth a bounded attempt before giving up.",
+      "when": {
+        "kind": "text_present",
+        "text": "SCHEDULED MAINTENANCE IN PROGRESS",
+        "framePath": [],
+        "caseSensitive": false
+      },
+      "then": [
+        {
+          "kind": "wait",
+          "ms": 2500
+        },
+        {
+          "kind": "reload"
+        }
+      ],
+      "maxAttempts": 2
     }
   ],
-  "failures": [],
+  "failures": [
+    {
+      "code": "APP_ERROR",
+      "description": "The host returned its application error page with a reference number. Nothing replay can do about it, and the reference is what a person will need.",
+      "when": {
+        "kind": "text_present",
+        "text": "APPLICATION ERROR",
+        "framePath": [],
+        "caseSensitive": false
+      }
+    },
+    {
+      "code": "SESSION_EXPIRED",
+      "description": "The session ended mid-flow. The recorded steps begin at sign-on, so resuming is not a matter of retrying one step, and re-running the capability is the honest remedy.",
+      "when": {
+        "kind": "text_present",
+        "text": "YOUR SESSION HAS TIMED OUT",
+        "framePath": [],
+        "caseSensitive": false
+      }
+    },
+    {
+      "code": "HOST_UNAVAILABLE",
+      "description": "The host is in a scheduled maintenance window. Declared as a failure as well as a recovery so that when waiting does not clear it, the run reports the reason rather than the symptom.",
+      "when": {
+        "kind": "text_present",
+        "text": "SCHEDULED MAINTENANCE IN PROGRESS",
+        "framePath": [],
+        "caseSensitive": false
+      }
+    }
+  ],
   "maxRisk": "mutate_reversible",
   "provenance": {
     "discoveredAt": "2026-08-27T01:00:11.759Z",
@@ -769,6 +820,11 @@
         "at": "2026-08-27T01:15:00.000Z",
         "by": "reviewer",
         "note": "Parameterised the share-id locator on {{memberNumber}} and removed a \"Regular Shares\" candidate that named a row type but no column, so on a member with several such rows it read an arbitrary one."
+      },
+      {
+        "at": "2026-08-27T02:45:00.000Z",
+        "by": "reviewer",
+        "note": "Declared how this capability meets the three host states Meridian Core can be forced into: maintenance is recoverable and bounded to two attempts, an application error and a session timeout are hard failures. Properties of the host, so declared identically on every capability recorded against it."
       }
     ],
     "validation": {

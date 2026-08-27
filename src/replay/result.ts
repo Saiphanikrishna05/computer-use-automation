@@ -38,6 +38,14 @@ export type FailureCode =
   | 'SESSION_EXPIRED'
   /** A modal was up that no recovery rule claimed. */
   | 'UNHANDLED_DIALOG'
+  /**
+   * The host is up but declining to work — a maintenance window, a batch
+   * posting run. Distinct from APP_ERROR because nothing is broken and the
+   * remedy is to come back later, and distinct from a missing control because
+   * reporting "the button is gone" when the host has simply gone quiet sends a
+   * reader to look at the wrong thing entirely.
+   */
+  | 'HOST_UNAVAILABLE'
   | 'OUTPUT_EXTRACTION_FAILED'
   | 'INPUT_VALIDATION_FAILED'
   | 'ARTIFACT_NOT_APPROVED'

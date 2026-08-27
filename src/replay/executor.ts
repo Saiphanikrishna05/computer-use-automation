@@ -303,6 +303,8 @@ export class ReplayEngine {
    * firing is a rule that is not working, and letting it retry from a fresh
    * budget at every step turns a broken capability into an infinite loop.
    */
+  /** Applies the first recovery rule whose condition holds and whose budget is
+   *  not spent. Returns whether the condition it targeted is now clear. */
   private async tryRecovery(): Promise<boolean> {
     const { artifact, driver, logger } = this.options;
     const ctx = { driver, values: this.values };
@@ -334,7 +336,18 @@ export class ReplayEngine {
       } else {
         this.pendingRecoveries.push(report);
       }
-      return true;
+      // Whether the surface is actually clear, not merely whether a rule ran.
+      //
+      // This returned `true` for "a rule fired", and the declared-failure check
+      // above treats a truthy answer as reason to stop calling the condition
+      // fatal. So a recovery that fired and did not work suppressed the very
+      // failure it had failed to fix: a host stuck in a maintenance window
+      // reported TARGET_NOT_FOUND several steps later, pointing at a missing
+      // button rather than at the host being closed.
+      //
+      // "Attempted" and "succeeded" are different facts, and only one of them
+      // is grounds for carrying on.
+      return report.succeeded;
     }
     return false;
   }

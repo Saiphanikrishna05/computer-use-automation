@@ -445,7 +445,7 @@ export type RecoveryRule = z.infer<typeof RecoveryRuleSchema>;
  * from engine source.
  */
 export const FailureRuleSchema = z.object({
-  code: z.enum(['APP_ERROR', 'SESSION_EXPIRED', 'UNHANDLED_DIALOG']),
+  code: z.enum(['APP_ERROR', 'SESSION_EXPIRED', 'UNHANDLED_DIALOG', 'HOST_UNAVAILABLE']),
   description: z.string(),
   when: ConditionSchema,
 });
