@@ -1,0 +1,1029 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "mc_place_hold",
+  "version": 1,
+  "title": "Stage an Account Hold to the Confirmation Screen (no commit)",
+  "description": "Signs on to Meridian Core, searches a member by member number, opens the member record, opens Place Account Hold, fills in the Share, Reason Code and Notes, and clicks Continue to reach the CONFIRM ACCOUNT HOLD review screen. It STOPS there and never clicks Apply Hold, so nothing is committed and the member's account is unchanged. Returns the share as shown on the review screen. Note: the confirmation screen itself is labelled IRREVERSIBLE ACTION - the caller must complete the hold manually if genuinely intended.",
+  "target": {
+    "surface": "web",
+    "app": {
+      "vendor": "cornerstone",
+      "product": "meridian-core",
+      "versionRange": "1.x"
+    },
+    "entryUrlTemplate": "{{baseUrl}}/"
+  },
+  "approval": {
+    "state": "approved",
+    "approvedBy": "operator",
+    "approvedAt": "2026-08-27T02:30:52.121Z",
+    "note": "reviewed and approved for unattended replay"
+  },
+  "inputs": [
+    {
+      "name": "operatorId",
+      "type": "string",
+      "description": "Servicing console operator user ID. Injected by the runtime credential store.",
+      "required": true,
+      "sensitivity": "pii",
+      "injected": true
+    },
+    {
+      "name": "operatorPassword",
+      "type": "string",
+      "description": "Servicing console operator password. Injected by the runtime credential store.",
+      "required": true,
+      "sensitivity": "secret",
+      "injected": true
+    },
+    {
+      "name": "branch",
+      "type": "string",
+      "description": "Branch the operator signs on against. Injected by the runtime.",
+      "required": true,
+      "sensitivity": "none",
+      "injected": true
+    },
+    {
+      "name": "memberNumber",
+      "type": "string",
+      "description": "Member number to search for",
+      "required": true,
+      "sensitivity": "none",
+      "pattern": "^\\d{6}$",
+      "example": "102777",
+      "injected": false
+    },
+    {
+      "name": "shareId",
+      "type": "string",
+      "description": "Share option label to place the hold on, e.g. 102777-MMKT-4",
+      "required": true,
+      "sensitivity": "none",
+      "example": "102777-MMKT-4",
+      "injected": false
+    },
+    {
+      "name": "reasonCode",
+      "type": "string",
+      "description": "Hold reason code option label",
+      "required": true,
+      "sensitivity": "none",
+      "example": "FRAUD - Suspected fraud",
+      "injected": false
+    },
+    {
+      "name": "notes",
+      "type": "string",
+      "description": "Free-text notes for the hold",
+      "required": true,
+      "sensitivity": "none",
+      "example": "demo hold",
+      "injected": false
+    }
+  ],
+  "outputs": [
+    {
+      "name": "holdShare",
+      "type": "string",
+      "description": "Share shown on the CONFIRM ACCOUNT HOLD review screen",
+      "required": true,
+      "sensitivity": "financial",
+      "extract": {
+        "target": {
+          "description": "cell \"{{shareId}} - Money Market\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Share:",
+              "positional": true,
+              "expect": "cell"
+            },
+            {
+              "kind": "label",
+              "text": "Share:",
+              "positional": true,
+              "expect": "cell"
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.346112060546875,
+              "yFraction": 0.185
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™",
+            "nearestLabel": "Share:"
+          },
+          "ordinal": 0,
+          "evidence": {
+            "role": "cell",
+            "accessibleName": "{{shareId}} - Money Market",
+            "tag": "td",
+            "textSnippet": "{{shareId}} - Money Market",
+            "boundingBox": {
+              "x": 349.265625,
+              "y": 157,
+              "width": 187.515625,
+              "height": 19
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "source": "text",
+        "transforms": [
+          "collapse_whitespace"
+        ]
+      }
+    }
+  ],
+  "steps": [
+    {
+      "id": "type_1",
+      "intent": "Enter the operator ID in the Operator Sign On panel",
+      "action": {
+        "kind": "type",
+        "target": {
+          "description": "textbox labelled \"Operator ID:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Operator ID:",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "input[name=\"operator\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.35118408203125,
+              "yFraction": 0.11611111111111111
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+          },
+          "evidence": {
+            "role": "textbox",
+            "tag": "input",
+            "boundingBox": {
+              "x": 374.515625,
+              "y": 96,
+              "width": 150,
+              "height": 17
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "{{operatorId}}",
+        "clearFirst": true,
+        "secret": true
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "type_2",
+      "intent": "Enter the operator password in the Operator Sign On panel",
+      "action": {
+        "kind": "type",
+        "target": {
+          "description": "textbox labelled \"Password:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Password:",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "input[name=\"password\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.35118408203125,
+              "yFraction": 0.14166666666666666
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+          },
+          "ordinal": 1,
+          "evidence": {
+            "role": "textbox",
+            "tag": "input",
+            "boundingBox": {
+              "x": 374.515625,
+              "y": 119,
+              "width": 150,
+              "height": 17
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "{{operatorPassword}}",
+        "clearFirst": true,
+        "secret": true
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "click_3",
+      "intent": "Submit the operator sign-on form",
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "button \"Sign On\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "role_name",
+              "role": "button",
+              "name": "Sign On",
+              "exact": true
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.317529296875,
+              "yFraction": 0.21055555555555555
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+          },
+          "evidence": {
+            "role": "button",
+            "accessibleName": "Sign On",
+            "tag": "input",
+            "boundingBox": {
+              "x": 374.515625,
+              "y": 180,
+              "width": 63.84375,
+              "height": 19
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        }
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "click_4",
+      "intent": "Open Member Inquiry / Selection to search for the member",
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "link \"Member Inquiry / Selection\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "role_name",
+              "role": "link",
+              "name": "Member Inquiry / Selection",
+              "exact": true
+            },
+            {
+              "kind": "label",
+              "text": "1.",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.31287841796875,
+              "yFraction": 0.1461111111111111
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™",
+            "nearestLabel": "1."
+          },
+          "evidence": {
+            "role": "link",
+            "accessibleName": "Member Inquiry / Selection",
+            "tag": "a",
+            "textSnippet": "Member Inquiry / Selection",
+            "boundingBox": {
+              "x": 324.875,
+              "y": 125,
+              "width": 151.21875,
+              "height": 13
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        }
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "select_5",
+      "intent": "Set the search type to Member Number",
+      "action": {
+        "kind": "select",
+        "target": {
+          "description": "combobox labelled \"Search by:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Search by:",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "select[name=\"by\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.3287353515625,
+              "yFraction": 0.1361111111111111
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+          },
+          "evidence": {
+            "role": "combobox",
+            "tag": "select",
+            "textSnippet": "Member Number Last Name",
+            "boundingBox": {
+              "x": 361.28125,
+              "y": 113,
+              "width": 119,
+              "height": 19
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "Member Number"
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "type_6",
+      "intent": "Enter the member number to search for",
+      "action": {
+        "kind": "type",
+        "target": {
+          "description": "textbox labelled \"Value:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Value:",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "input[name=\"q\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.3627197265625,
+              "yFraction": 0.1638888888888889
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+          },
+          "evidence": {
+            "role": "textbox",
+            "tag": "input",
+            "boundingBox": {
+              "x": 361.28125,
+              "y": 139,
+              "width": 206,
+              "height": 17
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "{{memberNumber}}",
+        "clearFirst": true,
+        "secret": false
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "click_7",
+      "intent": "Run the member search",
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "button \"Search\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "role_name",
+              "role": "button",
+              "name": "Search",
+              "exact": true
+            },
+            {
+              "kind": "label",
+              "text": "Value:",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.474945068359375,
+              "yFraction": 0.1638888888888889
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™",
+            "nearestLabel": "Value:"
+          },
+          "evidence": {
+            "role": "button",
+            "accessibleName": "Search",
+            "tag": "input",
+            "boundingBox": {
+              "x": 578.890625,
+              "y": 138,
+              "width": 58.078125,
+              "height": 19
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        }
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "click_8",
+      "intent": "Open the member record for member 102777 from the search results",
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "link \"Select\" in the Member No. panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "role_name",
+              "role": "link",
+              "name": "Select",
+              "exact": true
+            },
+            {
+              "kind": "label",
+              "text": "4",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.71751708984375,
+              "yFraction": 0.245
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "Member No.",
+            "nearestLabel": "4"
+          },
+          "evidence": {
+            "role": "link",
+            "accessibleName": "Select",
+            "tag": "a",
+            "textSnippet": "Select",
+            "boundingBox": {
+              "x": 901.5625,
+              "y": 214,
+              "width": 33.71875,
+              "height": 13
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        }
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "click_9",
+      "intent": "Open the Place Account Hold form for this member",
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "link \"Place Account Hold\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "role_name",
+              "role": "link",
+              "name": "Place Account Hold",
+              "exact": true
+            },
+            {
+              "kind": "label",
+              "text": "Main Menu · Member Inquiry · System Settings · Sign Off",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.560089111328125,
+              "yFraction": 0.3605555555555556
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™",
+            "nearestLabel": "Main Menu · Member Inquiry · System Settings · Sign Off"
+          },
+          "evidence": {
+            "role": "link",
+            "accessibleName": "Place Account Hold",
+            "tag": "a",
+            "textSnippet": "Place Account Hold",
+            "boundingBox": {
+              "x": 664.40625,
+              "y": 318,
+              "width": 105.015625,
+              "height": 13
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        }
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "select_10",
+      "intent": "Select the share 102777-MMKT-4 on the hold form",
+      "action": {
+        "kind": "select",
+        "target": {
+          "description": "combobox labelled \"Share:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Share:",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "select[name=\"share\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.4081787109375,
+              "yFraction": 0.15055555555555555
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+          },
+          "evidence": {
+            "role": "combobox",
+            "tag": "select",
+            "textSnippet": "{{memberNumber}}-S0001 - Regular Shares{{memberNumber}}-MMKT - Money Market{{memberNumber}}-S0070-3 - Share Draft (Checking){{shareId}} - Money Mar…",
+            "boundingBox": {
+              "x": 391.46875,
+              "y": 126,
+              "width": 262,
+              "height": 19
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "{{shareId}}"
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "select_11",
+      "intent": "Select the FRAUD reason code on the hold form",
+      "action": {
+        "kind": "select",
+        "target": {
+          "description": "combobox labelled \"Reason Code:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Reason Code:",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "select[name=\"reason\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.3839599609375,
+              "yFraction": 0.17833333333333334
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+          },
+          "ordinal": 1,
+          "evidence": {
+            "role": "combobox",
+            "tag": "select",
+            "textSnippet": "{{reasonCode}} LEGAL - Legal / levy DECEASED - Member deceased",
+            "boundingBox": {
+              "x": 391.46875,
+              "y": 151,
+              "width": 200,
+              "height": 19
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "{{reasonCode}}"
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "type_12",
+      "intent": "Enter the notes text on the hold form",
+      "action": {
+        "kind": "type",
+        "target": {
+          "description": "textbox labelled \"Notes:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Notes:",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "input[name=\"notes\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.4409912109375,
+              "yFraction": 0.205
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+          },
+          "evidence": {
+            "role": "textbox",
+            "tag": "input",
+            "boundingBox": {
+              "x": 391.46875,
+              "y": 176,
+              "width": 346,
+              "height": 17
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "{{notes}}",
+        "clearFirst": true,
+        "secret": false
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "click_13",
+      "intent": "Click Continue to reach the confirmation screen (without applying the hold)",
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "button \"Continue\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "role_name",
+              "role": "button",
+              "name": "Continue",
+              "exact": true
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.33284912109375,
+              "yFraction": 0.2461111111111111
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+          },
+          "evidence": {
+            "role": "button",
+            "accessibleName": "Continue",
+            "tag": "input",
+            "boundingBox": {
+              "x": 391.46875,
+              "y": 212,
+              "width": 69.15625,
+              "height": 19
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        }
+      },
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    },
+    {
+      "id": "apply_hold",
+      "intent": "Apply the hold to the host. This restricts the member’s share and cannot be reversed from this screen.",
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "Apply Hold button on the confirmation screen",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "role_name",
+              "role": "button",
+              "name": "Apply Hold",
+              "exact": true
+            }
+          ],
+          "anchor": {
+            "containerName": "CONFIRM ACCOUNT HOLD"
+          },
+          "evidence": {}
+        }
+      },
+      "risk": "mutate_irreversible",
+      "timeoutMs": 15000,
+      "postconditions": []
+    }
+  ],
+  "checkpoint": {
+    "description": "The host confirmed the hold was applied.",
+    "condition": {
+      "kind": "text_present",
+      "text": "HOLD APPLIED",
+      "framePath": [],
+      "caseSensitive": false
+    }
+  },
+  "outcomes": [
+    {
+      "code": "MEMBER_NOT_FOUND",
+      "description": "No member exists with the supplied member number, so no result row can be selected.",
+      "when": {
+        "kind": "text_present",
+        "text": "No member records matched",
+        "framePath": [],
+        "caseSensitive": false
+      },
+      "extract": [],
+      "probe": {
+        "parameter": "memberNumber",
+        "value": "999999",
+        "rationale": "No member is enrolled under this number."
+      },
+      "evidence": {
+        "state": "observed",
+        "probedAt": "2026-08-27T03:09:40.550Z",
+        "runId": "probe-20260827T030940-01",
+        "note": "Provoked with memberNumber=\"999999\"; condition (page contains \"No member records matched\") held on the resulting screen."
+      }
+    },
+    {
+      "code": "SUPERVISOR_REQUIRED",
+      "description": "The signed-on operator is not entitled to place a hold. A supervisor must sign on to complete it.",
+      "when": {
+        "kind": "text_present",
+        "text": "not authorized to perform this",
+        "framePath": [],
+        "caseSensitive": false
+      },
+      "extract": [],
+      "probe": {
+        "as": "operator",
+        "rationale": "A teller is not entitled to place a hold; the host refuses at the review step."
+      },
+      "evidence": {
+        "state": "observed",
+        "probedAt": "2026-08-27T03:09:42.896Z",
+        "runId": "probe-20260827T030940-01",
+        "note": "Provoked with undefined=\"undefined\"; condition (page contains \"not authorized to perform this\") held on the resulting screen."
+      }
+    }
+  ],
+  "recovery": [
+    {
+      "code": "ACCEPT_SYSTEM_DIALOG",
+      "description": "A native dialog is blocking the page. Acknowledging it is required before any further step can run. Review whether acknowledging is safe for this flow before approving.",
+      "when": {
+        "kind": "dialog_present"
+      },
+      "then": [
+        {
+          "kind": "accept_dialog"
+        }
+      ],
+      "maxAttempts": 3
+    },
+    {
+      "code": "WAIT_OUT_MAINTENANCE",
+      "description": "The host is in a scheduled maintenance window. It says the window normally clears within moments, so waiting and reloading is worth a bounded attempt before giving up.",
+      "when": {
+        "kind": "text_present",
+        "text": "SCHEDULED MAINTENANCE IN PROGRESS",
+        "framePath": [],
+        "caseSensitive": false
+      },
+      "then": [
+        {
+          "kind": "wait",
+          "ms": 2500
+        },
+        {
+          "kind": "reload"
+        }
+      ],
+      "maxAttempts": 2
+    }
+  ],
+  "failures": [
+    {
+      "code": "APP_ERROR",
+      "description": "The host returned its application error page with a reference number. Nothing replay can do about it, and the reference is what a person will need.",
+      "when": {
+        "kind": "text_present",
+        "text": "APPLICATION ERROR",
+        "framePath": [],
+        "caseSensitive": false
+      }
+    },
+    {
+      "code": "SESSION_EXPIRED",
+      "description": "The session ended mid-flow. The recorded steps begin at sign-on, so resuming is not a matter of retrying one step, and re-running the capability is the honest remedy.",
+      "when": {
+        "kind": "text_present",
+        "text": "YOUR SESSION HAS TIMED OUT",
+        "framePath": [],
+        "caseSensitive": false
+      }
+    },
+    {
+      "code": "HOST_UNAVAILABLE",
+      "description": "The host is in a scheduled maintenance window. Declared as a failure as well as a recovery so that when waiting does not clear it, the run reports the reason rather than the symptom.",
+      "when": {
+        "kind": "text_present",
+        "text": "SCHEDULED MAINTENANCE IN PROGRESS",
+        "framePath": [],
+        "caseSensitive": false
+      }
+    }
+  ],
+  "maxRisk": "mutate_irreversible",
+  "provenance": {
+    "discoveredAt": "2026-08-27T02:30:05.594Z",
+    "runId": "discovery-20260827T022907-01",
+    "goal": "Sign on. Search by Member Number for 102777. Open that member's record. Click Place Account Hold. On the hold form set Share to '102777-MMKT-4', Reason Code to 'FRAUD - Suspected fraud', and Notes to 'demo hold'. Click Continue to reach the CONFIRM ACCOUNT HOLD screen. STOP THERE. Do NOT click Apply Hold - applying a hold restricts a member's account and is irreversible; you must never perform it. Use the confirmation screen as your checkpoint and call finish immediately.",
+    "model": "claude-opus-5",
+    "evidencePath": "runs/discovery-20260827T022907-01",
+    "humanEdits": [
+      {
+        "at": "2026-08-27T02:35:00.000Z",
+        "by": "reviewer",
+        "note": "Corrected MEMBER_NOT_FOUND to the wording probing read. Declared SUPERVISOR_REQUIRED, which no probe can provoke because it turns on which operator the runtime signs on as rather than on any caller argument, and varying an injected credential is something probing refuses by design. Appended apply_hold by hand, marked irreversible: recorded as a supervisor, the discovery agent still cannot walk past the confirmation screen."
+      },
+      {
+        "at": "2026-08-27T02:30:52.121Z",
+        "by": "operator",
+        "note": "approved for unattended replay: reviewed and approved for unattended replay [1 outcome(s) unverified]"
+      },
+      {
+        "at": "2026-08-27T02:45:00.000Z",
+        "by": "reviewer",
+        "note": "Declared how this capability meets the three host states Meridian Core can be forced into: maintenance is recoverable and bounded to two attempts, an application error and a session timeout are hard failures. Properties of the host, so declared identically on every capability recorded against it."
+      },
+      {
+        "at": "2026-08-27T03:10:00.000Z",
+        "by": "reviewer",
+        "note": "SUPERVISOR_REQUIRED can now be probed. It is provoked by signing on as the operator identity rather than the supervisor one — a credential the store already holds, so authentication succeeds and what is under test is the entitlement check rather than the sign-on."
+      }
+    ],
+    "validation": {
+      "checkedAt": "2026-08-27T02:30:06.087Z",
+      "warnings": [
+        "1 declared outcome(s) were hypothesised by the run that recorded them, which never took these paths: MEMBER_NOT_FOUND (\"No members found\")"
+      ],
+      "rejected": []
+    },
+    "cost": {
+      "turns": 20,
+      "totalTokens": 295697,
+      "inputTokens": 207590,
+      "outputTokens": 2427,
+      "cacheReadTokens": 81396,
+      "cacheWriteTokens": 4284,
+      "costUsd": 3.498294,
+      "cacheSavingUsd": 1.098846
+    },
+    "probing": {
+      "probedAt": "2026-08-27T03:09:46.121Z",
+      "runs": 2,
+      "observed": [
+        "MEMBER_NOT_FOUND",
+        "SUPERVISOR_REQUIRED"
+      ],
+      "refuted": [],
+      "unprobed": [],
+      "warnings": []
+    }
+  }
+}
