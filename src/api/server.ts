@@ -219,6 +219,8 @@ export async function startApiServer(options: ApiServerOptions): Promise<Server>
 
   // --- the callable catalog ------------------------------------------------
 
+  const scope = TENANT_RUNTIMES[options.tenant]?.app;
+
   app.get('/api/capabilities', (_req, res) => {
     const artifacts = listArtifacts();
     res.json(
@@ -230,6 +232,16 @@ export async function startApiServer(options: ApiServerOptions): Promise<Server>
           approval: artifact?.approval.state,
           outcomes: artifact?.outcomes.map((o) => ({ code: o.code, evidence: o.evidence.state })) ?? [],
           evidenceSummary: artifact ? summariseFreshness(freshnessReport(artifact)) : '',
+          // Which application this was recorded against. The store holds
+          // capabilities for three different products; without saying so, a
+          // dashboard headed "Meridian Core" lists a shopping cart and looks
+          // like a bug rather than the point.
+          app: artifact?.target.app
+            ? { vendor: artifact.target.app.vendor, product: artifact.target.app.product }
+            : undefined,
+          servedHere:
+            artifact?.target.app.vendor === scope?.vendor &&
+            artifact?.target.app.product === scope?.product,
         };
       }),
     );
@@ -279,7 +291,6 @@ export async function startApiServer(options: ApiServerOptions): Promise<Server>
 
   /** The application this server is invoking against, used to scope what an
    *  agent is offered. */
-  const scope = TENANT_RUNTIMES[options.tenant]?.app;
 
   app.post('/api/chat', async (req, res) => {
     const message = String((req.body as { message?: unknown }).message ?? '').trim();

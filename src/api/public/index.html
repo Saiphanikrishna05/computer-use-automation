@@ -23,7 +23,7 @@
 <main>
   <section style="margin-bottom:2rem">
     <h2>Capabilities · recorded once, replayed since</h2>
-    <div class="grid cols" id="caps"><p class="empty">loading…</p></div>
+    <div id="caps"><p class="empty">loading…</p></div>
   </section>
 
   <div class="split">
@@ -54,13 +54,35 @@ async function load() {
   $('tenant').textContent = t ? `${t.name} · ${t.baseUrl}` : '';
 
   const caps = await (await fetch('/api/capabilities')).json();
-  $('caps').innerHTML = caps.length ? caps.map(c => `
+
+  // The store holds capabilities for more than one application. Grouping by
+  // the product each was recorded against — the one being served first — is
+  // the difference between "why is a shopping cart in my banking console"
+  // and "the same engine drives three unrelated systems".
+  const card = (c) => `
     <div class="card">
       <h3>${esc(c.name)}</h3>
       <p>${esc((c.description || '').split('\n')[0]).slice(0,150)}…</p>
       <p>${pill(c.risk)} ${pill(c.approval)}</p>
       <p class="mono muted" style="font-size:12px">${esc(c.evidenceSummary || 'no outcomes declared')}</p>
       <p class="mono muted" style="font-size:12px">${(c.input_schema?.required || []).join(', ') || 'no inputs'}</p>
+    </div>`;
+
+  const groups = new Map();
+  for (const c of caps) {
+    const key = c.app ? `${c.app.vendor} · ${c.app.product}` : 'unattributed';
+    if (!groups.has(key)) groups.set(key, { served: !!c.servedHere, items: [] });
+    groups.get(key).items.push(c);
+  }
+  const ordered = [...groups.entries()].sort((a, b) => (b[1].served ? 1 : 0) - (a[1].served ? 1 : 0));
+
+  $('caps').innerHTML = caps.length ? ordered.map(([name, g]) => `
+    <div style="margin-bottom:1.6rem">
+      <div class="mono" style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+           color:${g.served ? 'var(--brass)' : 'var(--faint)'};margin-bottom:.6rem">
+        ${esc(name)}${g.served ? ' · serving now' : ' · recorded, not this target'}
+      </div>
+      <div class="grid cols">${g.items.map(card).join('')}</div>
     </div>`).join('') : '<p class="empty">No approved capabilities.</p>';
 
   const runs = await (await fetch('/api/runs?limit=40')).json();
