@@ -22,6 +22,7 @@
  */
 
 import { chromium, type Page } from 'playwright';
+import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readdirSync, renameSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -134,7 +135,25 @@ async function main(): Promise<void> {
     const target = join(OUT, 'meridian-core-demo.webm');
     if (existsSync(target)) rmSync(target);
     renameSync(join(OUT, produced[0]!), target);
-    process.stdout.write(`\n  → ${target}\n\n`);
+    process.stdout.write(`\n  → ${target}\n`);
+    // Playwright only writes webm, which QuickTime and Keynote will not play.
+    // A backup video that needs a particular application to open it is not much
+    // of a backup, so an mp4 is produced alongside it where ffmpeg exists.
+    const mp4 = join(OUT, 'meridian-core-demo.mp4');
+    try {
+      execFileSync(
+        'ffmpeg',
+        ['-y', '-i', target, '-c:v', 'libx264', '-preset', 'slow', '-crf', '22',
+         '-pix_fmt', 'yuv420p', '-movflags', '+faststart', mp4],
+        { stdio: 'ignore' },
+      );
+      process.stdout.write(`  → ${mp4}\n\n`);
+    } catch {
+      process.stdout.write(
+        `\n  (no mp4: ffmpeg not found. The webm plays in any browser;\n` +
+        `   \`brew install ffmpeg\` and re-run for one that plays anywhere.)\n\n`,
+      );
+    }
   } else {
     process.stderr.write('\n  no video was produced\n\n');
     process.exit(1);
