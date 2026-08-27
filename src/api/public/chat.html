@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Member services assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/style.css">
+<style>
+  main{max-width:900px}
+  .msg{margin:0 0 1.2rem}
+  .msg .who{
+    font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--faint);margin-bottom:.35rem;
+  }
+  .msg.you .body{color:var(--ink);font-size:15px}
+  .msg.bot .body{color:var(--ink);font-size:16px;line-height:1.55}
+  .msg.bot .who{color:var(--brass)}
+
+  /* What actually ran underneath the sentence. The point of the whole page:
+     a plain answer on top, and the typed call that produced it below. */
+  .ran{
+    margin-top:.7rem;border-left:2px solid var(--brass-dim);
+    padding:.6rem 0 .6rem .9rem;background:var(--panel);
+  }
+  .ran table{font-size:12.5px}
+  .ran td{border:0;padding:.2rem .8rem .2rem 0}
+  .ran td.k{color:var(--faint);font-family:var(--mono);font-size:11px;width:9rem}
+  .timing{display:flex;height:22px;margin:.6rem 0 .2rem;background:var(--panel2);max-width:520px}
+  .timing div{
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-size:10px;color:#0d1117;white-space:nowrap;
+  }
+  .timing .u{background:var(--brass)}
+  .timing .d{background:var(--good)}
+  .legend{font-family:var(--mono);font-size:10.5px;color:var(--faint);letter-spacing:.05em}
+  form{display:flex;gap:.6rem;margin:1.6rem 0 0}
+  .examples{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.9rem}
+  .examples button{background:transparent;color:var(--dim);border:1px solid var(--rule);font-weight:400;font-size:12px;padding:.4rem .7rem}
+  .examples button:hover{color:var(--ink);border-color:var(--brass-dim)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Member services assistant</h1>
+  <span class="sub">standing in for the agent · drives the capability API</span>
+  <nav>
+    <a href="/">Dashboard</a>
+    <a href="/chat" class="on">Chatbot</a>
+  </nav>
+</header>
+
+<main>
+  <div id="thread">
+    <div class="msg bot">
+      <div class="who">Assistant</div>
+      <div class="body">Ask me about a member. I can only do things someone has recorded and approved — and I'll tell you plainly when something needs a person.</div>
+    </div>
+  </div>
+
+  <form id="f">
+    <input type="text" id="q" placeholder="What's the balance on member 102777's first share?" autocomplete="off">
+    <button id="send">Ask</button>
+  </form>
+
+  <div class="examples">
+    <button data-q="What's the balance on member 102777's regular shares?">balance</button>
+    <button data-q="Look up member 999999">no such member</button>
+    <button data-q="Transfer $1.00 from 102777-MMKT-4 to 102777-S0001 for member 102777, memo demo">a transfer</button>
+    <button data-q="Transfer $99999 from 102777-MMKT-4 to 102777-S0001 for member 102777, memo overdraw">overdraw</button>
+  </div>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pill = (v) => v ? `<span class="pill ${esc(v)}">${esc(v)}</span>` : '';
+
+function add(who, cls, html) {
+  const d = document.createElement('div');
+  d.className = 'msg ' + cls;
+  d.innerHTML = `<div class="who">${esc(who)}</div><div class="body">${html}</div>`;
+  $('thread').appendChild(d);
+  d.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  return d;
+}
+
+function renderRan(invocations, timing) {
+  if (!invocations?.length) return '';
+  let html = invocations.map(i => {
+    const rows = [
+      ['capability', `<code>${esc(i.capability)}</code>`],
+      ['result', pill(i.status) + (i.outcome ? ' <code>' + esc(i.outcome) + '</code>' : '')],
+    ];
+    if (i.outputs) rows.push(['returned', `<code>${esc(JSON.stringify(i.outputs))}</code>`]);
+    if (i.reason) rows.push(['why it stopped', esc(i.reason)]);
+    if (i.step) rows.push(['at step', `<code>${esc(i.step)}</code>`]);
+    if (i.observed) rows.push(['observed', esc(String(i.observed).slice(0, 160))]);
+    rows.push(['replay time', `${i.durationMs} ms — no model in this path`]);
+    rows.push(['evidence', `<a href="/" style="color:var(--brass)">${esc(i.runId)}</a>`]);
+    return `<div class="ran"><table>${rows.map(([k, v]) => `<tr><td class="k">${k}</td><td>${v}</td></tr>`).join('')}</table></div>`;
+  }).join('');
+
+  if (timing?.totalMs) {
+    const u = Math.round(timing.understandingMs / timing.totalMs * 100);
+    html += `<div class="timing">
+        <div class="u" style="width:${u}%">understanding ${(timing.understandingMs/1000).toFixed(1)}s</div>
+        <div class="d" style="width:${100-u}%">doing ${(timing.doingMs/1000).toFixed(1)}s</div>
+      </div>
+      <div class="legend">understanding is a model · doing is a recorded capability, no model</div>`;
+  }
+  return html;
+}
+
+async function ask(text) {
+  add('You', 'you', esc(text));
+  $('q').value = '';
+  $('send').disabled = true;
+  const pending = add('Assistant', 'bot', '<span class="muted">working…</span>');
+
+  try {
+    const r = await fetch('/api/chat', {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ message: text }),
+    });
+    const d = await r.json();
+    if (d.error) throw new Error(d.error);
+    pending.querySelector('.body').innerHTML = esc(d.reply) + renderRan(d.invocations, d.timing);
+  } catch (e) {
+    pending.querySelector('.body').innerHTML = `<span style="color:var(--bad)">${esc(e.message)}</span>`;
+  } finally {
+    $('send').disabled = false;
+    $('q').focus();
+  }
+}
+
+$('f').addEventListener('submit', (e) => { e.preventDefault(); const v = $('q').value.trim(); if (v) ask(v); });
+document.querySelectorAll('.examples button').forEach(b =>
+  b.addEventListener('click', () => ask(b.dataset.q)));
+$('q').focus();
+</script>
+</body>
+</html>

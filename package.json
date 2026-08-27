@@ -12,6 +12,7 @@
     "discover": "tsx src/cli/index.ts discover",
     "probe": "tsx src/cli/index.ts probe",
     "voice": "tsx src/cli/index.ts voice",
+    "serve": "tsx src/cli/index.ts serve",
     "demo:voice": "bash scripts/demo-voice.sh",
     "replay-recording": "tsx scripts/replay-recording.ts",
     "replay": "tsx src/cli/index.ts replay",

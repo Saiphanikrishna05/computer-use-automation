@@ -150,6 +150,24 @@ program
   });
 
 program
+  .command('serve')
+  .description('Serve the capability API, the dashboard and the chatbot on one port.')
+  .option('-p, --port <n>', 'port', (v) => Number(v), 7400)
+  .option('-t, --tenant <id>', 'default tenant for invocations', DEFAULT_TENANT)
+  .option('--no-headless', 'show the browser each invocation drives')
+  .option('--route <mode>', 'how the chatbot turns a request into a call: llm | rules', 'llm')
+  .action(async (opts) => {
+    const { startApiServer } = await import('../api/server.js');
+    await startApiServer({ port: opts.port, tenant: opts.tenant, headless: opts.headless !== false });
+    process.stdout.write(
+      `\n  Capability API   http://localhost:${opts.port}/api/capabilities\n` +
+        `  Dashboard        http://localhost:${opts.port}/\n` +
+        `  Chatbot          http://localhost:${opts.port}/chat\n\n` +
+        `  tenant ${opts.tenant} · Ctrl-C to stop\n\n`,
+    );
+  });
+
+program
   .command('audit')
   .description('Generate the audit pack for a capability: what it does, what backs it, and what it cannot vouch for.')
   .argument('[capability]', 'capability id; omit for every capability in the catalog')
