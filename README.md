@@ -69,6 +69,20 @@ curl -s -X POST localhost:7400/api/capabilities/mc_member_balance/invoke \
   -H 'content-type: application/json' -d '{"inputs":{"memberNumber":"102777"}}'
 ```
 
+### Where the three surfaces live
+
+```
+src/api/server.ts          the API — catalog, invoke, runs
+src/api/public/index.html  the dashboard
+src/api/public/chat.html   the chatbot
+```
+
+About eight hundred lines between them. They are thin on purpose: both pages are
+**clients of the capability API**, so a guardrail enforced in the driver holds
+identically from the CLI, the API and the chatbot. Asking the chatbot to move
+money returns `needs_human` for the same reason the CLI does — the refusal is
+several layers below either of them.
+
 ### Recording a new one *(needs `ANTHROPIC_API_KEY`)*
 
 ```bash

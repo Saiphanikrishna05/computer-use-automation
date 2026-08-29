@@ -84,6 +84,17 @@ POST /api/capabilities/:id/invoke   invoke by name, structured result
 GET  /api/runs, /api/runs/:runId    what happened, with the evidence
 ```
 
+```
+src/api/server.ts          410 lines   the API
+src/api/public/index.html  154 lines   the dashboard
+src/api/public/chat.html   146 lines   the chatbot
+```
+
+Eight hundred lines for all three, and that is the point: they are **clients of
+the capability API, not the system**. The chatbot uses a model to understand a
+sentence and then invokes a recorded capability; the dashboard reads the same
+run bundles the CLI writes. Neither can do anything the API cannot.
+
 Generated from the same artifact replay executes. A result is one of four
 shapes, and the fourth is the point:
 
