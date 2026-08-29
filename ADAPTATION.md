@@ -214,10 +214,33 @@ blunt.
 **Re-probing on a schedule** is supported but not run; that needs somewhere to
 run from and somewhere for the result to go.
 
-**What I would do first with more time** is not another capability. It is making
-locator parameterisation reliable without review. It matches on exact values
-today, which worked because a member number is distinctive, and would not on a
-value like `001`.
+**What I said I would do first, and then did.** Locator parameterisation was
+the limitation I named as most worth fixing: it matched on exact values, which
+worked because a member number is distinctive and would not have on a value
+like `001`.
+
+The defect underneath was a bare substring replace. A parameter whose value
+appeared inside a longer identifier rewrote the middle of it, so
+`memberNumber="1002"` turned `"Member 100234"` into
+`"Member {{memberNumber}}34"`. That is a locator which looks parameterised and
+is quietly wrong for every member but the recorded one, which is the same shape
+as the twenty-six-row bug above and just as hard to notice.
+
+Replacement is now bounded to whole tokens: bounded by a non-alphanumeric
+character or the end of the string. `102777-S0001` still parameterises, because
+a hyphen bounds the member number. `001` now works too, where it is a token,
+which is what closed the case I had named. The blunt three-character floor that
+was standing in for this is still there, but only to exclude values too short to
+be distinctive at all.
+
+The trade is deliberate. When boundary matching declines, the locator stays
+literal and the capability fails to find its row for a different member: a loud
+failure at a named step. Over-templatising fails silently with a real number
+from the wrong record, and between the two, loud is the one to keep.
+
+**What I would do next** is re-probing on a schedule. The machinery exists and
+is exercised by `--stale-only`; it needs somewhere to run from and somewhere for
+the result to go, which is deployment rather than design.
 
 ---
 

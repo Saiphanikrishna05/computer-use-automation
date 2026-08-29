@@ -317,7 +317,10 @@ function rank(actionClass: ActionClass): number {
  * templating it would hide that rather than surface it.
  */
 function templatizeTarget<T>(target: T, params: DeclaredParameter[]): T {
-  const usable = params.filter((p) => !p.injected && p.value && p.value.length >= 4);
+  // Three characters, not four. The old floor was a blunt guard around a bare
+  // substring replace; boundary matching below does that work properly now, so
+  // the floor only has to exclude values too short to be distinctive at all.
+  const usable = params.filter((p) => !p.injected && p.value && p.value.length >= 3);
   if (usable.length === 0) return target;
   const walk = (node: unknown): unknown => {
     if (typeof node === 'string') return templatize(node, usable);
@@ -334,15 +337,54 @@ function templatizeTarget<T>(target: T, params: DeclaredParameter[]): T {
  * Rewrites concrete values into template references.
  *
  * Longest-first so a parameter whose value is a substring of another cannot
- * corrupt the longer one, replacing "100" before "100001" would leave
+ * corrupt the longer one: replacing "100" before "100001" would leave
  * "{{shortParam}}001" behind.
+ *
+ * Only whole tokens are replaced. A bare substring match rewrites the middle of
+ * an unrelated identifier, and the result is a locator that looks
+ * parameterised and is quietly wrong for every member but the recorded one:
+ *
+ *     memberNumber="1002"  ·  "Member 100234"  ->  "Member {{memberNumber}}34"
+ *
+ * A token here is bounded by a non-alphanumeric character or the end of the
+ * string, which keeps the case this exists for. In "102777-S0001" the member
+ * number is bounded by a hyphen and is rewritten; in "100234" a shorter number
+ * sitting inside it is not.
+ *
+ * The failure this trades into is under-templatising: a locator stays literal
+ * and the capability then fails to find its row for a different member. That is
+ * a loud failure at a named step, and it is the better half of the trade,
+ * because over-templatising produces a confident wrong answer instead.
  */
 function templatize(value: string, params: DeclaredParameter[]): string {
   let out = value;
   for (const param of [...params].sort((a, b) => b.value.length - a.value.length)) {
-    if (param.value && out.includes(param.value)) {
-      out = out.split(param.value).join(`{{${param.name}}}`);
-    }
+    if (!param.value) continue;
+    out = replaceWholeTokens(out, param.value, `{{${param.name}}}`);
   }
   return out;
 }
+
+/** True when `text[index]` sits outside a run of alphanumeric characters. */
+function isBoundary(text: string, index: number): boolean {
+  if (index < 0 || index >= text.length) return true;
+  return !/[A-Za-z0-9]/.test(text[index]!);
+}
+
+function replaceWholeTokens(text: string, needle: string, replacement: string): string {
+  let out = '';
+  let cursor = 0;
+  for (;;) {
+    const at = text.indexOf(needle, cursor);
+    if (at === -1) {
+      out += text.slice(cursor);
+      return out;
+    }
+    const whole = isBoundary(text, at - 1) && isBoundary(text, at + needle.length);
+    out += text.slice(cursor, at) + (whole ? replacement : needle);
+    cursor = at + needle.length;
+  }
+}
+
+/** Exposed for tests: the boundary rule is the load-bearing part. */
+export const __templatizeForTest = templatize;
