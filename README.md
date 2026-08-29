@@ -71,7 +71,7 @@ curl -s -X POST localhost:7400/api/capabilities/mc_member_balance/invoke \
 
 ![Five capabilities recorded against interface.ai's hosted MERIDIAN CORE console](docs/meridian-dashboard.png)
 
-*The five capabilities recorded against their console, each showing its
+*The capabilities recorded against their console, each showing its
 reversibility, its approval state, and how many of its declared failure modes
 have been provoked against the live host rather than assumed.*
 

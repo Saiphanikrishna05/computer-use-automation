@@ -60,13 +60,28 @@ steps later, pointing at a missing button rather than a closed host.
 | | steps | outcomes observed | risk | to record |
 |---|---|---|---|---|
 | `mc_member_balance` | 9 | 1 of 1 | reversible | $1.83 |
+| `mc_member_lookup_by_surname` | 9 | 1 of 1 | reversible | $1.86 |
 | `mc_update_member` | 13 | 3 of 3 | reversible | $3.42 |
 | `mc_funds_transfer` | 16 | 4 of 4 | **irreversible** | $4.29 |
 | `mc_open_share` | 14 | 3 of 3 | **irreversible** | $3.81 |
 | `mc_place_hold` | 14 | 2 of 2 | **irreversible** | $3.50 |
 
-Five of seven functions, **$16.86 to record, $0 per replay**, verified by
+Six of seven functions, **$18.72 to record, $0 per replay**, verified by
 running with the API key removed from the environment.
+
+The sixth is the marginal-cost argument made concrete. I had argued that
+inquiry by surname would prove nothing the others did not, and that was true of
+the *flow*. It was not true of the cost: recording it took $1.86 and about ten
+minutes, against the weeks a hand-written integration would take for the same
+function. A claim about marginal cost is worth more with a sixth data point
+than with an argument for why five is enough.
+
+It also earned its place a second way. The model declared the same wrong
+outcome it had declared on the very first capability recorded against this
+host, `"No members found"` against a console that says `"No member records
+matched your search."` Probing refuted it within two minutes of the capability
+existing. The same guess, the same catch, on a target the system had by then
+seen five times.
 
 `mc_update_member` is worth noticing: it writes, and it is still
 `mutate_reversible`, because a contact detail can be written back. The axis is
@@ -134,7 +149,7 @@ wrong** by provoking each against the live host and reading back what it says:
 | `"account is on hold"` | "Source share is HOLD and cannot be debited." |
 | `"Invalid e-mail"` | "E-mail address is not in a valid format." |
 
-Corrected, **all thirteen outcomes across five capabilities are backed by a real
+Corrected, **all fourteen outcomes across six capabilities are backed by a real
 screen.** One was deleted rather than carried: `INVALID_AMOUNT` is unreachable,
 because `amount` is typed `money` and the contract rejects a non-numeric value
 before the host sees it.
@@ -177,9 +192,12 @@ attempts, then `HOST_UNAVAILABLE`.
 
 ## What I left out
 
-**Two functions.** Sign-off is a single link with no contract worth recording;
-inquiry by surname is the same flow as inquiry by number with one field changed.
-Neither would prove anything the five do not.
+**Sign-off, and only sign-off.** It takes no inputs, returns no values, and has
+no failure mode a caller could act on, so there is no contract to record. More
+than that, it would duplicate work the system already does: every capability
+signs on at the start and closes its own browser session at the end, so the
+session a sign-off capability exists to end has already gone. Recording it would
+be recording something that happens anyway.
 
 **Which identity a capability needs is configuration, not contract.**
 `mc_place_hold` has to be probed with `--as supervisor` because a teller never

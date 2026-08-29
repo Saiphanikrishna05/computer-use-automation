@@ -1,0 +1,733 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "mc_member_lookup_by_surname",
+  "version": 1,
+  "title": "Look up member by last name and return member number and name",
+  "description": "Signs on to Meridian Core, searches Member Inquiry by Last Name for the given surname, opens the matching member's record, and returns the Member Number and Name. Read-only; changes nothing.",
+  "target": {
+    "surface": "web",
+    "app": {
+      "vendor": "meridian",
+      "product": "servicing-console",
+      "versionRange": "1.x"
+    },
+    "entryUrlTemplate": "{{baseUrl}}/"
+  },
+  "approval": {
+    "state": "draft"
+  },
+  "maxRisk": "mutate_reversible",
+  "inputs": [
+    {
+      "name": "operatorId",
+      "type": "string",
+      "description": "Servicing console operator user ID. Injected by the runtime credential store.",
+      "required": true,
+      "sensitivity": "pii",
+      "injected": true
+    },
+    {
+      "name": "operatorPassword",
+      "type": "string",
+      "description": "Servicing console operator password. Injected by the runtime credential store.",
+      "required": true,
+      "sensitivity": "secret",
+      "injected": true
+    },
+    {
+      "name": "branch",
+      "type": "string",
+      "description": "Branch the operator signs on against. Injected by the runtime.",
+      "required": true,
+      "sensitivity": "none",
+      "injected": true
+    },
+    {
+      "name": "lastName",
+      "type": "string",
+      "description": "Member last name to search for",
+      "required": true,
+      "sensitivity": "none",
+      "injected": false,
+      "example": "Johnson"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "memberNumber",
+      "type": "string",
+      "description": "Member number on the Member Record screen",
+      "required": true,
+      "sensitivity": "financial",
+      "extract": {
+        "target": {
+          "description": "cell \"102777\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Member No.:",
+              "positional": true,
+              "expect": "cell"
+            },
+            {
+              "kind": "label",
+              "text": "Member No.:",
+              "positional": true,
+              "expect": "cell"
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.404168701171875,
+              "yFraction": 0.11833333333333333
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™",
+            "nearestLabel": "Member No.:"
+          },
+          "ordinal": 0,
+          "evidence": {
+            "role": "cell",
+            "accessibleName": "102777",
+            "tag": "td",
+            "textSnippet": "102777",
+            "boundingBox": {
+              "x": 399,
+              "y": 98,
+              "width": 236.671875,
+              "height": 17
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "source": "text",
+        "transforms": [
+          "collapse_whitespace"
+        ]
+      }
+    },
+    {
+      "name": "memberName",
+      "type": "string",
+      "description": "Member name on the Member Record screen",
+      "required": true,
+      "sensitivity": "pii",
+      "extract": {
+        "target": {
+          "description": "cell \"{{lastName}}, Katherine\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Name:",
+              "positional": true,
+              "expect": "cell"
+            },
+            {
+              "kind": "label",
+              "text": "Member No.:",
+              "positional": true,
+              "expect": "cell"
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.673699951171875,
+              "yFraction": 0.11833333333333333
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™",
+            "nearestLabel": "Name:"
+          },
+          "ordinal": 2,
+          "evidence": {
+            "role": "cell",
+            "accessibleName": "{{lastName}}, Katherine",
+            "tag": "td",
+            "textSnippet": "{{lastName}}, Katherine",
+            "boundingBox": {
+              "x": 719.671875,
+              "y": 98,
+              "width": 285.328125,
+              "height": 17
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "source": "text",
+        "transforms": [
+          "collapse_whitespace"
+        ]
+      }
+    }
+  ],
+  "steps": [
+    {
+      "id": "type_1",
+      "intent": "Enter the operator ID on the sign-on screen",
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": [],
+      "action": {
+        "kind": "type",
+        "target": {
+          "description": "textbox labelled \"Operator ID:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Operator ID:",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "input[name=\"operator\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.35118408203125,
+              "yFraction": 0.11611111111111111
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+          },
+          "evidence": {
+            "role": "textbox",
+            "tag": "input",
+            "boundingBox": {
+              "x": 374.515625,
+              "y": 96,
+              "width": 150,
+              "height": 17
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "{{operatorId}}",
+        "clearFirst": true,
+        "secret": true
+      }
+    },
+    {
+      "id": "type_2",
+      "intent": "Enter the operator password on the sign-on screen",
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": [],
+      "action": {
+        "kind": "type",
+        "target": {
+          "description": "textbox labelled \"Password:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Password:",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "input[name=\"password\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.35118408203125,
+              "yFraction": 0.14166666666666666
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+          },
+          "ordinal": 1,
+          "evidence": {
+            "role": "textbox",
+            "tag": "input",
+            "boundingBox": {
+              "x": 374.515625,
+              "y": 119,
+              "width": 150,
+              "height": 17
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "{{operatorPassword}}",
+        "clearFirst": true,
+        "secret": true
+      }
+    },
+    {
+      "id": "select_3",
+      "intent": "Select branch 001 (Main Office) for sign-on",
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": [],
+      "action": {
+        "kind": "select",
+        "target": {
+          "description": "combobox labelled \"Branch:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Branch:",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "select[name=\"branch\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.35352783203125,
+              "yFraction": 0.16833333333333333
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+          },
+          "evidence": {
+            "role": "combobox",
+            "tag": "select",
+            "textSnippet": "MAIN-001 - Main OfficeWEST-014 - WestsideEAST-022 - Eastgate",
+            "boundingBox": {
+              "x": 374.515625,
+              "y": 142,
+              "width": 156,
+              "height": 19
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "MAIN-{{branch}}"
+      }
+    },
+    {
+      "id": "click_4",
+      "intent": "Submit the sign-on form",
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": [],
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "button \"Sign On\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "role_name",
+              "role": "button",
+              "name": "Sign On",
+              "exact": true
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.317529296875,
+              "yFraction": 0.21055555555555555
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+          },
+          "evidence": {
+            "role": "button",
+            "accessibleName": "Sign On",
+            "tag": "input",
+            "boundingBox": {
+              "x": 374.515625,
+              "y": 180,
+              "width": 63.84375,
+              "height": 19
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "click_5",
+      "intent": "Open Member Inquiry / Selection from the main menu",
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": [],
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "link \"Member Inquiry / Selection\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "role_name",
+              "role": "link",
+              "name": "Member Inquiry / Selection",
+              "exact": true
+            },
+            {
+              "kind": "label",
+              "text": "1.",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.31287841796875,
+              "yFraction": 0.1461111111111111
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™",
+            "nearestLabel": "1."
+          },
+          "evidence": {
+            "role": "link",
+            "accessibleName": "Member Inquiry / Selection",
+            "tag": "a",
+            "textSnippet": "Member Inquiry / Selection",
+            "boundingBox": {
+              "x": 324.875,
+              "y": 125,
+              "width": 151.21875,
+              "height": 13
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "select_6",
+      "intent": "Switch the Member Inquiry search mode to Last Name",
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": [],
+      "action": {
+        "kind": "select",
+        "target": {
+          "description": "combobox labelled \"Search by:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Search by:",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "select[name=\"by\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.3287353515625,
+              "yFraction": 0.1361111111111111
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+          },
+          "evidence": {
+            "role": "combobox",
+            "tag": "select",
+            "textSnippet": "Member Number Last Name",
+            "boundingBox": {
+              "x": 361.28125,
+              "y": 113,
+              "width": 119,
+              "height": 19
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "Last Name"
+      }
+    },
+    {
+      "id": "type_7",
+      "intent": "Type the last name Johnson into the search Value field",
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": [],
+      "action": {
+        "kind": "type",
+        "target": {
+          "description": "textbox labelled \"Value:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "label",
+              "text": "Value:",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "structural",
+              "css": "input[name=\"q\"]",
+              "ordinal": 0
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.3627197265625,
+              "yFraction": 0.1638888888888889
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+          },
+          "evidence": {
+            "role": "textbox",
+            "tag": "input",
+            "boundingBox": {
+              "x": 361.28125,
+              "y": 139,
+              "width": 206,
+              "height": 17
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        },
+        "valueTemplate": "{{lastName}}",
+        "clearFirst": true,
+        "secret": false
+      }
+    },
+    {
+      "id": "click_8",
+      "intent": "Run the member search by last name",
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": [],
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "button \"Search\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "role_name",
+              "role": "button",
+              "name": "Search",
+              "exact": true
+            },
+            {
+              "kind": "label",
+              "text": "Value:",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.474945068359375,
+              "yFraction": 0.1638888888888889
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™",
+            "nearestLabel": "Value:"
+          },
+          "evidence": {
+            "role": "button",
+            "accessibleName": "Search",
+            "tag": "input",
+            "boundingBox": {
+              "x": 578.890625,
+              "y": 138,
+              "width": 58.078125,
+              "height": 19
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "click_9",
+      "intent": "Open the matching member's record from the search results",
+      "risk": "mutate_reversible",
+      "timeoutMs": 15000,
+      "postconditions": [],
+      "action": {
+        "kind": "click",
+        "target": {
+          "description": "link \"Select\" in the Member No. panel",
+          "framePath": [],
+          "candidates": [
+            {
+              "kind": "role_name",
+              "role": "link",
+              "name": "Select",
+              "exact": true
+            },
+            {
+              "kind": "label",
+              "text": "12",
+              "positional": true,
+              "expect": "control"
+            },
+            {
+              "kind": "coordinates",
+              "xFraction": 0.71751708984375,
+              "yFraction": 0.245
+            }
+          ],
+          "anchor": {
+            "containerRole": "panel",
+            "containerName": "Member No.",
+            "nearestLabel": "12"
+          },
+          "evidence": {
+            "role": "link",
+            "accessibleName": "Select",
+            "tag": "a",
+            "textSnippet": "Select",
+            "boundingBox": {
+              "x": 901.5625,
+              "y": 214,
+              "width": 33.71875,
+              "height": 13
+            },
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            }
+          }
+        }
+      }
+    }
+  ],
+  "checkpoint": {
+    "description": "Member Record screen shows the member number and name for the matched last name.",
+    "condition": {
+      "kind": "text_present",
+      "text": "MEMBER RECORD",
+      "framePath": [],
+      "caseSensitive": false
+    }
+  },
+  "outcomes": [
+    {
+      "code": "MEMBER_NOT_FOUND",
+      "description": "No member matches the supplied last name, so no result row can be selected.",
+      "when": {
+        "kind": "text_present",
+        "text": "No members found",
+        "framePath": [],
+        "caseSensitive": false
+      },
+      "extract": [],
+      "probe": {
+        "parameter": "lastName",
+        "value": "Zzzzqqx",
+        "rationale": "A surname that does not exist should return an empty result set."
+      },
+      "evidence": {
+        "state": "refuted",
+        "probedAt": "2026-08-29T17:44:47.122Z",
+        "runId": "discovery-20260829T174403-01",
+        "observedInstead": "failure TARGET_NOT_FOUND",
+        "note": "Replaying with lastName=\"Zzzzqqx\" ended in failure TARGET_NOT_FOUND, and no declared condition matched the screen it ended on. The wording in (page contains \"No members found\") is probably not what this application shows. Screen read: \"MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ Main Menu · Member Inquiry · System Settings · Sign Off MEMBER INQUIRY / SELECTION Search by: Member Number Last Name Value: No member records matched your search. Try member numbers 100234, 100987, 101555, 102777, 103001. \""
+      }
+    }
+  ],
+  "recovery": [
+    {
+      "code": "ACCEPT_SYSTEM_DIALOG",
+      "description": "A native dialog is blocking the page. Acknowledging it is required before any further step can run. Review whether acknowledging is safe for this flow before approving.",
+      "when": {
+        "kind": "dialog_present"
+      },
+      "then": [
+        {
+          "kind": "accept_dialog"
+        }
+      ],
+      "maxAttempts": 3
+    }
+  ],
+  "failures": [],
+  "provenance": {
+    "discoveredAt": "2026-08-29T17:44:46.657Z",
+    "runId": "discovery-20260829T174403-01",
+    "goal": "Sign on. On Member Inquiry, search by Last Name for Johnson instead of by member number. Open the matching member's record. Extract two values: the member's Member Number and their Name. As soon as you have both, call finish immediately - do not explore further.",
+    "model": "claude-opus-5",
+    "evidencePath": "runs/discovery-20260829T174403-01",
+    "humanEdits": [],
+    "cost": {
+      "turns": 15,
+      "totalTokens": 170135,
+      "inputTokens": 104131,
+      "outputTokens": 1744,
+      "cacheReadTokens": 59976,
+      "cacheWriteTokens": 4284,
+      "costUsd": 1.863054,
+      "cacheSavingUsd": 0.809676
+    },
+    "validation": {
+      "checkedAt": "2026-08-29T17:44:47.122Z",
+      "warnings": [
+        "1 declared outcome(s) were hypothesised by the run that recorded them, which never took these paths: MEMBER_NOT_FOUND (\"No members found\")"
+      ],
+      "rejected": []
+    },
+    "probing": {
+      "probedAt": "2026-08-29T17:44:49.265Z",
+      "runs": 1,
+      "observed": [],
+      "refuted": [
+        "MEMBER_NOT_FOUND"
+      ],
+      "unprobed": [],
+      "warnings": [
+        "MEMBER_NOT_FOUND was probed and did not fire: Replaying with lastName=\"Zzzzqqx\" ended in failure TARGET_NOT_FOUND, and no declared condition matched the screen it ended on. The wording in (page contains \"No members found\") is probably not what this application shows. Screen read: \"MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ Main Menu · Member Inquiry · System Settings · Sign Off MEMBER INQUIRY / SELECTION Search by: Member Number Last Name Value: No member records matched your search. Try member numbers 100234, 100987, 101555, 102777, 103001. \" Confirm the real on-screen wording before approving."
+      ]
+    }
+  }
+}

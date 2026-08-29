@@ -27,8 +27,15 @@ export interface DiscoverCommandOptions {
   capabilityId?: string;
   headless?: boolean;
   maxSteps?: number;
-  /** Vendor/product the capability is recorded against. Defaults to the
-   *  stand-in console; overridden when exploring a different application. */
+  /**
+   * Vendor/product the capability is recorded against.
+   *
+   * Defaults to the tenant's own application rather than to a literal. It used
+   * to default to the stand-in console, so discovering against a different
+   * tenant produced an artifact stamped with the wrong product, and the
+   * catalog then filtered it out of the tenant it was recorded for. Nothing
+   * failed; the capability was simply absent.
+   */
   vendor?: string;
   product?: string;
   /** Probe declared outcomes by replaying with a provoking input. On by
@@ -86,8 +93,8 @@ export async function runDiscoverCommand(opts: DiscoverCommandOptions): Promise<
     goal: opts.goal,
     runId,
     model: model.model,
-    vendor: opts.vendor ?? 'meridian',
-    product: opts.product ?? 'servicing-console',
+    vendor: opts.vendor ?? tenant.app?.vendor ?? 'meridian',
+    product: opts.product ?? tenant.app?.product ?? 'servicing-console',
     versionRange: '1.x',
     entryUrl,
     baseUrl,

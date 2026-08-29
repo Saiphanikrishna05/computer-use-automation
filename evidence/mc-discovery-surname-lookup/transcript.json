@@ -1,0 +1,313 @@
+[
+  {
+    "turn": 1,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_011U922rozFz2VGtkPyCC8JP",
+        "name": "observe",
+        "input": {},
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 2,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_01238k3XKcYDYpWwdxrHnfXT",
+        "name": "type",
+        "input": {
+          "ref": "main#4",
+          "text": "teller1",
+          "intent": "Enter the operator ID on the sign-on screen"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01SowyzjHKbhDky7ficspugr",
+        "name": "type",
+        "input": {
+          "ref": "main#6",
+          "text": "[redacted:literal]",
+          "intent": "Enter the operator [redacted:literal] on the sign-on screen"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 3,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_0114XufhC9hxijugkYzj7Shs",
+        "name": "select",
+        "input": {
+          "ref": "main#8",
+          "value": "MAIN-001",
+          "intent": "Select branch 001 (Main Office) for sign-on"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 4,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_014rmXovCT2f9iouMBMvGcTX",
+        "name": "click",
+        "input": {
+          "ref": "main#9",
+          "intent": "Submit the sign-on form"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 5,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_014wYhvixTc3VxjEhFv21Vxa",
+        "name": "observe",
+        "input": {},
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 6,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_01AiMKNvpPw6pF9C8MBYP6F7",
+        "name": "click",
+        "input": {
+          "ref": "main#10",
+          "intent": "Open Member Inquiry / Selection from the main menu"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 7,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_019Cft3tqrokjFEr9eXRuzcr",
+        "name": "observe",
+        "input": {},
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 8,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_01WCY1eeR68wFcEHPkjd3KPY",
+        "name": "select",
+        "input": {
+          "ref": "main#9",
+          "value": "Last Name",
+          "intent": "Switch the Member Inquiry search mode to Last Name"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 9,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_01FhLAa36TvAbizurnXREPuw",
+        "name": "type",
+        "input": {
+          "ref": "main#11",
+          "text": "Johnson",
+          "intent": "Type the last name Johnson into the search Value field"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 10,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_01FgsCzD6gudpYfeepoTbEwL",
+        "name": "click",
+        "input": {
+          "ref": "main#12",
+          "intent": "Run the member search by last name"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 11,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_0125JagUsyqXc3yY37fNRFqW",
+        "name": "observe",
+        "input": {},
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 12,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_01HMzprVdQn8XVpaDN1VSZ3z",
+        "name": "click",
+        "input": {
+          "ref": "main#20",
+          "intent": "Open the matching member's record from the search results"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 13,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_019V1yzS2KBQpjTE9WUTAgNT",
+        "name": "observe",
+        "input": {},
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 14,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_01KT5RjUSGRbui9dkoTAzCF3",
+        "name": "extract_value",
+        "input": {
+          "ref": "main#9",
+          "name": "memberNumber",
+          "type": "string",
+          "description": "Member number on the Member Record screen",
+          "sensitivity": "financial"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      },
+      {
+        "type": "tool_use",
+        "id": "toolu_01H21FxqWjGxpFbXxrVEXzFk",
+        "name": "extract_value",
+        "input": {
+          "ref": "main#11",
+          "name": "memberName",
+          "type": "string",
+          "description": "Member name on the Member Record screen",
+          "sensitivity": "pii"
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 15,
+    "role": "assistant",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_01J3ixqW8RTBe5RZvpiEqCMK",
+        "name": "finish",
+        "input": {
+          "capabilityId": "lookup_member_by_last_name",
+          "title": "Look up member by last name and return member number and name",
+          "description": "Signs on to Meridian Core, searches Member Inquiry by Last Name for the given surname, opens the matching member's record, and returns the Member Number and Name. Read-only; changes nothing.",
+          "parameters": [
+            {
+              "name": "lastName",
+              "type": "string",
+              "description": "Member last name to search for",
+              "value": "Johnson"
+            }
+          ],
+          "checkpointDescription": "Member Record screen shows the member number and name for the matched last name.",
+          "checkpointText": "MEMBER RECORD",
+          "expectedOutcomes": [
+            {
+              "code": "MEMBER_NOT_FOUND",
+              "description": "No member matches the supplied last name, so no result row can be selected.",
+              "textWhenPresent": "No members found",
+              "probeParameter": "lastName",
+              "probeValue": "Zzzzqqx",
+              "probeRationale": "A surname that does not exist should return an empty result set."
+            }
+          ]
+        },
+        "caller": {
+          "type": "direct"
+        }
+      }
+    ]
+  }
+]
