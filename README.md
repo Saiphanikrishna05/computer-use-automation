@@ -8,10 +8,10 @@ agent invokes it by name with typed arguments.
 The design write-up is in **[REPORT.md](REPORT.md)**. Evidence from real runs is
 in **[evidence/](evidence/)**.
 
-> **Adaptation project — MERIDIAN CORE.** This system has since been pointed at
+> **Adaptation project: MERIDIAN CORE.** This system has since been pointed at
 > a live legacy console it had never seen, hosted by interface.ai, and wrapped
 > in a callable API, a chatbot and a dashboard. That write-up is
-> **[ADAPTATION.md](ADAPTATION.md)** — what it took (sixty lines of
+> **[ADAPTATION.md](ADAPTATION.md)**, covering what it took (sixty lines of
 > configuration), the four things their target found wrong with the core, and
 > what I left out.
 >
@@ -34,7 +34,7 @@ npm run serve -- --tenant meridian-core
 | Chatbot | <http://localhost:7400/chat> |
 | Catalog | <http://localhost:7400/api/capabilities> |
 
-**Ask the chatbot these four**, in this order — they are the demo:
+**Ask the chatbot these four**, in this order. They are the demo:
 
 ```
 What's the balance on member 102777's regular shares?
@@ -80,8 +80,8 @@ src/api/public/chat.html   the chatbot
 About eight hundred lines between them. They are thin on purpose: both pages are
 **clients of the capability API**, so a guardrail enforced in the driver holds
 identically from the CLI, the API and the chatbot. Asking the chatbot to move
-money returns `needs_human` for the same reason the CLI does — the refusal is
-several layers below either of them.
+money returns `needs_human` for the same reason the CLI does, because the
+refusal is several layers below either of them.
 
 ### Recording a new one *(needs `ANTHROPIC_API_KEY`)*
 
@@ -309,7 +309,7 @@ npm run replay -- lookup_member_savings_balance -i memberId=100001
     memberStatus          "Active"
 ```
 
-**1,453 ms median over ten runs, and zero tokens.** Not "cheap" — replay makes no
+**1,453 ms median over ten runs, and zero tokens.** Not "cheap": replay makes no
 API call at all, which is why every command in this section runs with `.env`
 empty. Discovery measures what it spent, so the comparison is a measurement
 rather than a claim:

@@ -7,7 +7,7 @@ target I had not seen and did not write.
 
 ## What it took
 
-**Sixty lines, all configuration** — a tenant entry with their base URL, a
+**Sixty lines, all configuration:** a tenant entry with their base URL, a
 per-tenant credential, and a `branch` field threaded through sign-on:
 
 ```
@@ -16,8 +16,8 @@ src/config.ts +46   src/cli/discover-command.ts +11   src/discovery/agent.ts +5
 
 Nothing above the surface driver changed to *reach* it. That was decided months
 earlier: the artifact describes a control in terms an accessibility tree can
-answer — role, accessible name, the label a human reads as belonging to it, the
-row and column a cell sits in — rather than as a selector.
+answer (role, accessible name, the label a human reads as belonging to it, the
+row and column a cell sits in) rather than as a selector.
 
 **The hidden token cost nothing.** The brief flags `_token` as load-bearing.
 Replay drives a real browser, so clicking *Continue* submits every hidden field
@@ -30,19 +30,19 @@ Then their target found four real things wrong with the core.
 
 **Identifiers that nest.** Row matching is *containment* on purpose, so one
 recording survives a tenant saying "Member No." where another says "Member ID".
-That holds until identifiers nest — and on a share ledger they do:
+That holds until identifiers nest, and on a share ledger they do:
 `100234-S0001` is a prefix of twenty others. Asking for one share's balance
-matched twenty-six rows and returned **$2,070.51 — a real number, from a
+matched twenty-six rows and returned **$2,070.51, a real number from a
 different share.** Not a crash; a confident wrong answer. Exact now beats
 containing where an exact hit exists, and a test pins that the tolerant path
 still applies where nothing matches exactly.
 
 **Locators could not be parameterised.** On my target the balance row is headed
-"Savings" — chrome, identical for every member. Meridian Core heads each row
+"Savings": chrome, identical for every member. Meridian Core heads each row
 with a share id containing the member number: record data wearing a landmark's
 clothes, correct for exactly one member. Locators now carry `{{param}}`
 references, templatised by the recorder and filled at resolve time. Credentials
-are excluded from that rewrite — a locator needing a password in it is
+are excluded from that rewrite, because a locator needing a password in it is
 describing something no reviewer should be looking at.
 
 **Credential names were hardcoded** in two places. Adding `branch` broke replay
@@ -51,7 +51,7 @@ existing.
 
 **Recovery reported that it ran, not that it worked.** `tryRecovery` answered
 "did a rule fire?", and the declared-failure check treats that as reason not to
-call a condition fatal — so a recovery that failed suppressed the failure it had
+call a condition fatal, so a recovery that failed suppressed the failure it had
 failed to fix. A host stuck in maintenance reported `TARGET_NOT_FOUND` several
 steps later, pointing at a missing button rather than a closed host.
 
@@ -65,13 +65,13 @@ steps later, pointing at a missing button rather than a closed host.
 | `mc_open_share` | 14 | 3 of 3 | **irreversible** | $3.81 |
 | `mc_place_hold` | 14 | 2 of 2 | **irreversible** | $3.50 |
 
-Five of seven functions, **$16.86 to record, $0 per replay** — verified by
+Five of seven functions, **$16.86 to record, $0 per replay**, verified by
 running with the API key removed from the environment.
 
 `mc_update_member` is worth noticing: it writes, and it is still
 `mutate_reversible`, because a contact detail can be written back. The axis is
 reversibility, not whether anything changed. The three irreversible ones could
-not be recorded end to end, and that is the system working — the discovery agent
+not be recorded end to end, and that is the system working: the discovery agent
 is forbidden irreversible actions, so it walks each flow only to the
 confirmation screen. Their final steps are authored by hand and marked. The
 agent records what it may do; a human decides what commits.
@@ -102,18 +102,19 @@ shapes, and the fourth is the point:
 success · business_outcome · needs_human · failure
 ```
 
-`needs_human` covers both an escalation and a policy refusal — to a caller they
-are the same fact, and separating them invites treating one as retryable.
+`needs_human` covers both an escalation and a policy refusal, because to a
+caller they are the same fact, and separating them invites treating one as
+retryable.
 
 **The API is a front door, not a second path.** It runs the same replay under
-the same policy writing the same evidence. It does not accept credentials —
+the same policy writing the same evidence. It does not accept credentials:
 injected parameters are absent from the published schema, so a caller cannot
 supply an operator password or see that one exists. And it cannot authorise
 irreversible work: asking it to move money returns `needs_human`, because the
 refusal happens in the driver.
 
 The chatbot is a demo driver over that API. It chains calls, and its catalog is
-scoped to the institution being served — without that it reached for a
+scoped to the institution being served. Without that it reached for a
 capability belonging to a different console, failed, and recovered by trying
 another.
 
@@ -140,8 +141,8 @@ before the host sees it.
 
 The last one to fall was `SUPERVISOR_REQUIRED`, and getting to it meant fixing a
 rule that was too blunt. Probing refused to touch credentials at all, so an
-entitlement check — which turns on *who is signed on*, not on any caller
-argument — could never be provoked. But those are two different hazards wearing
+entitlement check, which turns on *who is signed on* rather than on any caller
+argument, could never be provoked. But those are two different hazards wearing
 one name. Guessing a password fails sign-on and locks real accounts out.
 Choosing a different identity the deployment has already provisioned signs on
 fine; what is then under test is the check after it. So the rule is now sharper:
@@ -150,7 +151,7 @@ fine; what is then under test is the check after it. So the rule is now sharper:
 
 `mc_place_hold` is baselined as a supervisor, and its probe declares
 `as: "operator"`. The teller signs on, reaches the review step, and is refused
-there — which is the outcome, observed. An identity the deployment has not
+there, which is the outcome, observed. An identity the deployment has not
 configured is still skipped rather than improvised, and both halves of that are
 pinned by tests.
 
@@ -165,10 +166,10 @@ attempts, then `HOST_UNAVAILABLE`.
   runs fifteen of sixteen steps and stops at `post_transfer`. The money does not
   move, from the CLI, the API or the chatbot.
 - **Two guards, different questions.** `mc_place_hold` as `teller1` returns
-  `business_outcome SUPERVISOR_REQUIRED` — their entitlement model. As `super1`
-  the host allows it and *my* policy refuses the last step. Satisfying one does
-  not satisfy the other.
-- **Redaction** applies at every egress — logs, DOM snapshots, screenshots
+  `business_outcome SUPERVISOR_REQUIRED`, which is their entitlement model. As
+  `super1` the host allows it and *my* policy refuses the last step. Satisfying
+  one does not satisfy the other.
+- **Redaction** applies at every egress: logs, DOM snapshots, screenshots
   masked at capture, prompts. What is returned to the caller is not, because a
   capability whose job is to return a balance cannot redact its own answer.
 - **Approval** still gates unattended replay, and refuses a capability carrying
@@ -182,7 +183,7 @@ Neither would prove anything the five do not.
 
 **Which identity a capability needs is configuration, not contract.**
 `mc_place_hold` has to be probed with `--as supervisor` because a teller never
-gets past the entitlement check — but the artifact does not say so. A human
+gets past the entitlement check, but the artifact does not say so. A human
 knows to pass the flag. The artifact should declare the role it was recorded
 under and let the runtime pick, and today it does not.
 
@@ -196,7 +197,7 @@ blunt.
 run from and somewhere for the result to go.
 
 **What I would do first with more time** is not another capability. It is making
-locator parameterisation reliable without review — it matches on exact values
+locator parameterisation reliable without review. It matches on exact values
 today, which worked because a member number is distinctive, and would not on a
 value like `001`.
 
