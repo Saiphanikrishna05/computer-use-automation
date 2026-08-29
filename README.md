@@ -5,8 +5,17 @@ successful run is recorded as a typed, versioned, reviewable capability. That
 capability then replays deterministically, with no model in the loop, and an AI
 agent invokes it by name with typed arguments.
 
-The design write-up is in **[REPORT.md](REPORT.md)**. Evidence from real runs is
-in **[evidence/](evidence/)**.
+![Six capabilities recorded against interface.ai's hosted MERIDIAN CORE console](docs/meridian-dashboard.png)
+
+*Six capabilities recorded against a legacy console this system had never seen,
+hosted by interface.ai. Each shows its reversibility, its approval state, and
+how many of its declared failure modes have been **provoked against the live
+host** rather than assumed. Sixty lines of configuration to reach it, $18.72 to
+record all six, and nothing per replay: replay makes no model call at all.*
+
+The design write-up is in **[REPORT.md](REPORT.md)**, the adaptation write-up in
+**[ADAPTATION.md](ADAPTATION.md)**. Evidence from every run behind every claim
+here is in **[evidence/](evidence/)**.
 
 > **Adaptation project: MERIDIAN CORE.** This system has since been pointed at
 > a live legacy console it had never seen, hosted by interface.ai, and wrapped
@@ -68,12 +77,6 @@ CUA_MERIDIAN_OPERATOR=teller1 npm run replay -- mc_place_hold --tenant meridian-
 curl -s -X POST localhost:7400/api/capabilities/mc_member_balance/invoke \
   -H 'content-type: application/json' -d '{"inputs":{"memberNumber":"102777"}}'
 ```
-
-![Five capabilities recorded against interface.ai's hosted MERIDIAN CORE console](docs/meridian-dashboard.png)
-
-*The capabilities recorded against their console, each showing its
-reversibility, its approval state, and how many of its declared failure modes
-have been provoked against the live host rather than assumed.*
 
 ![The chatbot staging a transfer and refusing to post it](docs/meridian-chatbot-refusal.png)
 
