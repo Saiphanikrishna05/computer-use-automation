@@ -7,7 +7,7 @@ target I had not seen and did not write.
 
 ## What it took
 
-**Sixty lines, all configuration:** a tenant entry with their base URL, a
+**Sixty lines, all configuration**: a tenant entry with their base URL, a
 per-tenant credential, and a `branch` field threaded through sign-on:
 
 ```
@@ -15,9 +15,9 @@ src/config.ts +46   src/cli/discover-command.ts +11   src/discovery/agent.ts +5
 ```
 
 Nothing above the surface driver changed to *reach* it. That was decided months
-earlier: the artifact describes a control in terms an accessibility tree can
-answer (role, accessible name, the label a human reads as belonging to it, the
-row and column a cell sits in) rather than as a selector.
+earlier. The artifact describes a control not as a selector but in terms an
+accessibility tree can answer: its role, its accessible name, the label a human
+reads as belonging to it, the row and column a cell sits in.
 
 **The hidden token cost nothing.** The brief flags `_token` as load-bearing.
 Replay drives a real browser, so clicking *Continue* submits every hidden field
@@ -32,7 +32,7 @@ Then their target found four real things wrong with the core.
 recording survives a tenant saying "Member No." where another says "Member ID".
 That holds until identifiers nest, and on a share ledger they do:
 `100234-S0001` is a prefix of twenty others. Asking for one share's balance
-matched twenty-six rows and returned **$2,070.51, a real number from a
+matched twenty-six rows and returned **$2,070.51. A real number, from a
 different share.** Not a crash; a confident wrong answer. Exact now beats
 containing where an exact hit exists, and a test pins that the tolerant path
 still applies where nothing matches exactly.
@@ -141,9 +141,9 @@ before the host sees it.
 
 The last one to fall was `SUPERVISOR_REQUIRED`, and getting to it meant fixing a
 rule that was too blunt. Probing refused to touch credentials at all, so an
-entitlement check, which turns on *who is signed on* rather than on any caller
-argument, could never be provoked. But those are two different hazards wearing
-one name. Guessing a password fails sign-on and locks real accounts out.
+entitlement check could never be provoked. That check turns on *who is signed
+on*, not on any caller argument. But those are two different hazards wearing one
+name. Guessing a password fails sign-on and locks real accounts out.
 Choosing a different identity the deployment has already provisioned signs on
 fine; what is then under test is the check after it. So the rule is now sharper:
 
@@ -151,7 +151,7 @@ fine; what is then under test is the check after it. So the rule is now sharper:
 
 `mc_place_hold` is baselined as a supervisor, and its probe declares
 `as: "operator"`. The teller signs on, reaches the review step, and is refused
-there, which is the outcome, observed. An identity the deployment has not
+there. That is the outcome, observed. An identity the deployment has not
 configured is still skipped rather than improvised, and both halves of that are
 pinned by tests.
 
