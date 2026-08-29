@@ -14,6 +14,7 @@ cd "$(dirname "$0")/.."
 
 TARGET="http://localhost:${CUA_TARGET_PORT:-4173}"
 CONSOLE_PORT="${CUA_CATALOG_PORT:-7318}"
+SERVE="${CUA_DEMO_URL:-http://localhost:${CUA_SERVE_PORT:-7400}}"
 
 curl -s -o /dev/null "$TARGET/" || { echo "Target app not running. Start it with: npm run app"; exit 1; }
 curl -s -X POST "$TARGET/_admin/reset" -o /dev/null
@@ -66,12 +67,12 @@ else
 fi
 
 echo "── MERIDIAN CORE: the dashboard and the chatbot refusing a transfer ──"
-if curl -s -o /dev/null -m 4 "http://localhost:7400/api/capabilities"; then
+if curl -s -o /dev/null -m 4 "$SERVE/api/capabilities"; then
   cat > .docs-shot-mc.tmp.ts <<'MCEOF'
 import { chromium } from 'playwright';
 
 async function main(): Promise<void> {
-  const BASE = 'http://localhost:7400';
+  const BASE = process.env.SERVE ?? 'http://localhost:7400';
   const b = await chromium.launch({ headless: true });
   const ctx = await b.newContext({ viewport: { width: 1280, height: 900 }, colorScheme: 'dark' });
   const p = await ctx.newPage();
@@ -97,12 +98,13 @@ async function main(): Promise<void> {
 }
 main().catch((e) => { console.error(e); process.exit(1); });
 MCEOF
-  npx tsx .docs-shot-mc.tmp.ts
+  SERVE="$SERVE" npx tsx .docs-shot-mc.tmp.ts
   echo "   → docs/meridian-dashboard.png"
   echo "   → docs/meridian-chatbot-refusal.png"
 else
-  echo "   ! skipped: nothing serving on :7400. Start it with:"
+  echo "   ! skipped: nothing serving at $SERVE. Start it with:"
   echo "     npm run serve -- --tenant meridian-core"
+  echo "   (or point this at another port: CUA_SERVE_PORT=8080 npm run docs:images)"
 fi
 echo "   (docs/meridian-member-record.png is copied from a committed replay bundle,"
 echo "    since it must be a screenshot the redaction layer actually produced)"
