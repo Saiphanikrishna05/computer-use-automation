@@ -69,6 +69,28 @@ curl -s -X POST localhost:7400/api/capabilities/mc_member_balance/invoke \
   -H 'content-type: application/json' -d '{"inputs":{"memberNumber":"102777"}}'
 ```
 
+![Five capabilities recorded against interface.ai's hosted MERIDIAN CORE console](docs/meridian-dashboard.png)
+
+*The five capabilities recorded against their console, each showing its
+reversibility, its approval state, and how many of its declared failure modes
+have been provoked against the live host rather than assumed.*
+
+![The chatbot staging a transfer and refusing to post it](docs/meridian-chatbot-refusal.png)
+
+*Asking the chatbot to move a dollar. It signs on, fills the transfer form and
+walks to the review screen, then refuses the final click: `needs_human`,
+`IRREVERSIBLE_REQUIRES_HUMAN`, at step `post_transfer`. The money does not move,
+and it does not move from the API or the CLI either, because the refusal is in
+the driver rather than the prompt. The bar underneath separates the one model
+call that reads the sentence from the replay that does the work.*
+
+![The member record on MERIDIAN CORE, with e-mail and phone masked at capture](docs/meridian-member-record.png)
+
+*Their console, captured by a replay while it was reading the page. E-mail and
+phone are blacked out because screenshots are masked at capture, before the
+image exists. The Balance cell of `102777-S0001` is the value the capability
+returns.*
+
 ### Where the three surfaces live
 
 ```
