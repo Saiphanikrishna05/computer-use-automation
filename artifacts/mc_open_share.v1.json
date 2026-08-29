@@ -82,7 +82,7 @@
       "sensitivity": "none",
       "extract": {
         "target": {
-          "description": "cell \"{{shareType}}\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "description": "cell \"{{shareType}}\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122 panel",
           "framePath": [],
           "candidates": [
             {
@@ -105,15 +105,15 @@
           ],
           "anchor": {
             "containerRole": "panel",
-            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122",
             "nearestLabel": "Share Type:"
           },
           "ordinal": 0,
           "evidence": {
             "role": "cell",
-            "accessibleName": "{{shareType}}",
+            "accessibleName": "MMKT - Money Market",
             "tag": "td",
-            "textSnippet": "{{shareType}}",
+            "textSnippet": "MMKT - Money Market",
             "boundingBox": {
               "x": 387.640625,
               "y": 131,
@@ -140,7 +140,7 @@
       "sensitivity": "financial",
       "extract": {
         "target": {
-          "description": "cell \"${{initialDeposit}}\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "description": "cell \"${{initialDeposit}}\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122 panel",
           "framePath": [],
           "candidates": [
             {
@@ -163,7 +163,7 @@
           ],
           "anchor": {
             "containerRole": "panel",
-            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122",
             "nearestLabel": "Initial Deposit:"
           },
           "ordinal": 0,
@@ -199,7 +199,7 @@
       "sensitivity": "pii",
       "extract": {
         "target": {
-          "description": "cell \"{{memberNumber}} - Johnson, Katherine\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "description": "cell \"{{memberNumber}} - Johnson, Katherine\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122 panel",
           "framePath": [],
           "candidates": [
             {
@@ -222,7 +222,7 @@
           ],
           "anchor": {
             "containerRole": "panel",
-            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122",
             "nearestLabel": "Member:"
           },
           "ordinal": 0,
@@ -257,7 +257,7 @@
       "action": {
         "kind": "type",
         "target": {
-          "description": "textbox labelled \"Operator ID:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "description": "textbox labelled \"Operator ID:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122 panel",
           "framePath": [],
           "candidates": [
             {
@@ -279,7 +279,7 @@
           ],
           "anchor": {
             "containerRole": "panel",
-            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122"
           },
           "evidence": {
             "role": "textbox",
@@ -310,7 +310,7 @@
       "action": {
         "kind": "type",
         "target": {
-          "description": "textbox labelled \"Password:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "description": "textbox labelled \"Password:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122 panel",
           "framePath": [],
           "candidates": [
             {
@@ -332,7 +332,7 @@
           ],
           "anchor": {
             "containerRole": "panel",
-            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122"
           },
           "ordinal": 1,
           "evidence": {
@@ -364,7 +364,7 @@
       "action": {
         "kind": "select",
         "target": {
-          "description": "combobox labelled \"Branch:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "description": "combobox labelled \"Branch:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122 panel",
           "framePath": [],
           "candidates": [
             {
@@ -386,7 +386,7 @@
           ],
           "anchor": {
             "containerRole": "panel",
-            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122"
           },
           "evidence": {
             "role": "combobox",
@@ -416,7 +416,7 @@
       "action": {
         "kind": "click",
         "target": {
-          "description": "button \"Sign On\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "description": "button \"Sign On\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122 panel",
           "framePath": [],
           "candidates": [
             {
@@ -433,7 +433,7 @@
           ],
           "anchor": {
             "containerRole": "panel",
-            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122"
           },
           "evidence": {
             "role": "button",
@@ -462,7 +462,7 @@
       "action": {
         "kind": "click",
         "target": {
-          "description": "link \"Member Inquiry / Selection\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "description": "link \"Member Inquiry / Selection\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122 panel",
           "framePath": [],
           "candidates": [
             {
@@ -485,7 +485,7 @@
           ],
           "anchor": {
             "containerRole": "panel",
-            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122",
             "nearestLabel": "1."
           },
           "evidence": {
@@ -516,7 +516,7 @@
       "action": {
         "kind": "select",
         "target": {
-          "description": "combobox labelled \"Search by:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "description": "combobox labelled \"Search by:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122 panel",
           "framePath": [],
           "candidates": [
             {
@@ -538,7 +538,7 @@
           ],
           "anchor": {
             "containerRole": "panel",
-            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122"
           },
           "evidence": {
             "role": "combobox",
@@ -568,7 +568,7 @@
       "action": {
         "kind": "type",
         "target": {
-          "description": "textbox labelled \"Value:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "description": "textbox labelled \"Value:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122 panel",
           "framePath": [],
           "candidates": [
             {
@@ -590,7 +590,7 @@
           ],
           "anchor": {
             "containerRole": "panel",
-            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122"
           },
           "evidence": {
             "role": "textbox",
@@ -621,7 +621,7 @@
       "action": {
         "kind": "click",
         "target": {
-          "description": "button \"Search\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "description": "button \"Search\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122 panel",
           "framePath": [],
           "candidates": [
             {
@@ -644,7 +644,7 @@
           ],
           "anchor": {
             "containerRole": "panel",
-            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122",
             "nearestLabel": "Value:"
           },
           "evidence": {
@@ -728,7 +728,7 @@
       "action": {
         "kind": "click",
         "target": {
-          "description": "link \"Open New Share\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "description": "link \"Open New Share\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122 panel",
           "framePath": [],
           "candidates": [
             {
@@ -739,7 +739,7 @@
             },
             {
               "kind": "label",
-              "text": "Main Menu · Member Inquiry · System Settings · Sign Off",
+              "text": "Main Menu \u00b7 Member Inquiry \u00b7 System Settings \u00b7 Sign Off",
               "positional": true,
               "expect": "control"
             },
@@ -751,8 +751,8 @@
           ],
           "anchor": {
             "containerRole": "panel",
-            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™",
-            "nearestLabel": "Main Menu · Member Inquiry · System Settings · Sign Off"
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122",
+            "nearestLabel": "Main Menu \u00b7 Member Inquiry \u00b7 System Settings \u00b7 Sign Off"
           },
           "evidence": {
             "role": "link",
@@ -782,7 +782,7 @@
       "action": {
         "kind": "select",
         "target": {
-          "description": "combobox labelled \"Share Type:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "description": "combobox labelled \"Share Type:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122 panel",
           "framePath": [],
           "candidates": [
             {
@@ -804,12 +804,12 @@
           ],
           "anchor": {
             "containerRole": "panel",
-            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122"
           },
           "evidence": {
             "role": "combobox",
             "tag": "select",
-            "textSnippet": "S0001 - Regular SharesS0070 - Share Draft (Checking){{shareType}}CERT - Certificate",
+            "textSnippet": "S0001 - Regular SharesS0070 - Share Draft (Checking)MMKT - Money MarketCERT - Certificate",
             "boundingBox": {
               "x": 400.234375,
               "y": 126,
@@ -834,7 +834,7 @@
       "action": {
         "kind": "type",
         "target": {
-          "description": "textbox labelled \"Initial Deposit:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "description": "textbox labelled \"Initial Deposit:\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122 panel",
           "framePath": [],
           "candidates": [
             {
@@ -856,7 +856,7 @@
           ],
           "anchor": {
             "containerRole": "panel",
-            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™"
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122"
           },
           "evidence": {
             "role": "textbox",
@@ -887,7 +887,7 @@
       "action": {
         "kind": "click",
         "target": {
-          "description": "button \"Continue\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™ panel",
+          "description": "button \"Continue\" in the MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122 panel",
           "framePath": [],
           "candidates": [
             {
@@ -910,7 +910,7 @@
           ],
           "anchor": {
             "containerRole": "panel",
-            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems™",
+            "containerName": "MERIDIAN CORE Member Services Platform v4.2.1 Cornerstone Financial Systems\u2122",
             "nearestLabel": "$"
           },
           "evidence": {
@@ -1017,7 +1017,7 @@
     },
     {
       "code": "DEPOSIT_BELOW_MINIMUM",
-      "description": "The opening deposit is under the host’s minimum, so no share was opened.",
+      "description": "The opening deposit is under the host\u2019s minimum, so no share was opened.",
       "when": {
         "kind": "text_present",
         "text": "minimum opening deposit",
@@ -1122,6 +1122,11 @@
         "at": "2026-08-27T02:48:41.814Z",
         "by": "operator",
         "note": "approved for unattended replay: reviewed and approved for unattended replay"
+      },
+      {
+        "at": "2026-08-29T18:45:00.000Z",
+        "by": "reviewer",
+        "note": "Restored the literal text in 7 evidence snapshot(s). Templatisation had rewritten values inside evidence.textSnippet, which records what was on screen when the step was recorded. Resolution never reads it and a reviewer does, so a rewritten snapshot is simply a less accurate record. The recorder no longer templatises the evidence block."
       }
     ],
     "validation": {

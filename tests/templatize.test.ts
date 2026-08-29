@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { __templatizeForTest as templatize } from '../src/discovery/recorder.js';
+import { __templatizeForTest as templatize, __templatizeTargetForTest as templatizeTarget } from '../src/discovery/recorder.js';
 
 const p = (name: string, value: string) => ({ name, value, type: 'string' as const, description: '' });
 
@@ -37,6 +37,19 @@ describe('templatising a recorded value into a parameter reference', () => {
   it('replaces the longer parameter first, so a shorter one cannot corrupt it', () => {
     const out = templatize('100001', [p('short', '100'), p('long', '100001')]);
     expect(out).toBe('{{long}}');
+  });
+
+  it('leaves the evidence block exactly as it was observed', () => {
+    // `evidence` is a snapshot of what the page said when the step was
+    // recorded. Resolution never reads it; a reviewer does. Rewriting a value
+    // inside it makes the record less true rather than more portable.
+    const target = {
+      candidates: [{ kind: 'label', text: '102777-S0001' }],
+      evidence: { textSnippet: '102777-S0001 - Regular Shares', role: 'cell' },
+    };
+    const out = templatizeTarget(target, [p('memberNumber', '102777')]);
+    expect((out.candidates[0] as { text: string }).text).toBe('{{memberNumber}}-S0001');
+    expect(out.evidence.textSnippet).toBe('102777-S0001 - Regular Shares');
   });
 
   it('leaves text alone when a parameter appears inside a word', () => {

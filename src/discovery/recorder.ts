@@ -326,7 +326,15 @@ function templatizeTarget<T>(target: T, params: DeclaredParameter[]): T {
     if (typeof node === 'string') return templatize(node, usable);
     if (Array.isArray(node)) return node.map(walk);
     if (node && typeof node === 'object') {
-      return Object.fromEntries(Object.entries(node as Record<string, unknown>).map(([k, v]) => [k, walk(v)]));
+      return Object.fromEntries(
+        Object.entries(node as Record<string, unknown>).map(([k, v]) =>
+          // `evidence` records what was on screen when this step was recorded.
+          // Resolution never reads it; a human reviewing the artifact does.
+          // Rewriting a value inside a snapshot makes the snapshot less true
+          // rather than more portable, so it is left exactly as observed.
+          [k, k === 'evidence' ? v : walk(v)],
+        ),
+      );
     }
     return node;
   };
@@ -388,3 +396,4 @@ function replaceWholeTokens(text: string, needle: string, replacement: string): 
 
 /** Exposed for tests: the boundary rule is the load-bearing part. */
 export const __templatizeForTest = templatize;
+export const __templatizeTargetForTest = templatizeTarget;
