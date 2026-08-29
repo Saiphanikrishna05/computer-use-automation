@@ -279,7 +279,7 @@ vendor cadence wants something different from one taking continuous updates.
 Determinism here is also the economic argument, so discovery now measures
 itself. A real recording of the lookup flow cost **$0.55, 60,336 tokens over 9
 model turns**, of which prompt-caching the fixed system-and-tools prefix saved
-$0.46 — nearly half the bill, and the reason that prefix is marked cacheable.
+$0.46, nearly half the bill, and the reason that prefix is marked cacheable.
 Replay of the same capability runs in a **1,453 ms median over ten runs and
 spends zero tokens**, which is not a rounding claim: replay makes no API call at
 all, which is why it runs with the key unset, and I check that rather than
@@ -323,8 +323,8 @@ page read.** So the run read a page it could not see, once per outcome, before
 ever reaching the recovery rule written to dismiss it, and it *hung* rather than
 failed, indefinitely, unattended. The existing code guarded either side of each
 wait, which does nothing when the wait itself is what blocks. Page reads now
-return empty while a dialog is pending, so `dialog_present` — which reads local
-state — fires, clears it, and the run completes in 1.5 s.
+return empty while a dialog is pending, so `dialog_present`, which reads local
+state, fires, clears it, and the run completes in 1.5 s.
 
 Two things had hidden this. The fixture raised its dialog 350 ms after load, and
 replay had got fast enough to finish first, so the condition stopped occurring;
@@ -332,17 +332,17 @@ and `evidence/replay-recovery-unexpected-dialog/` had quietly become an ordinary
 successful run that still claimed to demonstrate recovery. A fixture that no
 longer reproduces what it exists for is worse than none, because everything
 downstream keeps asserting that it does. Both are fixed, and three tests now pin
-the executor's behaviour when the page is unreadable — including that a blank
+the executor's behaviour when the page is unreadable, including that a blank
 read must not be mistaken for a business outcome.
 
 **Two views exist over all of this, because a capability is not the unit anyone
 operates.** `npm run audit` generates the document the person who signs this off
 actually gets: what it does, what it may do, what data it touches, who approved
-it on what basis, what backs each claim, and — the section that makes the rest
-credible — what it still cannot vouch for. Generated, never authored, since a
-hand-written pack is stale the moment the capability changes and that gap is
-where an audit finding lives. `npm run fleet` is the other axis: every
-capability across every institution, ordered by what to fix first. Drift
+it on what basis, what backs each claim, and what it still cannot vouch for.
+That last section is the one that makes the rest credible. Generated, never
+authored, since a hand-written pack is stale the moment the capability changes,
+and that gap is where an audit finding lives. `npm run fleet` is the other
+axis: every capability across every institution, ordered by what to fix first. Drift
 outranks failure deliberately. A failing capability is already generating
 support calls and somebody is on it; a drifting one still returns the right
 answer through a weaker locator and is invisible until it is not.
@@ -484,7 +484,7 @@ not satisfying.
 each stays defensible. **Assisted re-resolution** covers the one failure a
 declared rule cannot express: there is no condition to key on when the failure
 *is* the absence of the control. One model call, off unless asked for, once per
-run, and it *points* rather than authoring a locator — the synthesised
+run, and it *points* rather than authoring a locator: the synthesised
 descriptor must itself resolve cleanly, so an assisted step is held to the same
 standard as a recorded one. `TARGET_AMBIGUOUS` is excluded deliberately: that
 means the recording is under-specified, and breaking the tie with a model papers
@@ -494,7 +494,7 @@ finishing today's run and changing what runs tomorrow are different acts and
 only the first is safe without a person.
 
 Building it exposed two bugs worth more than the feature. **The coordinates tier
-could never fail** — a point on a screen always hits something, so a control
+could never fail.** A point on a screen always hits something, so a control
 that had genuinely gone was reported as found, the click landed on whatever had
 moved into that spot, and the run died later at the checkpoint pointing
 somewhere else entirely. Coordinates now honour the role the descriptor's richer
@@ -506,11 +506,11 @@ the one file where the locator logic lives.
 equivalent, and the point is that it *compiles as a `SurfaceDriver`*. If
 anything above the driver had leaked a browser assumption, it could not. The
 mapping from `UiNode` to UIA is in the file header, along with what I expect to
-have got wrong — the label heuristics, which lean on DOM adjacency that Win32
+have got wrong: the label heuristics, which lean on DOM adjacency that Win32
 does not have. **The governance log** is append-only and hash-chained: an
 artifact recording its own approval is a claim in a file anyone can edit, so
 approvals and probe results also append a chained entry. Tamper-*evident*, not
-tamper-proof, and the tests say so — someone who can write the file can forge a
+tamper-proof, and the tests say so. Someone who can write the file can forge a
 consistent history; what they cannot do is alter one entry quietly, which is the
 realistic failure mode. No authentication, deliberately: a deployment binds the
 actor to the institution's own identity system, and inventing a user store here
